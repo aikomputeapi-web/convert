@@ -61,4 +61,10 @@ export default [
     name: "material-icons",
     assemble: "assemble.ts",
   },
+  {
+    name: "shtoelf",
+    prebuild: "build.sh",
+    image:
+      "gcc:15-bookworm@sha256:9ca91b05c7b07d2979f16413e8b2cd6ec8a7c80ffca4121ccab0aeba33f90460",
+  },
 ] satisfies RequirementsConfig;

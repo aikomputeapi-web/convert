@@ -1,45 +1,29 @@
-import { join, relative } from "path";
-import { mkdir, readdir, rm, rename, stat } from "fs/promises";
+import { join } from "path";
+import { mkdir, rm, stat } from "fs/promises";
 import { $ } from "bun";
-import type { ArgsDef, ParsedArgs } from "citty";
+import type { ArgsDef } from "citty";
 import {
+  CACHE_DIR,
+  extractTarball,
+  findPrebuilts,
+  loadRequirements,
+  subrecipeScope,
+  type Scope,
+} from "./common";
+import { hashFile, hashInputs, listFiles, updateHash } from "./hash";
+import {
+  isPrebuilt,
   isSubrecipe,
+  type AssembleSubrecipeRequirement,
+  type PrebuildSubrecipeRequirement,
   type Requirement,
   type RequirementsConfig,
   type SourceRequirement,
-  type SubrecipeRequirement,
 } from "./types";
 
-const OUT_DIR = join(import.meta.dir, "../../built");
-const CACHE_DIR = join(import.meta.dir, "../../.cache/convert-build");
 const TARBALLS_DIR = join(CACHE_DIR, "tarballs");
-const RECIPE_DIR = join(import.meta.dir, "../../recipe");
 
-await mkdir(OUT_DIR, { recursive: true });
 await mkdir(TARBALLS_DIR, { recursive: true });
-
-type Scope = {
-  recipeDir: string;
-  outDir: string;
-  stateDir: string;
-};
-
-export const ROOT_SCOPE: Scope = { recipeDir: RECIPE_DIR, outDir: OUT_DIR, stateDir: CACHE_DIR };
-
-function subrecipeScope(scope: Scope, name: string): Scope {
-  const stateDir = join(scope.stateDir, "subrecipes", name);
-  return {
-    recipeDir: join(scope.recipeDir, name),
-    outDir: join(stateDir, "requirements"),
-    stateDir,
-  };
-}
-
-export async function loadRequirements(recipeDir: string): Promise<RequirementsConfig> {
-  const configPath = join(recipeDir, "requirements.config.ts");
-  if (!(await Bun.file(configPath).exists())) return [];
-  return (await import(configPath)).default;
-}
 
 async function fetchFile(path: string, url: string) {
   const res = await fetch(url);
@@ -49,42 +33,14 @@ async function fetchFile(path: string, url: string) {
   return file;
 }
 
-async function extractTarball(outPath: string, tarball: Uint8Array) {
-  const tmp = join(CACHE_DIR, `tmp-${crypto.randomUUID()}`);
-  await mkdir(tmp, { recursive: true });
-  await rm(outPath, { recursive: true, force: true });
-
-  const archive = new Bun.Archive(tarball);
-  await archive.extract(tmp);
-
-  const [inner] = await readdir(tmp);
-  await rename(join(tmp, inner), outPath);
-  await rm(tmp, { recursive: true });
-}
-
-function hashFile(alg: Bun.SupportedCryptoAlgorithms, bytes: Uint8Array) {
-  return new Bun.CryptoHasher(alg).update(bytes).digest("hex");
-}
-
-async function listFiles(dir: string) {
-  try {
-    const entries = await readdir(dir, { recursive: true, withFileTypes: true });
-    return entries
-      .filter((entry) => entry.isFile())
-      .map((entry) => relative(dir, join(entry.parentPath, entry.name)))
-      .toSorted();
-  } catch {
-    return [];
-  }
-}
-
 export const assembleArgs = {
   verbose: { type: "boolean", description: "Be louder" },
   force: { type: "boolean", description: "Reassemble, even if it looks the same" },
   refetch: { type: "boolean", description: "Redownload everything" },
 } as const satisfies ArgsDef;
 
-export type AssembleArgs = ParsedArgs<typeof assembleArgs>;
+export type AssembleArgs = { verbose?: boolean; force?: boolean; refetch?: boolean };
+
 function hashPath(requirement: Requirement, scope: Scope) {
   return join(scope.stateDir, "out-hashes", requirement.name);
 }
@@ -92,34 +48,23 @@ function hashPath(requirement: Requirement, scope: Scope) {
 async function hashRequirement(requirement: Requirement, scope: Scope) {
   const hash = new Bun.CryptoHasher("sha256");
 
-  hash.update(JSON.stringify(requirement));
-  hash.update("\0");
+  updateHash(hash, await hashInputs(requirement, scope));
 
-  const recipePath = join(scope.recipeDir, requirement.name);
-  for (const path of await listFiles(recipePath)) {
-    hash.update(path);
-    hash.update("\0");
-    hash.update(await Bun.file(join(recipePath, path)).bytes());
-    hash.update("\0");
-  }
-
-  if (isSubrecipe(requirement)) {
+  if (isPrebuilt(requirement)) {
+    for (const { path } of await findPrebuilts(requirement, scope)) {
+      updateHash(hash, path, await Bun.file(path).bytes());
+    }
+  } else if (isSubrecipe(requirement)) {
     const sub = subrecipeScope(scope, requirement.name);
     for (const subrequirement of await loadRequirements(sub.recipeDir)) {
-      hash.update(await Bun.file(hashPath(subrequirement, sub)).text());
-      hash.update("\0");
+      updateHash(hash, await Bun.file(hashPath(subrequirement, sub)).text());
     }
   }
 
   const outPath = join(scope.outDir, requirement.name);
   for (const path of await listFiles(outPath)) {
     const s = await stat(join(outPath, path));
-    hash.update(path);
-    hash.update("\0");
-    hash.update(String(s.size));
-    hash.update("\0");
-    hash.update(String(s.mtimeMs));
-    hash.update("\0");
+    updateHash(hash, path, String(s.size), String(s.mtimeMs));
   }
 
   return hash.digest("hex");
@@ -179,7 +124,7 @@ async function assembleSource(requirement: SourceRequirement, scope: Scope, args
 }
 
 /** Expects the subrecipe's own requirements to already be assembled. */
-async function assembleSubrecipe(requirement: SubrecipeRequirement, scope: Scope) {
+async function assembleSubrecipe(requirement: AssembleSubrecipeRequirement, scope: Scope) {
   const sub = subrecipeScope(scope, requirement.name);
   const outPath = join(scope.outDir, requirement.name);
   await rm(outPath, { recursive: true, force: true });
@@ -190,12 +135,32 @@ async function assembleSubrecipe(requirement: SubrecipeRequirement, scope: Scope
     .env({ ...process.env, OUT_DIR: outPath });
 }
 
+async function assemblePrebuilt(requirement: PrebuildSubrecipeRequirement, scope: Scope) {
+  const inputs = await hashInputs(requirement, scope);
+  const prebuilts = await findPrebuilts(requirement, scope);
+
+  let prebuilt = prebuilts.find((prebuilt) => prebuilt.inputs === inputs);
+  if (!prebuilt) {
+    if (prebuilts.length !== 1) {
+      throw new Error(
+        `${requirement.name} needs exactly one prebuilt, found ${prebuilts.length}. Run \`bun run build:prebuilt\`.`,
+      );
+    }
+    prebuilt = prebuilts[0];
+    console.warn(
+      `Prebuilt ${requirement.name} is stale, run \`bun run build:prebuilt\` to update it.`,
+    );
+  }
+
+  await extractTarball(join(scope.outDir, requirement.name), await Bun.file(prebuilt.path).bytes());
+}
+
 async function assembleRequirementChecked(
   requirement: Requirement,
   scope: Scope,
   args: AssembleArgs,
 ) {
-  if (isSubrecipe(requirement)) {
+  if (isSubrecipe(requirement) && !isPrebuilt(requirement)) {
     const sub = subrecipeScope(scope, requirement.name);
     await assembleAll(await loadRequirements(sub.recipeDir), sub, args);
   }
@@ -205,7 +170,8 @@ async function assembleRequirementChecked(
     return;
   }
 
-  if (isSubrecipe(requirement)) await assembleSubrecipe(requirement, scope);
+  if (isPrebuilt(requirement)) await assemblePrebuilt(requirement, scope);
+  else if (isSubrecipe(requirement)) await assembleSubrecipe(requirement, scope);
   else await assembleSource(requirement, scope, args);
 
   await writeHash(requirement, scope);
