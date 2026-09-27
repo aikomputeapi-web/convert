@@ -1,4 +1,4 @@
-import { join } from "path";
+import { join, relative } from "path";
 import { mkdir, readdir, rm } from "fs/promises";
 import { $ } from "bun";
 import type { ArgsDef, ParsedArgs } from "citty";
@@ -6,6 +6,7 @@ import { assembleAll } from "./assemble";
 import {
   CACHE_DIR,
   PACK_IMAGE,
+  ROOT_SCOPE,
   findPrebuilts,
   loadRequirements,
   prebuiltPath,
@@ -55,6 +56,9 @@ async function prebuild(
   const inputs = await hashInputs(requirement, scope);
   const existing = await findPrebuilts(requirement, scope);
   if (!args.force && existing.some((prebuilt) => prebuilt.inputs === inputs)) {
+    for (const prebuilt of existing) {
+      if (prebuilt.inputs !== inputs) await removeStale(prebuilt.path);
+    }
     if (args.verbose) console.log(`Prebuilt ${requirement.name} is up to date.`);
     return;
   }
@@ -94,7 +98,7 @@ async function prebuild(
     ]);
 
     const tarball = await Bun.file(join(tmp, "out.tar.gz")).bytes();
-    for (const { path } of existing) await rm(path);
+    for (const { path } of existing) await removeStale(path);
     await Bun.write(prebuiltPath(requirement, scope, inputs), tarball);
     console.log(`Prebuilt ${requirement.name} (sha256 ${hashFile("sha256", tarball)}).`);
   } finally {
@@ -113,5 +117,34 @@ export async function prebuildAll(
     const sub = subrecipeScope(scope, requirement.name);
     await prebuildAll(await loadRequirements(sub.recipeDir), sub, args);
     if (isPrebuilt(requirement)) await prebuild(requirement, scope, args);
+  }
+
+  await removeOrphans(requirements, scope);
+}
+
+async function removeStale(path: string) {
+  await rm(path, { recursive: true, force: true });
+  console.log(`Removed stale prebuilt ${relative(ROOT_SCOPE.prebuiltDir, path)}.`);
+}
+
+async function removeOrphans(requirements: RequirementsConfig, scope: Scope) {
+  let entries;
+  try {
+    entries = await readdir(scope.prebuiltDir, { withFileTypes: true });
+  } catch {
+    return;
+  }
+
+  const subrecipes = new Set(requirements.filter(isSubrecipe).map((r) => r.name));
+  const prebuilts = new Set(
+    (
+      await Promise.all(requirements.filter(isPrebuilt).map((r) => findPrebuilts(r, scope)))
+    ).flatMap((found) => found.map(({ path }) => path)),
+  );
+
+  for (const entry of entries) {
+    const path = join(scope.prebuiltDir, entry.name);
+    const keep = entry.isDirectory() ? subrecipes.has(entry.name) : prebuilts.has(path);
+    if (!keep) await removeStale(path);
   }
 }
