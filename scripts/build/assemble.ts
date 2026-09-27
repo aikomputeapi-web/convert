@@ -12,8 +12,8 @@ import {
 } from "./common";
 import { hashFile, hashInputs, listFiles, updateHash } from "./hash";
 import {
+  isAssembleSubrecipe,
   isPrebuilt,
-  isSubrecipe,
   type AssembleSubrecipeRequirement,
   type PrebuildSubrecipeRequirement,
   type Requirement,
@@ -23,14 +23,10 @@ import {
 
 const TARBALLS_DIR = join(CACHE_DIR, "tarballs");
 
-await mkdir(TARBALLS_DIR, { recursive: true });
-
-async function fetchFile(path: string, url: string) {
+async function fetchFile(url: string) {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Could not fetch: ${res.status} ${res.statusText}`);
-  const file = await res.bytes();
-  await Bun.write(path, file);
-  return file;
+  return await res.bytes();
 }
 
 export const assembleArgs = {
@@ -45,16 +41,20 @@ function hashPath(requirement: Requirement, scope: Scope) {
   return join(scope.stateDir, "out-hashes", requirement.name);
 }
 
+async function findCurrentPrebuilt(requirement: PrebuildSubrecipeRequirement, scope: Scope) {
+  const inputs = await hashInputs(requirement, scope);
+  return (await findPrebuilts(requirement, scope)).find((prebuilt) => prebuilt.inputs === inputs);
+}
+
 async function hashRequirement(requirement: Requirement, scope: Scope) {
   const hash = new Bun.CryptoHasher("sha256");
 
   updateHash(hash, await hashInputs(requirement, scope));
 
   if (isPrebuilt(requirement)) {
-    for (const { path } of await findPrebuilts(requirement, scope)) {
-      updateHash(hash, path, await Bun.file(path).bytes());
-    }
-  } else if (isSubrecipe(requirement)) {
+    const prebuilt = await findCurrentPrebuilt(requirement, scope);
+    if (prebuilt) updateHash(hash, await Bun.file(prebuilt.path).bytes());
+  } else if (isAssembleSubrecipe(requirement)) {
     const sub = subrecipeScope(scope, requirement.name);
     for (const subrequirement of await loadRequirements(sub.recipeDir)) {
       updateHash(hash, await Bun.file(hashPath(subrequirement, sub)).text());
@@ -75,43 +75,45 @@ async function writeHash(requirement: Requirement, scope: Scope) {
 }
 
 async function checkHash(requirement: Requirement, scope: Scope): Promise<boolean> {
-  try {
-    const outHash = (await Bun.file(hashPath(requirement, scope)).text()).trim();
-    return outHash === (await hashRequirement(requirement, scope));
-  } catch {
-    return false;
-  }
+  const file = Bun.file(hashPath(requirement, scope));
+  if (!(await file.exists())) return false;
+  return (await file.text()).trim() === (await hashRequirement(requirement, scope));
 }
 
-async function assembleSource(requirement: SourceRequirement, scope: Scope, args: AssembleArgs) {
-  const tarballPath = join(TARBALLS_DIR, `${requirement.hash[1]}.tar.gz`);
+async function readCachedTarball(requirement: SourceRequirement, path: string) {
+  const file = Bun.file(path);
+  if (!(await file.exists())) return undefined;
+  const tarball = await file.bytes();
+  if (hashFile(requirement.hash[0], tarball) === requirement.hash[1]) return tarball;
+  console.warn(`Bad hash for cached ${requirement.name} tarball, refetching.`);
+  return undefined;
+}
 
-  let tarball;
-  if (!args.refetch) {
-    try {
-      tarball = await Bun.file(tarballPath).bytes();
-      const hash = hashFile(requirement.hash[0], tarball);
-      if (hash !== requirement.hash[1]) {
-        console.warn(`Bad hash for cached ${requirement.name} tarball, refetching.`);
-        tarball = undefined;
-      }
-    } catch {
-      tarball = undefined;
-    }
-  }
-
-  if (tarball && args.verbose) console.log(`Using cached tarball for ${requirement.name}.`);
-  if (!tarball) {
-    console.log(`Fetching file ${requirement.url}...`);
-    tarball = await fetchFile(tarballPath, requirement.url);
-    console.log(`Got sources for ${requirement.name}.`);
-  }
-
+async function fetchTarball(requirement: SourceRequirement, path: string) {
+  console.log(`Fetching file ${requirement.url}...`);
+  const tarball = await fetchFile(requirement.url);
   const hash = hashFile(requirement.hash[0], tarball);
   if (hash !== requirement.hash[1]) {
     throw new Error(
       `Requirement claimed a ${requirement.hash[0]} hash of ${requirement.hash[1]}, but the source hashes to ${hash}!`,
     );
+  }
+  await mkdir(TARBALLS_DIR, { recursive: true });
+  await Bun.write(path, tarball);
+  console.log(`Got sources for ${requirement.name}.`);
+  return tarball;
+}
+
+async function assembleSource(requirement: SourceRequirement, scope: Scope, args: AssembleArgs) {
+  const tarballPath = join(TARBALLS_DIR, `${requirement.hash[1]}.tar.gz`);
+
+  let tarball: Uint8Array | undefined = args.refetch
+    ? undefined
+    : await readCachedTarball(requirement, tarballPath);
+  if (tarball) {
+    if (args.verbose) console.log(`Using cached tarball for ${requirement.name}.`);
+  } else {
+    tarball = await fetchTarball(requirement, tarballPath);
   }
 
   const outPath = join(scope.outDir, requirement.name);
@@ -123,7 +125,6 @@ async function assembleSource(requirement: SourceRequirement, scope: Scope, args
   }
 }
 
-/** Expects the subrecipe's own requirements to already be assembled. */
 async function assembleSubrecipe(requirement: AssembleSubrecipeRequirement, scope: Scope) {
   const sub = subrecipeScope(scope, requirement.name);
   const outPath = join(scope.outDir, requirement.name);
@@ -136,10 +137,7 @@ async function assembleSubrecipe(requirement: AssembleSubrecipeRequirement, scop
 }
 
 async function assemblePrebuilt(requirement: PrebuildSubrecipeRequirement, scope: Scope) {
-  const inputs = await hashInputs(requirement, scope);
-  const prebuilt = (await findPrebuilts(requirement, scope)).find(
-    (prebuilt) => prebuilt.inputs === inputs,
-  );
+  const prebuilt = await findCurrentPrebuilt(requirement, scope);
   if (!prebuilt) {
     throw new Error(
       `Prebuilt ${requirement.name} is missing or stale, run \`bun run build:prebuild ${requirement.name}\` to update it.`,
@@ -154,7 +152,8 @@ async function assembleRequirementChecked(
   scope: Scope,
   args: AssembleArgs,
 ) {
-  if (isSubrecipe(requirement) && !isPrebuilt(requirement)) {
+  // our hash covers the subrecipe's own requirements, so they must be current before the check
+  if (isAssembleSubrecipe(requirement)) {
     const sub = subrecipeScope(scope, requirement.name);
     await assembleAll(await loadRequirements(sub.recipeDir), sub, args);
   }
@@ -164,8 +163,11 @@ async function assembleRequirementChecked(
     return;
   }
 
+  // a failure partway through must not leave the old hash vouching for a half-assembled output
+  await rm(hashPath(requirement, scope), { force: true });
+
   if (isPrebuilt(requirement)) await assemblePrebuilt(requirement, scope);
-  else if (isSubrecipe(requirement)) await assembleSubrecipe(requirement, scope);
+  else if (isAssembleSubrecipe(requirement)) await assembleSubrecipe(requirement, scope);
   else await assembleSource(requirement, scope, args);
 
   await writeHash(requirement, scope);

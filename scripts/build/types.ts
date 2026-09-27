@@ -26,6 +26,12 @@ export function isSubrecipe(requirement: Requirement): requirement is SubrecipeR
   return "assemble" in requirement || "prebuild" in requirement;
 }
 
+export function isAssembleSubrecipe(
+  requirement: Requirement,
+): requirement is AssembleSubrecipeRequirement {
+  return "assemble" in requirement;
+}
+
 export function isPrebuilt(requirement: Requirement): requirement is PrebuildSubrecipeRequirement {
   return "prebuild" in requirement;
 }
