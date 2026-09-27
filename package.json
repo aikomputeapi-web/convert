@@ -9,6 +9,7 @@
   "scripts": {
     "build:assemble": "bun run scripts/build.ts assemble",
     "build:prebuild": "bun run scripts/build.ts prebuild",
+    "build:check": "bun run scripts/build.ts check",
     "dev": "bun run build:assemble --all && vite",
     "build": "bun run build:assemble --all && tsc && vite build",
     "cache:build": "bun run buildCache.js dist/cache.json --minify",

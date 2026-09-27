@@ -137,18 +137,12 @@ async function assembleSubrecipe(requirement: AssembleSubrecipeRequirement, scop
 
 async function assemblePrebuilt(requirement: PrebuildSubrecipeRequirement, scope: Scope) {
   const inputs = await hashInputs(requirement, scope);
-  const prebuilts = await findPrebuilts(requirement, scope);
-
-  let prebuilt = prebuilts.find((prebuilt) => prebuilt.inputs === inputs);
+  const prebuilt = (await findPrebuilts(requirement, scope)).find(
+    (prebuilt) => prebuilt.inputs === inputs,
+  );
   if (!prebuilt) {
-    if (prebuilts.length !== 1) {
-      throw new Error(
-        `${requirement.name} needs exactly one prebuilt, found ${prebuilts.length}. Run \`bun run build:prebuild ${requirement.name}\`.`,
-      );
-    }
-    prebuilt = prebuilts[0];
-    console.warn(
-      `Prebuilt ${requirement.name} is stale, run \`bun run build:prebuild ${requirement.name}\` to update it.`,
+    throw new Error(
+      `Prebuilt ${requirement.name} is missing or stale, run \`bun run build:prebuild ${requirement.name}\` to update it.`,
     );
   }
 
