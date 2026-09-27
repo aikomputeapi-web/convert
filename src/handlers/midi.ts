@@ -14,6 +14,7 @@ import {
 
 import CommonFormats, { Category } from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
+import sfontUrl from "built/timgm6mb/TimGM6mb.sf2?url";
 
 const SAMPLE_RATE = 44100;
 const BUFFER_FRAMES = 4096;
@@ -60,7 +61,7 @@ function loadFluidSynth(): Promise<{ JSSynth: any; sfontBin: ArrayBuffer }> {
       JSSynth.Synthesizer.initializeWithFluidSynthModule(fluidModule);
       await JSSynth.Synthesizer.waitForWasmInitialized();
 
-      const sfontBin = await fetch("/convert/wasm/TimGM6mb.sf2").then((r) => r.arrayBuffer());
+      const sfontBin = await fetch(sfontUrl).then((r) => r.arrayBuffer());
       return { JSSynth, sfontBin };
     })();
   }

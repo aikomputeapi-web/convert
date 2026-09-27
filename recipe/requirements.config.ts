@@ -58,6 +58,16 @@ export default [
     hash: ["sha256", "4988f3ddf26b1feea9f312f9a2194493ed042aebf21eb18cc39452f24d261ced"],
   },
   {
+    name: "pandoc",
+    url: "https://github.com/jgm/pandoc/releases/download/3.11/pandoc-3.11.wasm.zip",
+    hash: ["sha256", "bd856c19094f5333ee92f239dd93d288a05429f1d957efef1c37e7bb97ac14bd"],
+  },
+  {
+    name: "timgm6mb",
+    url: "https://deb.debian.org/debian/pool/main/t/timgm6mb-soundfont/timgm6mb-soundfont_1.3.orig.tar.gz",
+    hash: ["sha256", "af8f3a00e416dfb262bcaa904a1c84df04a51b72bbc1313aed012bc754bdf99b"],
+  },
+  {
     name: "material-icons",
     assemble: "assemble.ts",
   },
@@ -66,5 +76,11 @@ export default [
     prebuild: "build.sh",
     image:
       "gcc:15-bookworm@sha256:9ca91b05c7b07d2979f16413e8b2cd6ec8a7c80ffca4121ccab0aeba33f90460",
+  },
+  {
+    name: "libopenmpt",
+    prebuild: "build.sh",
+    image:
+      "emscripten/emsdk:6.0.10@sha256:e077d54e2b8970575ebc4f185ac1de0b95c05f2b266134d4ba27449af7aebf65",
   },
 ] satisfies RequirementsConfig;

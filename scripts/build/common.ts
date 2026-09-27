@@ -1,5 +1,6 @@
-import { join } from "path";
+import { isAbsolute, join, normalize } from "path";
 import { mkdir, readdir, rm, rename } from "fs/promises";
+import JSZip from "jszip";
 import type { ArgsDef } from "citty";
 import type { PrebuildSubrecipeRequirement, RequirementsConfig } from "./types";
 
@@ -90,18 +91,38 @@ export async function findPrebuilts(requirement: PrebuildSubrecipeRequirement, s
   });
 }
 
-export async function extractTarball(outPath: string, tarball: Uint8Array) {
+async function extractInto(outPath: string, extract: (dir: string) => Promise<void>) {
   const tmp = join(CACHE_DIR, `tmp-${crypto.randomUUID()}`);
   try {
     await mkdir(tmp, { recursive: true });
     await rm(outPath, { recursive: true, force: true });
 
-    const archive = new Bun.Archive(tarball);
-    await archive.extract(tmp);
+    await extract(tmp);
 
-    const [inner] = await readdir(tmp);
-    await rename(join(tmp, inner), outPath);
+    // unwrap a single top-level directory, like the one github archives have
+    const entries = await readdir(tmp, { withFileTypes: true });
+    const [inner] = entries;
+    if (entries.length === 1 && inner.isDirectory()) await rename(join(tmp, inner.name), outPath);
+    else await rename(tmp, outPath);
   } finally {
     await rm(tmp, { recursive: true, force: true });
   }
+}
+
+export async function extractTarball(outPath: string, tarball: Uint8Array) {
+  await extractInto(outPath, (dir) => new Bun.Archive(tarball).extract(dir).then(() => {}));
+}
+
+export async function extractZip(outPath: string, zip: Uint8Array) {
+  await extractInto(outPath, async (dir) => {
+    const archive = await JSZip.loadAsync(zip);
+    for (const entry of Object.values(archive.files)) {
+      if (entry.dir) continue;
+      const path = normalize(entry.name);
+      if (isAbsolute(path) || path.startsWith("..")) {
+        throw new Error(`Zip entry ${entry.name} escapes the output directory.`);
+      }
+      await Bun.write(join(dir, path), await entry.async("uint8array"));
+    }
+  });
 }

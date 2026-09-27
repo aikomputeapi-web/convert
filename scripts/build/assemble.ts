@@ -1,10 +1,11 @@
-import { join } from "path";
+import { basename, join } from "path";
 import { mkdir, rm, stat } from "fs/promises";
 import { $ } from "bun";
 import type { ArgsDef } from "citty";
 import {
   CACHE_DIR,
   extractTarball,
+  extractZip,
   findPrebuilts,
   loadRequirements,
   subrecipeScope,
@@ -21,7 +22,7 @@ import {
   type SourceRequirement,
 } from "./types";
 
-const TARBALLS_DIR = join(CACHE_DIR, "tarballs");
+const DOWNLOADS_DIR = join(CACHE_DIR, "downloads");
 
 async function fetchFile(url: string) {
   const res = await fetch(url);
@@ -80,44 +81,52 @@ async function checkHash(requirement: Requirement, scope: Scope): Promise<boolea
   return (await file.text()).trim() === (await hashRequirement(requirement, scope));
 }
 
-async function readCachedTarball(requirement: SourceRequirement, path: string) {
+async function readCachedDownload(requirement: SourceRequirement, path: string) {
   const file = Bun.file(path);
   if (!(await file.exists())) return undefined;
-  const tarball = await file.bytes();
-  if (hashFile(requirement.hash[0], tarball) === requirement.hash[1]) return tarball;
-  console.warn(`Bad hash for cached ${requirement.name} tarball, refetching.`);
+  const bytes = await file.bytes();
+  if (hashFile(requirement.hash[0], bytes) === requirement.hash[1]) return bytes;
+  console.warn(`Bad hash for cached ${requirement.name} download, refetching.`);
   return undefined;
 }
 
-async function fetchTarball(requirement: SourceRequirement, path: string) {
+async function fetchDownload(requirement: SourceRequirement, path: string) {
   console.log(`Fetching file ${requirement.url}...`);
-  const tarball = await fetchFile(requirement.url);
-  const hash = hashFile(requirement.hash[0], tarball);
+  const bytes = await fetchFile(requirement.url);
+  const hash = hashFile(requirement.hash[0], bytes);
   if (hash !== requirement.hash[1]) {
     throw new Error(
       `Requirement claimed a ${requirement.hash[0]} hash of ${requirement.hash[1]}, but the source hashes to ${hash}!`,
     );
   }
-  await mkdir(TARBALLS_DIR, { recursive: true });
-  await Bun.write(path, tarball);
+  await mkdir(DOWNLOADS_DIR, { recursive: true });
+  await Bun.write(path, bytes);
   console.log(`Got sources for ${requirement.name}.`);
-  return tarball;
+  return bytes;
 }
 
 async function assembleSource(requirement: SourceRequirement, scope: Scope, args: AssembleArgs) {
-  const tarballPath = join(TARBALLS_DIR, `${requirement.hash[1]}.tar.gz`);
+  const downloadPath = join(DOWNLOADS_DIR, requirement.hash[1]);
 
-  let tarball: Uint8Array | undefined = args.refetch
+  let bytes: Uint8Array | undefined = args.refetch
     ? undefined
-    : await readCachedTarball(requirement, tarballPath);
-  if (tarball) {
-    if (args.verbose) console.log(`Using cached tarball for ${requirement.name}.`);
+    : await readCachedDownload(requirement, downloadPath);
+  if (bytes) {
+    if (args.verbose) console.log(`Using cached download for ${requirement.name}.`);
   } else {
-    tarball = await fetchTarball(requirement, tarballPath);
+    bytes = await fetchDownload(requirement, downloadPath);
   }
 
   const outPath = join(scope.outDir, requirement.name);
-  await extractTarball(outPath, tarball);
+  const urlPath = new URL(requirement.url).pathname;
+  if (urlPath.endsWith(".tar.gz")) {
+    await extractTarball(outPath, bytes);
+  } else if (urlPath.endsWith(".zip")) {
+    await extractZip(outPath, bytes);
+  } else {
+    await rm(outPath, { recursive: true, force: true });
+    await Bun.write(join(outPath, decodeURIComponent(basename(urlPath))), bytes);
+  }
 
   const recipePath = join(scope.recipeDir, requirement.name);
   for (const patch of requirement.patches || []) {

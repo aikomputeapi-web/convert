@@ -1,6 +1,6 @@
 export type SourceRequirement = {
   name: string;
-  url: `https://${string}.tar.gz`; // only tar gz for now
+  url: `https://${string}`;
   hash: [Bun.SupportedCryptoAlgorithms, string];
   patches?: string[];
 };

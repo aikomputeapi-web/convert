@@ -44,7 +44,7 @@ const prebuild = defineCommand({
     if (!args.all && nothing.length) {
       throw new Error(`Nothing to prebuild in ${nothing.map(({ name }) => name).join(", ")}.`);
     }
-    await prebuildAll(requirements, ROOT_SCOPE, args, args.all);
+    await prebuildAll(requirements, ROOT_SCOPE, args, args.all ?? false);
     const end = performance.now();
     console.log(`Prebuilt in ${(end - start).toFixed(2)} ms.`);
   },
