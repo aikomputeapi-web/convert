@@ -1,5 +1,6 @@
 import { join } from "path";
 import { mkdir, readdir, rm, rename } from "fs/promises";
+import type { ArgsDef } from "citty";
 import type { PrebuildSubrecipeRequirement, RequirementsConfig } from "./types";
 
 const OUT_DIR = join(import.meta.dir, "../../built");
@@ -40,6 +41,31 @@ export async function loadRequirements(recipeDir: string): Promise<RequirementsC
   const configPath = join(recipeDir, "requirements.config.ts");
   if (!(await Bun.file(configPath).exists())) return [];
   return (await import(configPath)).default;
+}
+
+export const selectArgs = {
+  requirements: {
+    type: "positional",
+    required: false,
+    description: "Names of the top-level requirements to build",
+  },
+  all: { type: "boolean", description: "Build every requirement" },
+} as const satisfies ArgsDef;
+
+export function selectRequirements(
+  requirements: RequirementsConfig,
+  names: string[],
+  all: boolean | undefined,
+): RequirementsConfig {
+  if (all && names.length) throw new Error("Pass either requirement names or --all, not both.");
+  if (all) return requirements;
+  if (!names.length)
+    throw new Error("Pass requirement names to build, or --all to build everything.");
+
+  const byName = new Map(requirements.map((requirement) => [requirement.name, requirement]));
+  const unknown = names.filter((name) => !byName.has(name));
+  if (unknown.length) throw new Error(`Unknown requirements: ${unknown.join(", ")}.`);
+  return [...new Set(names)].map((name) => byName.get(name)!);
 }
 
 export function prebuiltPath(

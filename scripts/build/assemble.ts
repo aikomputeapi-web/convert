@@ -143,12 +143,12 @@ async function assemblePrebuilt(requirement: PrebuildSubrecipeRequirement, scope
   if (!prebuilt) {
     if (prebuilts.length !== 1) {
       throw new Error(
-        `${requirement.name} needs exactly one prebuilt, found ${prebuilts.length}. Run \`bun run build:prebuilt\`.`,
+        `${requirement.name} needs exactly one prebuilt, found ${prebuilts.length}. Run \`bun run build:prebuild ${requirement.name}\`.`,
       );
     }
     prebuilt = prebuilts[0];
     console.warn(
-      `Prebuilt ${requirement.name} is stale, run \`bun run build:prebuilt\` to update it.`,
+      `Prebuilt ${requirement.name} is stale, run \`bun run build:prebuild ${requirement.name}\` to update it.`,
     );
   }
 

@@ -145,6 +145,7 @@ export async function prebuildAll(
   requirements: RequirementsConfig,
   scope: Scope,
   args: PrebuildArgs,
+  prune = true,
 ) {
   // one at a time, builds are heavy
   for (const requirement of requirements) {
@@ -154,7 +155,7 @@ export async function prebuildAll(
     if (isPrebuilt(requirement)) await prebuild(requirement, scope, args);
   }
 
-  await removeOrphans(requirements, scope, args);
+  if (prune) await removeOrphans(requirements, scope, args);
 }
 
 async function removeStale(path: string, args: PrebuildArgs) {

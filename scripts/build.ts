@@ -1,14 +1,20 @@
 import { defineCommand, runMain } from "citty";
 import { assembleAll, assembleArgs } from "./build/assemble";
-import { ROOT_SCOPE, loadRequirements } from "./build/common";
+import { ROOT_SCOPE, loadRequirements, selectArgs, selectRequirements } from "./build/common";
 import { prebuildAll, prebuildArgs } from "./build/prebuild";
+import { isSubrecipe } from "./build/types";
 
 const assemble = defineCommand({
-  meta: { name: "assemble", description: "Prepare all requirements for use" },
-  args: assembleArgs,
+  meta: { name: "assemble", description: "Prepare requirements for use" },
+  args: { ...selectArgs, ...assembleArgs },
   async run({ args }) {
     const start = performance.now();
-    await assembleAll(await loadRequirements(ROOT_SCOPE.recipeDir), ROOT_SCOPE, args);
+    const requirements = selectRequirements(
+      await loadRequirements(ROOT_SCOPE.recipeDir),
+      args._,
+      args.all,
+    );
+    await assembleAll(requirements, ROOT_SCOPE, args);
     const end = performance.now();
     console.log(`Assembled in ${(end - start).toFixed(2)} ms.`);
   },
@@ -16,10 +22,19 @@ const assemble = defineCommand({
 
 const prebuild = defineCommand({
   meta: { name: "prebuild", description: "Build prebuilt subrecipes in docker" },
-  args: prebuildArgs,
+  args: { ...selectArgs, ...prebuildArgs },
   async run({ args }) {
     const start = performance.now();
-    await prebuildAll(await loadRequirements(ROOT_SCOPE.recipeDir), ROOT_SCOPE, args);
+    const requirements = selectRequirements(
+      await loadRequirements(ROOT_SCOPE.recipeDir),
+      args._,
+      args.all,
+    );
+    const nothing = requirements.filter((requirement) => !isSubrecipe(requirement));
+    if (!args.all && nothing.length) {
+      throw new Error(`Nothing to prebuild in ${nothing.map(({ name }) => name).join(", ")}.`);
+    }
+    await prebuildAll(requirements, ROOT_SCOPE, args, args.all);
     const end = performance.now();
     console.log(`Prebuilt in ${(end - start).toFixed(2)} ms.`);
   },
