@@ -1,4 +1,4 @@
-import { basename, join } from "path";
+import { basename, join, relative, sep } from "path";
 import { mkdir, rm, stat } from "fs/promises";
 import { $ } from "bun";
 import type { ArgsDef } from "citty";
@@ -23,6 +23,7 @@ import {
 } from "./types";
 
 const DOWNLOADS_DIR = join(CACHE_DIR, "downloads");
+const ROOT_DIR = join(import.meta.dir, "../..");
 
 async function fetchFile(url: string) {
   const res = await fetch(url);
@@ -130,7 +131,8 @@ async function assembleSource(requirement: SourceRequirement, scope: Scope, args
 
   const recipePath = join(scope.recipeDir, requirement.name);
   for (const patch of requirement.patches || []) {
-    await $`patch -p1 -i ${join(recipePath, patch)}`.cwd(outPath);
+    const directory = relative(ROOT_DIR, outPath).split(sep).join("/");
+    await $`git apply -p1 ${`--directory=${directory}`} ${join(recipePath, patch)}`.cwd(ROOT_DIR);
   }
 }
 
