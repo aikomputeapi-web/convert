@@ -1,4 +1,4 @@
-import type { RequirementsConfig } from "../../scripts/build";
+import type { RequirementsConfig } from "../../scripts/build/types";
 
 export default [
   {
