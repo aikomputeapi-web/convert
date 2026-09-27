@@ -63,6 +63,12 @@ export default [
     hash: ["sha256", "bd856c19094f5333ee92f239dd93d288a05429f1d957efef1c37e7bb97ac14bd"],
   },
   {
+    name: "pandoc-js",
+    url: "https://raw.githubusercontent.com/jgm/pandoc/3.11/wasm/pandoc.js",
+    hash: ["sha256", "6b07bca137feee170bffa2aefd0e5e067135a86a0b8aa4ec6da31049e6c5a36b"],
+    patches: ["vite-and-extract-media.patch"],
+  },
+  {
     name: "timgm6mb",
     url: "https://deb.debian.org/debian/pool/main/t/timgm6mb-soundfont/timgm6mb-soundfont_1.3.orig.tar.gz",
     hash: ["sha256", "af8f3a00e416dfb262bcaa904a1c84df04a51b72bbc1313aed012bc754bdf99b"],

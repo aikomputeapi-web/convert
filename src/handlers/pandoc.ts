@@ -175,7 +175,7 @@ class pandocHandler implements FormatHandler {
   }>;
 
   async init() {
-    const { query, convert } = await import("./pandoc/pandoc.js");
+    const { query, convert } = await import("built/pandoc-js/pandoc.js");
     this.query = query;
     this.convert = convert;
 
