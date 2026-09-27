@@ -1,5 +1,5 @@
 import { exit } from "node:process";
-import { ConvertPathNode, FileFormat, HandlerDefinition } from "../src/FormatHandler";
+import { ConvertPathNode, type FileFormat, type HandlerDefinition } from "../src/FormatHandler";
 import { TraversionGraph } from "../src/TraversionGraph";
 import { join } from "node:path";
 
@@ -63,6 +63,7 @@ const search = traversionGraph.searchPath(
   from,
   to,
   true,
+  undefined,
   breakdown
     ? (costs, total) => {
         const steps = new Map<number, string[]>();

@@ -40,5 +40,5 @@
     "jsx": "react-jsx",
     "jsxImportSource": "preact"
   },
-  "include": ["src"]
+  "include": ["src", "scripts", "recipe"]
 }
