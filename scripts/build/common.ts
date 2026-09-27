@@ -92,13 +92,16 @@ export async function findPrebuilts(requirement: PrebuildSubrecipeRequirement, s
 
 export async function extractTarball(outPath: string, tarball: Uint8Array) {
   const tmp = join(CACHE_DIR, `tmp-${crypto.randomUUID()}`);
-  await mkdir(tmp, { recursive: true });
-  await rm(outPath, { recursive: true, force: true });
+  try {
+    await mkdir(tmp, { recursive: true });
+    await rm(outPath, { recursive: true, force: true });
 
-  const archive = new Bun.Archive(tarball);
-  await archive.extract(tmp);
+    const archive = new Bun.Archive(tarball);
+    await archive.extract(tmp);
 
-  const [inner] = await readdir(tmp);
-  await rename(join(tmp, inner), outPath);
-  await rm(tmp, { recursive: true });
+    const [inner] = await readdir(tmp);
+    await rename(join(tmp, inner), outPath);
+  } finally {
+    await rm(tmp, { recursive: true, force: true });
+  }
 }
