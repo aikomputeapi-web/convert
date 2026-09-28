@@ -13,10 +13,11 @@ import {
 } from "./common";
 import { hashFile, hashInputs, listFiles, updateHash } from "./hash";
 import {
-  isAssembleSubrecipe,
+  hasSource,
+  isAssembled,
   isPrebuilt,
-  type AssembleSubrecipeRequirement,
-  type PrebuildSubrecipeRequirement,
+  type AssembleRequirement,
+  type PrebuildRequirement,
   type Requirement,
   type RequirementsConfig,
   type SourceRequirement,
@@ -43,7 +44,7 @@ function hashPath(requirement: Requirement, scope: Scope) {
   return join(scope.stateDir, "out-hashes", requirement.name);
 }
 
-async function findCurrentPrebuilt(requirement: PrebuildSubrecipeRequirement, scope: Scope) {
+async function findCurrentPrebuilt(requirement: PrebuildRequirement, scope: Scope) {
   const inputs = await hashInputs(requirement, scope);
   return (await findPrebuilts(requirement, scope)).find((prebuilt) => prebuilt.inputs === inputs);
 }
@@ -56,7 +57,7 @@ async function hashRequirement(requirement: Requirement, scope: Scope) {
   if (isPrebuilt(requirement)) {
     const prebuilt = await findCurrentPrebuilt(requirement, scope);
     if (prebuilt) updateHash(hash, await Bun.file(prebuilt.path).bytes());
-  } else if (isAssembleSubrecipe(requirement)) {
+  } else if (isAssembled(requirement)) {
     const sub = subrecipeScope(scope, requirement.name);
     for (const subrequirement of await loadRequirements(sub.recipeDir)) {
       updateHash(hash, await Bun.file(hashPath(subrequirement, sub)).text());
@@ -131,8 +132,13 @@ export async function extractSource(
   }
 }
 
-async function assembleSource(requirement: SourceRequirement, scope: Scope, args: AssembleArgs) {
-  const outPath = join(scope.outDir, requirement.name);
+// fetches, extracts and patches the source of a requirement in scope
+export async function prepareSource(
+  requirement: SourceRequirement,
+  scope: Scope,
+  outPath: string,
+  args: AssembleArgs,
+) {
   await extractSource(requirement, await fetchSource(requirement, args), outPath);
 
   const recipePath = join(scope.recipeDir, requirement.name);
@@ -142,18 +148,29 @@ async function assembleSource(requirement: SourceRequirement, scope: Scope, args
   }
 }
 
-async function assembleSubrecipe(requirement: AssembleSubrecipeRequirement, scope: Scope) {
+async function assembleSubrecipe(
+  requirement: AssembleRequirement,
+  scope: Scope,
+  args: AssembleArgs,
+) {
   const sub = subrecipeScope(scope, requirement.name);
   const outPath = join(scope.outDir, requirement.name);
   await rm(outPath, { recursive: true, force: true });
   await mkdir(outPath, { recursive: true });
 
+  // a fresh copy every time, so the script can't see leftovers from an earlier run
+  let cwd = sub.outDir;
+  if (hasSource(requirement)) {
+    cwd = join(sub.stateDir, "source");
+    await prepareSource(requirement, scope, cwd, args);
+  }
+
   await $`bun run ${join(sub.recipeDir, requirement.assemble)}`
-    .cwd(sub.outDir)
-    .env({ ...process.env, OUT_DIR: outPath });
+    .cwd(cwd)
+    .env({ ...process.env, OUT_DIR: outPath, REQUIREMENTS_DIR: sub.outDir });
 }
 
-async function assemblePrebuilt(requirement: PrebuildSubrecipeRequirement, scope: Scope) {
+async function assemblePrebuilt(requirement: PrebuildRequirement, scope: Scope) {
   const prebuilt = await findCurrentPrebuilt(requirement, scope);
   if (!prebuilt) {
     throw new Error(
@@ -170,7 +187,7 @@ async function assembleRequirementChecked(
   args: AssembleArgs,
 ) {
   // our hash covers the subrecipe's own requirements, so they must be current before the check
-  if (isAssembleSubrecipe(requirement)) {
+  if (isAssembled(requirement)) {
     const sub = subrecipeScope(scope, requirement.name);
     await assembleAll(await loadRequirements(sub.recipeDir), sub, args);
   }
@@ -184,8 +201,9 @@ async function assembleRequirementChecked(
   await rm(hashPath(requirement, scope), { force: true });
 
   if (isPrebuilt(requirement)) await assemblePrebuilt(requirement, scope);
-  else if (isAssembleSubrecipe(requirement)) await assembleSubrecipe(requirement, scope);
-  else await assembleSource(requirement, scope, args);
+  else if (isAssembled(requirement)) await assembleSubrecipe(requirement, scope, args);
+  else if (hasSource(requirement))
+    await prepareSource(requirement, scope, join(scope.outDir, requirement.name), args);
 
   await writeHash(requirement, scope);
   if (args.verbose) console.log(`Assembled ${requirement.name}.`);

@@ -3,7 +3,7 @@ import { mkdir, rm } from "fs/promises";
 import { $ } from "bun";
 import { extractSource, fetchSource } from "./assemble";
 import { CACHE_DIR, ROOT_SCOPE, loadRequirements, subrecipeScope, type Scope } from "./common";
-import { isSubrecipe, type SourceRequirement } from "./types";
+import { hasSource, isSubrecipe, type SourceRequirement } from "./types";
 
 const WORKSPACES_DIR = join(CACHE_DIR, "patches");
 const BASE_TAG = "base";
@@ -18,7 +18,7 @@ async function findSourceRequirement(path: string) {
     const requirement = (await loadRequirements(scope.recipeDir)).find(({ name }) => name === part);
     if (!requirement) throw new Error(`Unknown requirement ${parts.slice(0, i + 1).join("/")}.`);
     if (i === parts.length - 1) {
-      if (isSubrecipe(requirement)) throw new Error(`${path} is a subrecipe, not a source.`);
+      if (!hasSource(requirement)) throw new Error(`${path} has no source to patch.`);
       return { requirement, recipePath: join(scope.recipeDir, requirement.name) };
     }
     if (!isSubrecipe(requirement))

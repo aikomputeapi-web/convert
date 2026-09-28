@@ -3,9 +3,8 @@ import { join } from "node:path";
 import ts from "typescript";
 import { extraExtensionToIcon } from "./extra-language-extensions";
 
-const SOURCE_DIR = "vscode-material-icon-theme";
-const ICONS_SRC = join(SOURCE_DIR, "icons");
-const FILE_ICONS_TS = join(SOURCE_DIR, "src/core/icons/fileIcons.ts");
+const ICONS_SRC = "icons";
+const FILE_ICONS_TS = "src/core/icons/fileIcons.ts";
 const OUT_BUNDLE = join(process.env.OUT_DIR!, "icons.json");
 
 const FILE_SVG_PATH =

@@ -75,6 +75,8 @@ export default [
   },
   {
     name: "material-icons",
+    url: "https://github.com/material-extensions/vscode-material-icon-theme/archive/cb1dfb6d9cb73b15681a93939983d75dbba7bf5b.tar.gz",
+    hash: ["sha256", "fcf933b7b9fe2a8b54366abc6c88d0c902f8846eb436074d151e7a135c13c444"],
     assemble: "assemble.ts",
   },
   {
@@ -85,6 +87,8 @@ export default [
   },
   {
     name: "libopenmpt",
+    url: "https://lib.openmpt.org/files/libopenmpt/src/libopenmpt-0.8.9+release.makefile.tar.gz",
+    hash: ["sha256", "9273b88b67973cc69e54d748ab1b749399d6d07695f1c37d0c59f88b4106074f"],
     prebuild: "build.sh",
     image:
       "emscripten/emsdk:6.0.10@sha256:e077d54e2b8970575ebc4f185ac1de0b95c05f2b266134d4ba27449af7aebf65",

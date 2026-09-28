@@ -2,7 +2,7 @@ import { join, relative } from "path";
 import { mkdir, readdir, rm } from "fs/promises";
 import { $ } from "bun";
 import type { ArgsDef, ParsedArgs } from "citty";
-import { assembleAll } from "./assemble";
+import { assembleAll, prepareSource } from "./assemble";
 import {
   CACHE_DIR,
   PACK_IMAGE,
@@ -15,9 +15,10 @@ import {
 } from "./common";
 import { hashFile, hashInputs } from "./hash";
 import {
+  hasSource,
   isPrebuilt,
   isSubrecipe,
-  type PrebuildSubrecipeRequirement,
+  type PrebuildRequirement,
   type RequirementsConfig,
 } from "./types";
 
@@ -56,7 +57,7 @@ function dockerRun(image: string, mounts: Record<string, string>, env: Record<st
 }
 
 async function prebuild(
-  requirement: PrebuildSubrecipeRequirement,
+  requirement: PrebuildRequirement,
   scope: Scope,
   args: PrebuildArgs,
   report?: CheckReport,
@@ -116,7 +117,7 @@ async function prebuild(
 }
 
 async function build(
-  requirement: PrebuildSubrecipeRequirement,
+  requirement: PrebuildRequirement,
   scope: Scope,
   args: PrebuildArgs,
 ): Promise<Uint8Array> {
@@ -130,14 +131,25 @@ async function build(
 
   try {
     // the build gets its own copy of the sources, so it can build in-tree
-    await $`cp -R ${sub.outDir} ${buildDir}`;
+    const mounts: Record<string, string> = {
+      [sub.recipeDir]: "/recipe:ro",
+      [buildDir]: "/build",
+      [outDir]: "/out",
+    };
+    let requirementsDir = "/build";
+    if (hasSource(requirement)) {
+      await prepareSource(requirement, scope, buildDir, { verbose: args.verbose });
+      mounts[sub.outDir] = "/requirements:ro";
+      requirementsDir = "/requirements";
+    } else {
+      await $`cp -R ${sub.outDir} ${buildDir}`;
+    }
 
     console.log(`Prebuilding ${requirement.name} in ${requirement.image}...`);
-    await dockerRun(
-      requirement.image,
-      { [sub.recipeDir]: "/recipe:ro", [buildDir]: "/build", [outDir]: "/out" },
-      { OUT_DIR: "/out" },
-    )(["sh", "-euc", `cd /build && exec sh -eu "/recipe/$1"`, "sh", requirement.prebuild]);
+    await dockerRun(requirement.image, mounts, {
+      OUT_DIR: "/out",
+      REQUIREMENTS_DIR: requirementsDir,
+    })(["sh", "-euc", `cd /build && exec sh -eu "/recipe/$1"`, "sh", requirement.prebuild]);
 
     if (!(await readdir(outDir)).length) {
       throw new Error(`Prebuild script for ${requirement.name} produced no output.`);

@@ -2,7 +2,7 @@ import { isAbsolute, join, normalize } from "path";
 import { mkdir, readdir, rm, rename } from "fs/promises";
 import JSZip from "jszip";
 import type { ArgsDef } from "citty";
-import type { PrebuildSubrecipeRequirement, RequirementsConfig } from "./types";
+import type { PrebuildRequirement, RequirementsConfig } from "./types";
 
 const OUT_DIR = join(import.meta.dir, "../../built");
 export const CACHE_DIR = join(import.meta.dir, "../../.cache/convert-build");
@@ -69,15 +69,11 @@ export function selectRequirements(
   return [...new Set(names)].map((name) => byName.get(name)!);
 }
 
-export function prebuiltPath(
-  requirement: PrebuildSubrecipeRequirement,
-  scope: Scope,
-  inputs: string,
-) {
+export function prebuiltPath(requirement: PrebuildRequirement, scope: Scope, inputs: string) {
   return join(scope.prebuiltDir, `${requirement.name}-${inputs}.tar.gz`);
 }
 
-export async function findPrebuilts(requirement: PrebuildSubrecipeRequirement, scope: Scope) {
+export async function findPrebuilts(requirement: PrebuildRequirement, scope: Scope) {
   const pattern = new RegExp(`^${RegExp.escape(requirement.name)}-([0-9a-f]{64})\\.tar\\.gz$`);
   let entries: string[];
   try {
