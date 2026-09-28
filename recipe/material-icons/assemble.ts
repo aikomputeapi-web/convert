@@ -1,4 +1,4 @@
-import { existsSync, writeFileSync, readFileSync } from "node:fs";
+import { existsSync, writeFileSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import ts from "typescript";
 import { extraExtensionToIcon } from "./extra-language-extensions";
@@ -91,6 +91,10 @@ function resolveSourceIconPath(iconName: string, cloneBase: string | undefined):
 }
 
 function main(): void {
+  for (const path of ["material-file-icons", "icons.json"]) {
+    rmSync(join(import.meta.dir, "../../public", path), { recursive: true, force: true });
+  }
+
   const entries = extractFileIconEntries(FILE_ICONS_TS);
   const extToLogical = new Map<string, string>();
 
