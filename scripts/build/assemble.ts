@@ -106,19 +106,20 @@ async function fetchDownload(requirement: SourceRequirement, path: string) {
   return bytes;
 }
 
-async function assembleSource(requirement: SourceRequirement, scope: Scope, args: AssembleArgs) {
+export async function fetchSource(requirement: SourceRequirement, args: AssembleArgs) {
   const downloadPath = join(DOWNLOADS_DIR, requirement.hash[1]);
 
-  let bytes: Uint8Array | undefined = args.refetch
-    ? undefined
-    : await readCachedDownload(requirement, downloadPath);
-  if (bytes) {
-    if (args.verbose) console.log(`Using cached download for ${requirement.name}.`);
-  } else {
-    bytes = await fetchDownload(requirement, downloadPath);
-  }
+  const bytes = args.refetch ? undefined : await readCachedDownload(requirement, downloadPath);
+  if (!bytes) return await fetchDownload(requirement, downloadPath);
+  if (args.verbose) console.log(`Using cached download for ${requirement.name}.`);
+  return bytes;
+}
 
-  const outPath = join(scope.outDir, requirement.name);
+export async function extractSource(
+  requirement: SourceRequirement,
+  bytes: Uint8Array,
+  outPath: string,
+) {
   const urlPath = new URL(requirement.url).pathname;
   if (urlPath.endsWith(".tar.gz")) {
     await extractTarball(outPath, bytes);
@@ -128,6 +129,11 @@ async function assembleSource(requirement: SourceRequirement, scope: Scope, args
     await rm(outPath, { recursive: true, force: true });
     await Bun.write(join(outPath, decodeURIComponent(basename(urlPath))), bytes);
   }
+}
+
+async function assembleSource(requirement: SourceRequirement, scope: Scope, args: AssembleArgs) {
+  const outPath = join(scope.outDir, requirement.name);
+  await extractSource(requirement, await fetchSource(requirement, args), outPath);
 
   const recipePath = join(scope.recipeDir, requirement.name);
   for (const patch of requirement.patches || []) {

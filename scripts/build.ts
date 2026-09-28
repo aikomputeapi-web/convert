@@ -11,6 +11,7 @@ import {
   type Scope,
 } from "./build/common";
 import { hashInputs } from "./build/hash";
+import { editPatch, finishPatch, patchStatus, savePatch } from "./build/patch";
 import { prebuildAll, prebuildArgs } from "./build/prebuild";
 import { isPrebuilt, isSubrecipe, type RequirementsConfig } from "./build/types";
 
@@ -80,9 +81,58 @@ const check = defineCommand({
   },
 });
 
+const nameArg = {
+  name: {
+    type: "positional",
+    required: true,
+    description: "Requirement to patch, as subrecipe/name for ones inside a subrecipe",
+  },
+} as const;
+
+const algorithmArg = {
+  algorithm: {
+    type: "string",
+    description: "git diff algorithm: myers, minimal, patience or histogram",
+  },
+} as const;
+
+const patch = defineCommand({
+  meta: { name: "patch", description: "Create or edit a patch for a requirement" },
+  subCommands: {
+    edit: defineCommand({
+      meta: { name: "edit", description: "Set up a workspace for editing a patch" },
+      args: {
+        ...nameArg,
+        patch: {
+          type: "positional",
+          required: true,
+          description: "Patch file name, created if it doesn't exist",
+        },
+        reset: { type: "boolean", description: "Throw away an existing workspace and start over" },
+      },
+      run: ({ args }) => editPatch(args.name, args.patch, args.reset ?? false),
+    }),
+    save: defineCommand({
+      meta: { name: "save", description: "Write the workspace changes to the patch" },
+      args: { ...nameArg, ...algorithmArg },
+      run: ({ args }) => savePatch(args.name, args.algorithm),
+    }),
+    status: defineCommand({
+      meta: { name: "status", description: "Show the workspace and what changed in it" },
+      args: nameArg,
+      run: ({ args }) => patchStatus(args.name),
+    }),
+    finish: defineCommand({
+      meta: { name: "finish", description: "Delete the workspace, without saving" },
+      args: nameArg,
+      run: ({ args }) => finishPatch(args.name),
+    }),
+  },
+});
+
 const main = defineCommand({
   meta: { name: "convert-build", description: "The convert build system" },
-  subCommands: { assemble, prebuild, check },
+  subCommands: { assemble, prebuild, check, patch },
 });
 
 await runMain(main);
