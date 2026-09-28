@@ -34,6 +34,9 @@ export const prebuildArgs = {
 
 export type PrebuildArgs = ParsedArgs<typeof prebuildArgs>;
 
+// with --check, failures are collected here instead of stopping the run
+type CheckReport = { passed: string[]; failed: { name: string; error: string }[] };
+
 function dockerRun(image: string, mounts: Record<string, string>, env: Record<string, string>) {
   const args = ["run", "--rm", "--network=none", `--platform=${PLATFORM}`];
   const uid = process.getuid?.();
@@ -56,7 +59,20 @@ async function prebuild(
   requirement: PrebuildSubrecipeRequirement,
   scope: Scope,
   args: PrebuildArgs,
+  report?: CheckReport,
 ) {
+  if (report) {
+    try {
+      await prebuild(requirement, scope, args);
+      report.passed.push(requirement.name);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(message);
+      report.failed.push({ name: requirement.name, error: message });
+    }
+    return;
+  }
+
   const inputs = await hashInputs(requirement, scope);
   const existing = await findPrebuilts(requirement, scope);
 
@@ -75,8 +91,11 @@ async function prebuild(
         `Prebuilt ${requirement.name} is not reproducible (committed sha256 ${expected}, built sha256 ${actual}).`,
       );
     }
-    for (const prebuilt of existing) {
-      if (prebuilt.inputs !== inputs) await removeStale(prebuilt.path, args);
+    const stale = existing.filter((prebuilt) => prebuilt.inputs !== inputs);
+    if (stale.length) {
+      throw new Error(
+        `Found stale prebuilt ${stale.map(({ path }) => relative(ROOT_SCOPE.prebuiltDir, path)).join(", ")}.`,
+      );
     }
     console.log(`Prebuilt ${requirement.name} is correct (sha256 ${actual}).`);
     return;
@@ -147,26 +166,55 @@ export async function prebuildAll(
   args: PrebuildArgs,
   prune = true,
 ) {
+  const report: CheckReport | undefined = args.check ? { passed: [], failed: [] } : undefined;
+  await prebuildTree(requirements, scope, args, prune, report);
+  if (!report) return;
+
+  console.log("\nCheck summary:");
+  for (const name of report.passed) console.log(`  ok    ${name}`);
+  for (const { name, error } of report.failed) console.log(`  FAIL  ${name}: ${error}`);
+  const total = report.passed.length + report.failed.length;
+  console.log(`${total} checked, ${report.passed.length} passed, ${report.failed.length} failed.`);
+  if (report.failed.length) process.exitCode = 1;
+}
+
+async function prebuildTree(
+  requirements: RequirementsConfig,
+  scope: Scope,
+  args: PrebuildArgs,
+  prune: boolean,
+  report?: CheckReport,
+) {
   // one at a time, builds are heavy
   for (const requirement of requirements) {
     if (!isSubrecipe(requirement)) continue;
     const sub = subrecipeScope(scope, requirement.name);
-    await prebuildAll(await loadRequirements(sub.recipeDir), sub, args);
-    if (isPrebuilt(requirement)) await prebuild(requirement, scope, args);
+    await prebuildTree(await loadRequirements(sub.recipeDir), sub, args, true, report);
+    if (isPrebuilt(requirement)) await prebuild(requirement, scope, args, report);
   }
 
-  if (prune) await removeOrphans(requirements, scope, args);
+  if (prune) await removeOrphans(requirements, scope, args, report);
 }
 
-async function removeStale(path: string, args: PrebuildArgs) {
+async function removeStale(path: string, args: PrebuildArgs, report?: CheckReport) {
   if (args.check) {
-    throw new Error(`Found stale prebuilt ${relative(ROOT_SCOPE.prebuiltDir, path)}.`);
+    const name = relative(ROOT_SCOPE.prebuiltDir, path);
+    const error = `Found stale prebuilt ${name}.`;
+    if (!report) throw new Error(error);
+    console.error(error);
+    report.failed.push({ name, error: "stale" });
+    return;
   }
   await rm(path, { recursive: true, force: true });
   console.log(`Removed stale prebuilt ${relative(ROOT_SCOPE.prebuiltDir, path)}.`);
 }
 
-async function removeOrphans(requirements: RequirementsConfig, scope: Scope, args: PrebuildArgs) {
+async function removeOrphans(
+  requirements: RequirementsConfig,
+  scope: Scope,
+  args: PrebuildArgs,
+  report?: CheckReport,
+) {
   let entries;
   try {
     entries = await readdir(scope.prebuiltDir, { withFileTypes: true });
@@ -184,6 +232,6 @@ async function removeOrphans(requirements: RequirementsConfig, scope: Scope, arg
   for (const entry of entries) {
     const path = join(scope.prebuiltDir, entry.name);
     const keep = entry.isDirectory() ? subrecipes.has(entry.name) : prebuilts.has(path);
-    if (!keep) await removeStale(path, args);
+    if (!keep) await removeStale(path, args, report);
   }
 }
