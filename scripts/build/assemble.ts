@@ -159,10 +159,12 @@ async function assembleSubrecipe(
   await mkdir(outPath, { recursive: true });
 
   // a fresh copy every time, so the script can't see leftovers from an earlier run
-  let cwd = sub.outDir;
+  const cwd = join(sub.stateDir, "source");
   if (hasSource(requirement)) {
-    cwd = join(sub.stateDir, "source");
     await prepareSource(requirement, scope, cwd, args);
+  } else {
+    await rm(cwd, { recursive: true, force: true });
+    await mkdir(cwd, { recursive: true });
   }
 
   await $`bun run ${join(sub.recipeDir, requirement.assemble)}`

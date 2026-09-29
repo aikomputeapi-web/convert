@@ -131,25 +131,23 @@ async function build(
 
   try {
     // the build gets its own copy of the sources, so it can build in-tree
-    const mounts: Record<string, string> = {
-      [sub.recipeDir]: "/recipe:ro",
-      [buildDir]: "/build",
-      [outDir]: "/out",
-    };
-    let requirementsDir = "/build";
     if (hasSource(requirement)) {
       await prepareSource(requirement, scope, buildDir, { verbose: args.verbose });
-      mounts[sub.outDir] = "/requirements:ro";
-      requirementsDir = "/requirements";
     } else {
-      await $`cp -R ${sub.outDir} ${buildDir}`;
+      await mkdir(buildDir, { recursive: true });
     }
 
     console.log(`Prebuilding ${requirement.name} in ${requirement.image}...`);
-    await dockerRun(requirement.image, mounts, {
-      OUT_DIR: "/out",
-      REQUIREMENTS_DIR: requirementsDir,
-    })(["sh", "-euc", `cd /build && exec sh -eu "/recipe/$1"`, "sh", requirement.prebuild]);
+    await dockerRun(
+      requirement.image,
+      {
+        [sub.recipeDir]: "/recipe:ro",
+        [sub.outDir]: "/requirements:ro",
+        [buildDir]: "/build",
+        [outDir]: "/out",
+      },
+      { OUT_DIR: "/out", REQUIREMENTS_DIR: "/requirements" },
+    )(["sh", "-euc", `cd /build && exec sh -eu "/recipe/$1"`, "sh", requirement.prebuild]);
 
     if (!(await readdir(outDir)).length) {
       throw new Error(`Prebuild script for ${requirement.name} produced no output.`);
