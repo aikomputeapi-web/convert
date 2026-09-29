@@ -29,7 +29,7 @@
     "fmt:check": "oxfmt --check",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "prepare": "husky"
+    "prepare": "bun run scripts/remove-old.ts && husky"
   },
   "dependencies": {
     "7z-wasm": "^1.2.0",

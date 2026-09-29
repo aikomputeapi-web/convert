@@ -19,6 +19,7 @@ const assemble = defineCommand({
   meta: { name: "assemble", description: "Prepare requirements for use" },
   args: { ...selectArgs, ...assembleArgs },
   async run({ args }) {
+    await import("./remove-old");
     const start = performance.now();
     const requirements = selectRequirements(
       await loadRequirements(ROOT_SCOPE.recipeDir),
