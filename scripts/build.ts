@@ -1,5 +1,6 @@
 import { relative } from "path";
 import { defineCommand, runMain } from "citty";
+import { addSource } from "./build/add";
 import { assembleAll, assembleArgs } from "./build/assemble";
 import {
   ROOT_SCOPE,
@@ -131,9 +132,22 @@ const patch = defineCommand({
   },
 });
 
+const add = defineCommand({
+  meta: { name: "add", description: "Download and add a source with its SHA-256 hash" },
+  args: {
+    name: {
+      type: "positional",
+      required: true,
+      description: "Requirement name, or subrecipe/name for a subrecipe dependency",
+    },
+    url: { type: "positional", required: true, description: "HTTPS source URL" },
+  },
+  run: ({ args }) => addSource(args.name, args.url),
+});
+
 const main = defineCommand({
   meta: { name: "convert-build", description: "The convert build system" },
-  subCommands: { assemble, prebuild, check, patch },
+  subCommands: { assemble, prebuild, check, patch, add },
 });
 
 await runMain(main);
