@@ -1,4 +1,4 @@
-import { join, relative } from "path";
+import { join, relative, sep } from "path";
 import { readdir } from "fs/promises";
 import {
   PACK_IMAGE,
@@ -25,7 +25,7 @@ export async function listFiles(dir: string) {
     const entries = await readdir(dir, { recursive: true, withFileTypes: true });
     return entries
       .filter((entry) => entry.isFile())
-      .map((entry) => relative(dir, join(entry.parentPath, entry.name)))
+      .map((entry) => relative(dir, join(entry.parentPath, entry.name)).replaceAll(sep, "/"))
       .toSorted();
   } catch {
     return [];
