@@ -69,6 +69,12 @@ export default [
     patches: ["vite-and-extract-media.patch"],
   },
   {
+    name: "foliate-mobi",
+    url: "https://raw.githubusercontent.com/johnfactotum/foliate-js/399248a67a8862ffb5e6463a33f9d52b317ca2eb/mobi.js",
+    hash: ["sha256", "833a25b0d6e7079027bfef9c28a3da702f093a50bd3f465945bc0d9fd0cd75cf"],
+    patches: ["linkedom.patch"],
+  },
+  {
     name: "timgm6mb",
     url: "https://deb.debian.org/debian/pool/main/t/timgm6mb-soundfont/timgm6mb-soundfont_1.3.orig.tar.gz",
     hash: ["sha256", "af8f3a00e416dfb262bcaa904a1c84df04a51b72bbc1313aed012bc754bdf99b"],
