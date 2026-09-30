@@ -19,7 +19,7 @@ bun run build:add word-parser https://github.com/p2r3/envelope/archive/2d8bc87d9
 bun run build:add bash https://ftp.gnu.org/gnu/bash/bash-5.3.tar.gz
 ```
 
-To assemble the `built` folder, run `bun run build:assemble --all`. However, this is usually done for you.
+To assemble the `built` folder, run `bun run build:assemble --all`. However, this is usually done for you when you run `bun run build` or `bun run dev`.
 
 ## Advanced usage
 
