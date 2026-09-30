@@ -115,7 +115,7 @@ export async function savePatch(name: string, algorithm: string | undefined) {
   const { requirement, recipePath } = await findSourceRequirement(name);
 
   const run = git(workspace);
-  await run(["add", "-A"]);
+  await run(["add", "-A", "-f"]);
   const diff = await run([
     "diff",
     "--cached",
