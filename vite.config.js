@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 export default defineConfig({
   publicDir: "public",
   optimizeDeps: {
+    include: ["turbowarp-packager", "turbowarp-unpackager"],
     exclude: ["@ffmpeg/ffmpeg", "@sqlite.org/sqlite-wasm", "@bokuweb/zstd-wasm", "@yowasp/clang"],
   },
   base: "/convert/",
@@ -15,6 +16,12 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
     alias: {
+      "turbowarp-packager": fileURLToPath(
+        new URL("./built/turbowarp-packager/packager.js", import.meta.url),
+      ),
+      "turbowarp-unpackager": fileURLToPath(
+        new URL("./built/turbowarp-unpackager/unpackager.js", import.meta.url),
+      ),
       built: fileURLToPath(new URL("./built", import.meta.url)),
     },
   },
@@ -56,10 +63,6 @@ export default defineConfig({
         {
           src: "node_modules/pdf-parse/dist/pdf-parse/web/pdf.worker.mjs",
           dest: "js",
-        },
-        {
-          src: "node_modules/turbowarp-packager-browser/dist/scaffolding/*",
-          dest: "js/turbowarp-scaffolding",
         },
         {
           src: "node_modules/7z-wasm/7zz.wasm",

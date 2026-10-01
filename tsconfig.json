@@ -28,9 +28,10 @@
      * away from the TS file.
      */
     "paths": {
+      "turbowarp-packager": ["./built/turbowarp-packager/packager"],
+      "turbowarp-unpackager": ["./built/turbowarp-unpackager/unpackager"],
       "qoi-fu": ["./built/qoi-fu/transpiled/QOI.js"],
       "qoa-fu": ["./built/qoa-fu/transpiled/QOA.js"],
-      "built/*": ["./built/*"],
       // this is driving me nuts
       "*": ["./*"]
     },

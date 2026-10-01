@@ -50,7 +50,6 @@ export default [
     name: "turbowarp-unpackager",
     url: "https://github.com/TurboWarp/unpackager/archive/2eb03bd5dc18e3b7b1318190bef8e14274123778.tar.gz",
     hash: ["sha256", "3bb10d2d3cf90496ddca29b523da85a901040d707ac03751de40edd35c8d61ce"],
-    patches: ["make-esm.patch"],
   },
   {
     name: "typst-assets",
@@ -98,5 +97,12 @@ export default [
     prebuild: "build.sh",
     image:
       "emscripten/emsdk:6.0.10@sha256:e077d54e2b8970575ebc4f185ac1de0b95c05f2b266134d4ba27449af7aebf65",
+  },
+  {
+    name: "turbowarp-packager",
+    url: "https://github.com/TurboWarp/packager/archive/9a4854b238c5ebfe9ccbbda486382a673c85cd38.tar.gz",
+    hash: ["sha256", "95bebe471a9c7316961526f230ef23d4bd0a37901eb063c543e859c5e35823c6"],
+    patches: ["browser.patch"],
+    assemble: "assemble.ts",
   },
 ] satisfies RequirementsConfig;
