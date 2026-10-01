@@ -23,7 +23,7 @@ export class espeakngHandler implements FormatHandler {
     if (this.#tts == undefined) {
       await new Promise<void>((resolve) => {
         this.#tts = new SimpleTTS({
-          workerPath: `${import.meta.env.BASE_URL}js/espeakng.worker.js`,
+          workerPath: new URL("js/espeakng.worker.js", globalThis.baseUrl).href,
           defaultVoice: "en",
           defaultRate: 220,
           defaultPitch: 200,

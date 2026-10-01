@@ -9,7 +9,7 @@ export default defineConfig({
     include: ["turbowarp-packager", "turbowarp-unpackager"],
     exclude: ["@ffmpeg/ffmpeg", "@sqlite.org/sqlite-wasm", "@bokuweb/zstd-wasm", "@yowasp/clang"],
   },
-  base: "/convert/",
+  base: "./",
   worker: {
     format: "es",
   },

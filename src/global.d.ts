@@ -19,4 +19,6 @@ declare global {
       path: ConvertPathNode[];
     } | null>;
   }
+
+  var baseUrl: string | undefined;
 }

@@ -350,8 +350,7 @@ class typstHandler implements FormatHandler {
     typst.use(
       TypstSnippet.preloadFontAssets({
         assets: ["text"],
-        assetUrlPrefix: new URL(`${import.meta.env.BASE_URL}wasm/typst/`, globalThis.location.href)
-          .href,
+        assetUrlPrefix: new URL("wasm/typst/", globalThis.baseUrl).href,
       }),
     );
     typst.setCompilerInitOptions({

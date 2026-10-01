@@ -23,8 +23,9 @@ export class Converter {
   public name: string;
   private defs?: HandlerDefinition[];
 
-  public constructor(name: string) {
+  public constructor(name: string, baseUrl: string) {
     this.name = name;
+    globalThis.baseUrl = baseUrl;
   }
 
   public init(defs: HandlerDefinition[]) {

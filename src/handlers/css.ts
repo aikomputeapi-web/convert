@@ -61,9 +61,7 @@ class cssHandler implements FormatHandler {
         less.PluginLoader = PluginLoader;
         less.FileManager = createFileManager({}, less.logger);
         less.environment.addFileManager(new less.FileManager());
-        const { css: compiled } = await less.render(source, {
-          filename: new URL("input", new URL(import.meta.env.BASE_URL, location.href)).href,
-        });
+        const { css: compiled } = await less.render(source);
         css = compiled;
       } else if (inputFormat.internal === "scss") {
         const sass = await import("sass");

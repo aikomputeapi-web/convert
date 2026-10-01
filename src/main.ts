@@ -35,8 +35,10 @@ window.handlerDefs = [];
 const RemoteConverter = comlink.wrap<typeof Converter>(new ConverterWorker());
 const RemoteTraversionGraph = comlink.wrap<typeof TraversionGraph>(new TraversionGraphWorker());
 
-const converterWorker = await new RemoteConverter("web_worker");
-const converterMain = new Converter("main_thread");
+// i dont expect any other pages to exist so location.href works
+window.baseUrl = new URL(import.meta.env.BASE_URL, location.href).href;
+const converterWorker = await new RemoteConverter("web_worker", window.baseUrl);
+const converterMain = new Converter("main_thread", window.baseUrl);
 window.traversionGraph = await new RemoteTraversionGraph();
 
 window.printSupportedFormatCache = () => {

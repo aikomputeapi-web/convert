@@ -59,16 +59,11 @@ class pdfjsHandler implements FormatHandler {
       const loadingTask = getDocument({
         data: new Uint8Array(inputFile.bytes),
         CanvasFactory: WorkerCanvasFactory,
-        standardFontDataUrl: new URL(
-          `${import.meta.env.BASE_URL}js/pdfjs/standard_fonts/`,
-          globalThis.location.href,
-        ).href,
-        cMapUrl: new URL(`${import.meta.env.BASE_URL}js/pdfjs/cmaps/`, globalThis.location.href)
-          .href,
+        standardFontDataUrl: new URL("js/pdfjs/standard_fonts/", globalThis.baseUrl).href,
+        cMapUrl: new URL("js/pdfjs/cmaps/", globalThis.baseUrl).href,
         cMapPacked: true,
         useWorkerFetch: true,
-        wasmUrl: new URL(`${import.meta.env.BASE_URL}js/pdfjs/wasm/`, globalThis.location.href)
-          .href,
+        wasmUrl: new URL("js/pdfjs/wasm/", globalThis.baseUrl).href,
         disableFontFace: true,
         useSystemFonts: false,
       });
