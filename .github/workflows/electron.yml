@@ -39,6 +39,9 @@ jobs:
       - name: Install dependencies
         run: bun i --frozen-lockfile
 
+      - name: Check prebuilts
+        run: bun run build:check
+
       - name: Build Distribution for ${{ matrix.platform }}
         run: bun run desktop:dist:${{ matrix.platform }}
 

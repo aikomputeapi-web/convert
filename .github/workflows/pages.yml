@@ -39,6 +39,9 @@ jobs:
       - name: Check formatting
         run: bun run fmt:check
 
+      - name: Check prebuilts
+        run: bun run build:check
+
       - name: Build
         run: |
           export VITE_COMMIT_SHA=${{ github.sha }}

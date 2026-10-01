@@ -2,7 +2,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import JSZip from "jszip";
 import pako from "pako";
-import { isMOBI, MOBI } from "./azw3/mobi.js";
+import { isMOBI, MOBI } from "built/foliate-mobi/mobi.js";
 import { DOMParser } from "linkedom/worker";
 
 class azw3Handler implements FormatHandler {

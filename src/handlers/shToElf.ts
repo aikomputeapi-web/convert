@@ -1,7 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats, { Category } from "src/CommonFormats.ts";
 
-import elfUrl from "./shToElf/stub.elf?url";
+import elfUrl from "built/shtoelf/stub.elf?url";
 
 function replaceUint32LE(file: Buffer, from: number, to: number) {
   const fromBytes = Buffer.alloc(4);

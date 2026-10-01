@@ -2,10 +2,39 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 import CommonFormats, { Category } from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
+import wasmUrl from "built/libopenmpt/libopenmpt.wasm?url";
+import runtimeUrl from "built/libopenmpt/libopenmpt.js?url";
 
+// the parts of the emscripten module we use, see libopenmpt.h for the C API
 interface LibOpenMPTModule {
-  __render(fileData: Uint8Array, sampleRate: number): Int16Array;
+  HEAPU8: Uint8Array;
+  HEAP16: Int16Array;
+  _malloc(size: number): number;
+  _free(ptr: number): void;
+  _openmpt_module_create_from_memory2(
+    data: number,
+    size: number,
+    logfunc: number,
+    loguser: number,
+    errfunc: number,
+    erruser: number,
+    error: number,
+    errorMessage: number,
+    ctls: number,
+  ): number;
+  _openmpt_module_set_repeat_count(mod: number, count: number): number;
+  _openmpt_module_read_interleaved_stereo(
+    mod: number,
+    sampleRate: number,
+    count: number,
+    buffer: number,
+  ): number;
+  _openmpt_module_destroy(mod: number): void;
 }
+
+type LibOpenMPTFactory = (options: {
+  locateFile: (path: string) => string;
+}) => Promise<LibOpenMPTModule>;
 
 const TRACKER_FORMATS: Array<{ ext: string; name: string; mime?: string }> = [
   { ext: "mptm", name: "OpenMPT Module" },
@@ -89,21 +118,10 @@ class libopenmptHandler implements FormatHandler {
   #module?: LibOpenMPTModule;
 
   async init(): Promise<void> {
-    // Pre-fetch the WASM binary so the Emscripten module can use it directly.
-    const wasmBinary = await fetch("/convert/wasm/libopenmpt.wasm").then((r) => r.arrayBuffer());
-
-    // Set the global that Emscripten picks up:
-    //   var Module = typeof libopenmpt != "undefined" ? libopenmpt : {}
-    // libopenmpt.js was patched to attach __readyPromise (resolves with Module)
-    // and __render (uses closure-scoped HEAPU8/HEAP16) before calling run().
-    (globalThis as any).libopenmpt = { wasmBinary };
-
-    const runtimeUrl = "/convert/wasm/libopenmpt.js";
-    await import(/* @vite-ignore */ runtimeUrl);
-
-    // __readyPromise was attached by our libopenmpt.js patch and resolves with
-    // the Module object once onRuntimeInitialized fires.
-    this.#module = await (globalThis as any).libopenmpt.__readyPromise;
+    const { default: createModule }: { default: LibOpenMPTFactory } = await import(
+      /* @vite-ignore */ runtimeUrl
+    );
+    this.#module = await createModule({ locateFile: () => wasmUrl });
 
     for (const fmt of TRACKER_FORMATS) {
       this.supportedFormats.push({
@@ -136,7 +154,7 @@ class libopenmptHandler implements FormatHandler {
 
     for (const inputFile of inputFiles) {
       const bytes = new Uint8Array(inputFile.bytes);
-      const pcmData = mod.__render(bytes, SAMPLE_RATE);
+      const pcmData = render(mod, bytes, SAMPLE_RATE);
       const wavBytes = buildWav(pcmData, SAMPLE_RATE, 2, 16);
       const name = inputFile.name.replace(/\.[^.]+$/, "") + ".wav";
       outputFiles.push({ bytes: wavBytes, name });
@@ -144,6 +162,58 @@ class libopenmptHandler implements FormatHandler {
 
     return outputFiles;
   }
+}
+
+const RENDER_FRAMES = 4096;
+
+/** Renders a whole module to interleaved stereo 16-bit PCM. */
+function render(mod: LibOpenMPTModule, fileData: Uint8Array, sampleRate: number): Int16Array {
+  const input = mod._malloc(fileData.length);
+  mod.HEAPU8.set(fileData, input);
+  const handle = mod._openmpt_module_create_from_memory2(
+    input,
+    fileData.length,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+  );
+  mod._free(input);
+  if (!handle) throw new Error("libopenmpt: failed to open module");
+
+  const buffer = mod._malloc(RENDER_FRAMES * 4);
+  const chunks: Int16Array[] = [];
+  let total = 0;
+  try {
+    mod._openmpt_module_set_repeat_count(handle, 0);
+    let frames: number;
+    do {
+      frames = mod._openmpt_module_read_interleaved_stereo(
+        handle,
+        sampleRate,
+        RENDER_FRAMES,
+        buffer,
+      );
+      // HEAP16 can be replaced when memory grows, so read it fresh each time
+      const start = buffer >> 1;
+      chunks.push(mod.HEAP16.slice(start, start + frames * 2));
+      total += frames;
+    } while (frames > 0);
+  } finally {
+    mod._free(buffer);
+    mod._openmpt_module_destroy(handle);
+  }
+
+  const out = new Int16Array(total * 2);
+  let offset = 0;
+  for (const chunk of chunks) {
+    out.set(chunk, offset);
+    offset += chunk.length;
+  }
+  return out;
 }
 
 function buildWav(
