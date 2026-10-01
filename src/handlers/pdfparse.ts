@@ -1,6 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import { PDFParse } from "pdf-parse";
+import pdfWorkerUrl from "../../node_modules/pdf-parse/dist/pdf-parse/web/pdf.worker.mjs?url";
 
 class pdfparseHandler implements FormatHandler {
   public name: string = "pdfparse";
@@ -12,7 +13,7 @@ class pdfparseHandler implements FormatHandler {
   public offload: boolean = true;
 
   async init() {
-    PDFParse.setWorker("/convert/js/pdf.worker.mjs");
+    PDFParse.setWorker(pdfWorkerUrl);
     this.ready = true;
   }
 

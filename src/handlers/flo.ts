@@ -3,6 +3,7 @@ import normalizeMimeType from "../normalizeMimeType.ts";
 import CommonFormats, { Category } from "src/CommonFormats.ts";
 import initReflo, { decode, encode, get_flo_file_info } from "@flo-audio/reflo";
 import { WaveFile } from "wavefile";
+import refloWasmUrl from "@flo-audio/reflo/reflo_bg.wasm?url";
 
 class floHandler implements FormatHandler {
   public name: string = "flo";
@@ -11,7 +12,7 @@ class floHandler implements FormatHandler {
   public offload: boolean = true;
 
   async init() {
-    await initReflo({ module_or_path: "/convert/wasm/reflo_bg.wasm" });
+    await initReflo({ module_or_path: refloWasmUrl });
     this.supportedFormats = [
       {
         name: "Flo Audio",

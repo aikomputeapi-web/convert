@@ -8,6 +8,7 @@ import {
 } from "@imagemagick/magick-wasm";
 
 import mime from "mime";
+import magickWasmUrl from "@imagemagick/magick-wasm/magick.wasm?url";
 import normalizeMimeType from "../normalizeMimeType.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
@@ -22,8 +23,7 @@ class ImageMagickHandler implements FormatHandler {
   public offload: boolean = true;
 
   async init() {
-    const wasmLocation = "/convert/wasm/magick.wasm";
-    const wasmBuffer = await fetch(wasmLocation).then((r) => r.arrayBuffer());
+    const wasmBuffer = await fetch(magickWasmUrl).then((r) => r.arrayBuffer());
     const wasmBytes = new Uint8Array(wasmBuffer);
 
     await initializeImageMagick(wasmBytes);

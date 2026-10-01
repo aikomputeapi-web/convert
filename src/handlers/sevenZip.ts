@@ -1,12 +1,13 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { Category } from "src/CommonFormats.ts";
 import SevenZip from "7z-wasm";
+import sevenZipWasmUrl from "7z-wasm/7zz.wasm?url";
 import mime from "mime";
 import normalizeMimeType from "src/normalizeMimeType.ts";
 import type { ConvertContext } from "src/ui/ProgressStore.js";
 
 const defaultSevenZipOptions = {
-  locateFile: () => "/convert/wasm/7zz.wasm",
+  locateFile: () => sevenZipWasmUrl,
 };
 
 function padNumberString(num: number, digits: number): string {

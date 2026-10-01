@@ -1,6 +1,8 @@
 import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import type { TypstSnippet } from "@myriaddreamin/typst.ts/dist/esm/contrib/snippet.mjs";
+import typstCompilerWasmUrl from "@myriaddreamin/typst-ts-web-compiler/wasm?url";
+import typstRendererWasmUrl from "@myriaddreamin/typst-ts-renderer/wasm?url";
 import { InitializationError } from "src/errors.ts";
 
 export const TYPST_PAGEBREAK_MARKER = "CONVERTTYPSTPAGEBREAKTOKEN";
@@ -353,10 +355,10 @@ class typstHandler implements FormatHandler {
       }),
     );
     typst.setCompilerInitOptions({
-      getModule: () => `${import.meta.env.BASE_URL}wasm/typst_ts_web_compiler_bg.wasm`,
+      getModule: () => typstCompilerWasmUrl,
     });
     typst.setRendererInitOptions({
-      getModule: () => `${import.meta.env.BASE_URL}wasm/typst_ts_renderer_bg.wasm`,
+      getModule: () => typstRendererWasmUrl,
     });
 
     this.$typst = typst;

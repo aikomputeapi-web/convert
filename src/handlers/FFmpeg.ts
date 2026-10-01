@@ -3,6 +3,8 @@ import type { ConvertContext } from "../ui/ProgressStore.js";
 
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import type { LogEvent } from "@ffmpeg/ffmpeg";
+import ffmpegCoreUrl from "@ffmpeg/core?url";
+import ffmpegWasmUrl from "@ffmpeg/core/wasm?url";
 
 import mime from "mime";
 import normalizeMimeType from "../normalizeMimeType.ts";
@@ -50,7 +52,8 @@ class FFmpegHandler implements FormatHandler {
   async loadFFmpeg() {
     if (!this.#ffmpeg) return;
     return await this.#ffmpeg.load({
-      coreURL: "/convert/wasm/ffmpeg-core.js",
+      coreURL: ffmpegCoreUrl,
+      wasmURL: ffmpegWasmUrl,
     });
   }
   terminateFFmpeg() {
