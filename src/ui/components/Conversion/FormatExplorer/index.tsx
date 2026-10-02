@@ -2,16 +2,20 @@ import FormatCard from "src/ui/components/Conversion/FormatCard";
 import Chip from "src/ui/components/Chip";
 import { Search, X } from "lucide-preact";
 import {
+  Braces,
   Image,
   Video,
+  PenTool,
+  FileText,
+  Text,
   Music,
   Archive,
-  FileText,
-  Code,
-  Type,
-  BarChart3,
+  Sheet,
   Presentation,
+  Type,
+  Code,
   Database,
+  Box,
 } from "lucide-preact";
 import { useDebouncedCallback } from "use-debounce";
 
@@ -26,9 +30,8 @@ import {
   toggleCategory,
   clearCategories,
   hasActiveFilters,
-  type CategoryEnum,
 } from "src/ui/FormatCategories";
-import { Category } from "src/CommonFormats";
+import { Category, type CategoryType } from "src/CommonFormats";
 
 interface FormatExplorerProps {
   conversionOptions: ConversionOptionsMap;
@@ -71,19 +74,22 @@ function matchesFormatSearch(option: ConversionOption, termLower: string): boole
   );
 }
 
-const CATEGORY_CHIPS: Array<{ id: CategoryEnum; label: string; icon: preact.ComponentChildren }> = [
-  { id: Category.IMAGE, label: "Image", icon: <Image size={14} /> },
-  { id: Category.VIDEO, label: "Video", icon: <Video size={14} /> },
-  { id: Category.AUDIO, label: "Audio", icon: <Music size={14} /> },
-  { id: Category.DOCUMENT, label: "Document", icon: <FileText size={14} /> },
-  { id: Category.ARCHIVE, label: "Archive", icon: <Archive size={14} /> },
-  { id: Category.TEXT, label: "Text", icon: <Type size={14} /> },
-  { id: Category.CODE, label: "Code", icon: <Code size={14} /> },
-  { id: Category.DATA, label: "Data", icon: <Database size={14} /> },
-  { id: Category.VECTOR, label: "Vector", icon: <Presentation size={14} /> },
-  { id: Category.SPREADSHEET, label: "Spreadsheet", icon: <BarChart3 size={14} /> },
-  { id: Category.FONT, label: "Font", icon: <Type size={14} /> },
-];
+const CATEGORY_CHIPS = {
+  [Category.IMAGE]: { label: "Image", icon: <Image size={14} /> },
+  [Category.VECTOR]: { label: "Vector", icon: <PenTool size={14} /> },
+  [Category.VIDEO]: { label: "Video", icon: <Video size={14} /> },
+  [Category.AUDIO]: { label: "Audio", icon: <Music size={14} /> },
+  [Category.TEXT]: { label: "Text", icon: <Text size={14} /> },
+  [Category.DATA]: { label: "Data", icon: <Braces size={14} /> },
+  [Category.CODE]: { label: "Code", icon: <Code size={14} /> },
+  [Category.DOCUMENT]: { label: "Document", icon: <FileText size={14} /> },
+  [Category.SPREADSHEET]: { label: "Spreadsheet", icon: <Sheet size={14} /> },
+  [Category.PRESENTATION]: { label: "Presentation", icon: <Presentation size={14} /> },
+  [Category.ARCHIVE]: { label: "Archive", icon: <Archive size={14} /> },
+  [Category.FONT]: { label: "Font", icon: <Type size={14} /> },
+  [Category.MODEL]: { label: "3D Model", icon: <Box size={14} /> },
+  [Category.DATABASE]: { label: "Database", icon: <Database size={14} /> },
+} satisfies Record<CategoryType, { label: string; icon: preact.ComponentChildren }>;
 
 function generateSearchIndex(
   optionsMap: ConversionOptionsMap,
@@ -112,17 +118,17 @@ function generateSearchIndex(
   return index;
 }
 
-function filterByCategories(options: SearchIndex, categories: Set<CategoryEnum>): SearchIndex {
+function filterByCategories(options: SearchIndex, categories: Set<CategoryType>): SearchIndex {
   if (categories.size === 0) return options;
 
   const filtered: SearchIndex = new Map();
   for (const [key, pair] of options) {
     const cat = pair[0].category;
-    if (typeof cat === "string" && categories.has(cat as CategoryEnum)) {
+    if (typeof cat === "string" && categories.has(cat)) {
       filtered.set(key, pair);
     } else if (Array.isArray(cat)) {
       for (const c of cat) {
-        if (categories.has(c as CategoryEnum)) {
+        if (categories.has(c)) {
           filtered.set(key, pair);
           break;
         }
@@ -242,13 +248,13 @@ export default function FormatExplorer({
           </div>
 
           <div className="chip-filters">
-            {CATEGORY_CHIPS.map((chip) => (
+            {Object.entries(CATEGORY_CHIPS).map(([id, { label, icon }]) => (
               <Chip
-                key={chip.id}
-                label={chip.label}
-                icon={chip.icon}
-                selected={activeCategories.has(chip.id)}
-                onClick={() => toggleCategory(chip.id)}
+                key={id}
+                label={label}
+                icon={icon}
+                selected={activeCategories.has(id as CategoryType)}
+                onClick={() => toggleCategory(id as CategoryType)}
               />
             ))}
           </div>

@@ -1,3 +1,4 @@
+import type { CategoryType } from "src/CommonFormats";
 import FileIcon from "src/ui/components/FileIcon";
 import { X } from "lucide-preact";
 import "./index.css";
@@ -7,7 +8,7 @@ interface FileInfoBadgeProps {
   fileSize?: number;
   extension?: string;
   mimeType?: string;
-  category?: string | string[];
+  category?: CategoryType | CategoryType[];
   onRemove?: () => void;
   className?: string;
 }

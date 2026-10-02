@@ -8,7 +8,7 @@ import ffmpegWasmUrl from "@ffmpeg/core/wasm?url";
 
 import mime from "mime";
 import normalizeMimeType from "../normalizeMimeType.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import CommonFormats, { Category, type CategoryType } from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 
 class FFmpegHandler implements FormatHandler {
@@ -151,7 +151,8 @@ class FFmpegHandler implements FormatHandler {
         }
         mimeType = normalizeMimeType(mimeType);
 
-        let category = mimeType.split("/")[0];
+        const mimeCategory = mimeType.split("/")[0];
+        let category: CategoryType;
         if (
           description.includes("PCM") ||
           description.includes("PWM") ||
@@ -162,11 +163,18 @@ class FFmpegHandler implements FormatHandler {
           primaryFormat === "apm" ||
           primaryFormat === "alp"
         ) {
-          category = "audio";
+          category = Category.AUDIO;
           mimeType = "audio/" + mimeType.split("/")[1];
-        } else if (category !== "audio" && category !== "video" && category !== "image") {
-          if (description.toLowerCase().includes("audio")) category = "audio";
-          else category = "video";
+        } else if (
+          mimeCategory === Category.AUDIO ||
+          mimeCategory === Category.VIDEO ||
+          mimeCategory === Category.IMAGE
+        ) {
+          category = mimeCategory;
+        } else if (description.toLowerCase().includes("audio")) {
+          category = Category.AUDIO;
+        } else {
+          category = Category.VIDEO;
         }
 
         const name =

@@ -1,27 +1,31 @@
-import { Category } from "src/CommonFormats";
+import { Category, type CategoryType } from "src/CommonFormats";
 
-const CATEGORY_TO_ICON: Record<string, string> = {
-  [Category.DATA]: "json",
+const CATEGORY_TO_ICON: Record<CategoryType, string> = {
   [Category.IMAGE]: "image",
-  [Category.VIDEO]: "video",
   [Category.VECTOR]: "svg",
-  [Category.DOCUMENT]: "document",
-  [Category.TEXT]: "document",
+  [Category.VIDEO]: "video",
   [Category.AUDIO]: "audio",
-  [Category.ARCHIVE]: "zip",
+  [Category.TEXT]: "document",
+  [Category.DATA]: "json",
+  [Category.CODE]: "javascript",
+  [Category.DOCUMENT]: "document",
   [Category.SPREADSHEET]: "table",
   [Category.PRESENTATION]: "powerpoint",
+  [Category.ARCHIVE]: "zip",
   [Category.FONT]: "font",
-  [Category.CODE]: "javascript",
+  [Category.MODEL]: "3d",
+  [Category.DATABASE]: "database",
 };
 
-export function normalizeCategory(category?: string | string[]): string | undefined {
+export function normalizeCategory(
+  category?: CategoryType | CategoryType[],
+): CategoryType | undefined {
   if (category === undefined) return undefined;
   return Array.isArray(category) ? category[0] : category;
 }
 
-export function getDefaultIconForCategory(category?: string | string[]): string {
+export function getDefaultIconForCategory(category?: CategoryType | CategoryType[]): string {
   const key = normalizeCategory(category);
   if (!key) return "file";
-  return CATEGORY_TO_ICON[key] ?? "file";
+  return CATEGORY_TO_ICON[key];
 }

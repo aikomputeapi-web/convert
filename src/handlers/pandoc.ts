@@ -1,6 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import type { ConvertContext } from "../ui/ProgressStore.js";
-import CommonFormats from "src/CommonFormats.ts";
+import CommonFormats, { Category, type CategoryType } from "src/CommonFormats.ts";
 import mime from "mime";
 import normalizeMimeType from "../normalizeMimeType.ts";
 import { InitializationError } from "src/errors.ts";
@@ -199,13 +199,13 @@ class pandocHandler implements FormatHandler {
       const name = pandocHandler.formatNames.get(format) || format;
       const extension = pandocHandler.formatExtensions.get(format) || format;
       const mimeType = normalizeMimeType(mime.getType(extension) || `text/${format}`);
-      const categories: string[] = [];
-      if (format === "xlsx") categories.push("spreadsheet");
-      else if (format === "pptx") categories.push("presentation");
+      const categories: CategoryType[] = [];
+      if (format === "xlsx") categories.push(Category.SPREADSHEET);
+      else if (format === "pptx") categories.push(Category.PRESENTATION);
       if (name.toLowerCase().includes("text") || mimeType === "text/plain") {
-        categories.push("text");
+        categories.push(Category.TEXT);
       } else {
-        categories.push("document");
+        categories.push(Category.DOCUMENT);
       }
       const isOfficeDocument =
         format === "docx" ||

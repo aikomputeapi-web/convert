@@ -1,12 +1,13 @@
 import { useEffect, useState } from "preact/hooks";
 import iconsUrl from "built/material-icons/icons.json?url";
+import type { CategoryType } from "src/CommonFormats";
 import { getDefaultIconForCategory } from "./categoryDefaultIcons";
 import "./index.css";
 
 interface FileIconProps {
   extension?: string;
   mimeType?: string;
-  category?: string | string[];
+  category?: CategoryType | CategoryType[];
   size?: number;
   className?: string;
 }
@@ -70,7 +71,7 @@ function resolveLogical(
   extension: string | undefined,
   mimeType: string | undefined,
   map: Record<string, string> | null,
-  category: string | string[] | undefined,
+  category: CategoryType | CategoryType[] | undefined,
 ): string {
   let logical = "file";
   if (extension !== undefined && extension !== "") {

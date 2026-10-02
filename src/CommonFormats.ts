@@ -1,21 +1,29 @@
 import { FormatDefinition } from "src/FormatHandler";
 
 export const Category = {
-  DATA: "data",
   IMAGE: "image",
-  VIDEO: "video",
   VECTOR: "vector",
-  DOCUMENT: "document",
-  TEXT: "text",
+  VIDEO: "video",
   AUDIO: "audio",
-  ARCHIVE: "archive",
+  TEXT: "text",
+  DATA: "data",
+  CODE: "code",
+  DOCUMENT: "document",
   SPREADSHEET: "spreadsheet",
   PRESENTATION: "presentation",
+  ARCHIVE: "archive",
   FONT: "font",
-  CODE: "code",
-  DATABASE: "database",
   MODEL: "model",
-};
+  DATABASE: "database",
+} as const;
+
+export type CategoryType = (typeof Category)[keyof typeof Category];
+
+const categoryValues: ReadonlySet<string> = new Set(Object.values(Category));
+
+export function isCategory(value: string): value is CategoryType {
+  return categoryValues.has(value);
+}
 
 /**
  * Common format definitions which can be used to reduce boilerplate definitions

@@ -1,3 +1,4 @@
+import type { CategoryType } from "./CommonFormats.js";
 import type { HandlerName } from "./handlers/index.js";
 import type { ConvertContext } from "./ui/ProgressStore.js";
 
@@ -17,7 +18,7 @@ export interface IFormatDefinition {
   /** MIME type. */
   mime: string;
   /** Category for grouping formats. */
-  category?: Array<string> | string;
+  category: CategoryType[] | CategoryType;
 }
 
 export interface FileFormat extends IFormatDefinition {
@@ -40,14 +41,14 @@ export class FormatDefinition implements IFormatDefinition {
   public readonly format: string;
   public readonly extension: string;
   public readonly mime: string;
-  public readonly category?: string[] | string;
+  public readonly category: CategoryType[] | CategoryType;
 
   constructor(
     name: string,
     format: string,
     extension: string,
     mime: string,
-    category?: string[] | string,
+    category: CategoryType[] | CategoryType,
   ) {
     this.name = name;
     this.format = format;

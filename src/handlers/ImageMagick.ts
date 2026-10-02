@@ -10,7 +10,7 @@ import {
 import mime from "mime";
 import magickWasmUrl from "@imagemagick/magick-wasm/magick.wasm?url";
 import normalizeMimeType from "../normalizeMimeType.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import CommonFormats, { Category, isCategory } from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import type { ConvertContext } from "../ui/ProgressStore.js";
 
@@ -52,6 +52,11 @@ class ImageMagickHandler implements FormatHandler {
       if (formatName === "mpo") description = "Multi-Picture Object";
       if (formatName === "vst") description = "Microsoft Visio Template";
 
+      const mimeCategory = mimeType.split("/")[0];
+      let category;
+      if (isCategory(mimeCategory)) category = mimeCategory;
+      else if (mimeType === "application/pdf") category = Category.DOCUMENT;
+      else category = Category.IMAGE;
       this.supportedFormats.push({
         name: description,
         format: formatName === "jpg" ? "jpeg" : formatName,
@@ -60,7 +65,7 @@ class ImageMagickHandler implements FormatHandler {
         from: mimeType === "application/pdf" ? false : format.supportsReading,
         to: format.supportsWriting,
         internal: format.format,
-        category: mimeType.split("/")[0],
+        category,
         lossless: ["png", "bmp", "tiff"].includes(formatName),
       });
     });
