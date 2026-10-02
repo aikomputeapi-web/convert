@@ -1,7 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "src/FormatHandler";
 import * as NBT from "nbtify";
 import { gunzipSync, gzipSync } from "fflate";
-import { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 
 class mcSchematicHandler implements FormatHandler {
   public name: string = "mcSchematic";
@@ -11,51 +11,11 @@ class mcSchematicHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      {
-        name: "Minecraft Schematic",
-        format: "schematic",
-        extension: "schematic",
-        mime: "application/x-minecraft-schematic",
-        from: true,
-        to: true,
-        internal: "schematic",
-        category: Category.DATA,
-        lossless: true,
-      },
-      {
-        name: "Sponge Schematic",
-        format: "schem",
-        extension: "schem",
-        mime: "application/x-minecraft-schem",
-        from: true,
-        to: true,
-        internal: "schem",
-        category: Category.DATA,
-        lossless: true,
-      },
-      {
-        name: "Litematica Schematic",
-        format: "litematic",
-        extension: "litematic",
-        mime: "application/x-minecraft-litematic",
-        from: true,
-        to: true,
-        internal: "litematic",
-        category: Category.DATA,
-        lossless: true,
-      },
+      CommonFormats.MC_SCHEMATIC.builder("schematic").lossless().fromTo(),
+      CommonFormats.MC_SCHEM.builder("schem").lossless().fromTo(),
+      CommonFormats.MC_LITEMATIC.builder("litematic").lossless().fromTo(),
       // Target internal format for graph routing
-      {
-        name: "Named Binary Tag",
-        format: "nbt",
-        extension: "nbt",
-        mime: "application/x-minecraft-nbt",
-        from: false,
-        to: true,
-        internal: "nbt",
-        category: Category.DATA,
-        lossless: true,
-      },
+      CommonFormats.NBT.builder("nbt").lossless().to(),
     ];
     this.ready = true;
   }

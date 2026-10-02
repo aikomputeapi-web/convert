@@ -10,19 +10,9 @@ class krzHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.PNG.builder("png").allowFrom(false).allowTo(true),
+      CommonFormats.PNG.builder("png").to(),
 
-      {
-        name: "Krita Raster Archive (krz)",
-        format: "krz",
-        extension: "krz",
-        mime: "application/x-krita",
-        from: true,
-        to: false,
-        internal: "krz",
-        category: ["archive"],
-        lossless: false,
-      },
+      CommonFormats.KRZ.builder("krz").from(),
     ];
     this.ready = true;
   }

@@ -54,91 +54,55 @@ export class FormatDefinition implements IFormatDefinition {
   }
 
   /**
-   * Returns `FileFormat` object that uses this format definition
-   * and specified options
-   * @param ref Format identifier for the handler's internal reference.
-   * @param from Whether conversion **from** this format is supported.
-   * @param to Whether conversion **to** this format is supported.
-   * @param lossless (Optional) Whether the format is lossless in this context. Defaults to `false`.
-   * @param override Format definition values to override
-   * @returns
+   * Returns a builder to fluently create FileFormat based on this format definition.
+   * Finish the chain with {@link FormatBuilder.from}, {@link FormatBuilder.to},
+   * {@link FormatBuilder.fromTo} or {@link FormatBuilder.nowhere}.
+   * @param internal Format identifier for the handler's internal reference.
    */
-  supported(
-    ref: string,
-    from: boolean,
-    to: boolean,
-    lossless?: boolean,
-    override: Partial<IFormatDefinition> = {},
-  ): FileFormat {
-    return {
-      ...this,
-      ...override,
-      internal: ref,
-      from: from,
-      to: to,
-      lossless: lossless ?? false,
-    };
+  builder(internal: string) {
+    return new FormatBuilder(this, internal);
   }
+}
 
-  /**
-   * Returns a builder to fluently create FileFormat.
-   * Builder can be used to create FileFormat based on this format definition
-   */
-  builder(ref: string) {
-    const builder = {
-      // FileFormat fields
-      name: this.name,
-      format: this.format,
-      extension: this.extension,
-      mime: this.mime,
-      category: this.category,
-      internal: ref,
+/**
+ * Fluent builder for {@link FileFormat}. {@link lossless} comes first if needed; the chain
+ * ends with {@link from}, {@link to}, {@link fromTo} or {@link nowhere}, which return the
+ * built `FileFormat`.
+ * Losslessness defaults to `false`.
+ */
+export class FormatBuilder {
+  #format: FileFormat;
+
+  constructor(definition: IFormatDefinition, internal: string) {
+    this.#format = {
+      ...structuredClone(definition),
+      internal,
       from: false,
       to: false,
       lossless: false,
-
-      allowFrom(value: boolean = true) {
-        this.from = value;
-        return this;
-      },
-      allowTo(value: boolean = true) {
-        this.to = value;
-        return this;
-      },
-      markLossless(value: boolean = true) {
-        this.lossless = value;
-        return this;
-      },
-      named(name: string) {
-        this.name = name;
-        return this;
-      },
-      withFormat(format: string) {
-        this.format = format;
-        return this;
-      },
-      withExt(ext: string) {
-        this.extension = ext;
-        return this;
-      },
-      withMime(mimetype: string) {
-        this.mime = mimetype;
-        return this;
-      },
-      /**
-       * Replaces format category
-       */
-      withCategory(category: string[] | string | undefined) {
-        this.category = category;
-        return this;
-      },
-      override(values: Partial<IFormatDefinition>) {
-        Object.assign(this, values);
-        return this;
-      },
     };
+  }
 
-    return builder as FileFormat & typeof builder;
+  /** Marks the format as lossless in this context. */
+  lossless(value: boolean = true) {
+    this.#format.lossless = value;
+    return this;
+  }
+  /** Builds a format that only allows conversion **from** it. */
+  from(value: boolean = true): FileFormat {
+    return this.fromTo(value, false);
+  }
+  /** Builds a format that only allows conversion **to** it. */
+  to(value: boolean = true): FileFormat {
+    return this.fromTo(false, value);
+  }
+  /** Builds a format that allows conversion **from** and **to** it. */
+  fromTo(from: boolean = true, to: boolean = true): FileFormat {
+    return { ...structuredClone(this.#format), from, to };
+  }
+  /** Builds a format that does not allow conversion. */
+  nowhere(): FileFormat {
+    return this.fromTo(false, false);
   }
 }
 

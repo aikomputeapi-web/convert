@@ -1,4 +1,4 @@
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import type { FormatHandler, FileData, FileFormat } from "../FormatHandler.ts";
 
 function hasPrefix(bytes: Uint8Array, prefix: number[]) {
@@ -94,73 +94,13 @@ function decodeUsingTextDecoder(bytes: Uint8Array, label: string) {
 }
 
 const formats: FileFormat[] = [
-  CommonFormats.TEXT.supported("txt", true, true, true), // May or may not have BOM depending on browser
-  {
-    name: "Plain Text (UTF-8 without BOM)",
-    format: "UTF-8 without BOM",
-    extension: "txt",
-    mime: "text/plain; charset=UTF-8 without BOM",
-    from: false,
-    to: true,
-    internal: "utf8NB",
-    category: Category.TEXT,
-    lossless: true,
-  }, // In case the broeser defaults to with BOM, we can choose to force BOMless UTF-8.
-  {
-    name: "Plain Text (UTF-8 with BOM)",
-    format: "UTF-8 with BOM",
-    extension: "txt",
-    mime: "text/plain; charset=UTF-8 with BOM",
-    from: false,
-    to: true,
-    internal: "utf8WB",
-    category: Category.TEXT,
-    lossless: true,
-  }, // UTF8 with forced BOM.
-  {
-    name: "Plain Text (UTF-16 LE)",
-    format: "UTF-16 LE",
-    extension: "txt",
-    mime: "text/plain; charset=UTF-16LE",
-    from: true,
-    to: true,
-    internal: "utf16le",
-    category: Category.TEXT,
-    lossless: true,
-  },
-  {
-    name: "Plain Text (UTF-16 BE)",
-    format: "UTF-16 BE",
-    extension: "txt",
-    mime: "text/plain; charset=UTF-16BE",
-    from: true,
-    to: true,
-    internal: "utf16be",
-    category: Category.TEXT,
-    lossless: true,
-  },
-  {
-    name: "Plain Text (UTF-32 LE)",
-    format: "UTF-32 LE",
-    extension: "txt",
-    mime: "text/plain; charset=UTF-32LE",
-    from: true,
-    to: true,
-    internal: "utf32le",
-    category: Category.TEXT,
-    lossless: true,
-  },
-  {
-    name: "Plain Text (UTF-32 BE)",
-    format: "UTF-32 BE",
-    extension: "txt",
-    mime: "text/plain; charset=UTF-32BE",
-    from: true,
-    to: true,
-    internal: "utf32be",
-    category: Category.TEXT,
-    lossless: true,
-  },
+  CommonFormats.TEXT.builder("txt").lossless().fromTo(), // May or may not have BOM depending on browser
+  CommonFormats.TEXT_UTF8_NO_BOM.builder("utf8NB").lossless().to(), // In case the broeser defaults to with BOM, we can choose to force BOMless UTF-8.
+  CommonFormats.TEXT_UTF8_BOM.builder("utf8WB").lossless().to(), // UTF8 with forced BOM.
+  CommonFormats.TEXT_UTF16LE.builder("utf16le").lossless().fromTo(),
+  CommonFormats.TEXT_UTF16BE.builder("utf16be").lossless().fromTo(),
+  CommonFormats.TEXT_UTF32LE.builder("utf32le").lossless().fromTo(),
+  CommonFormats.TEXT_UTF32BE.builder("utf32be").lossless().fromTo(),
 ];
 
 export default class textEncodingHandler implements FormatHandler {

@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import {
   BLACK,
   KING,
@@ -48,18 +48,8 @@ function isPieceSymbol(value: string): value is PieceSymbol {
 class fenToJsonHandler implements FormatHandler {
   public name: string = "fenToJson";
   public supportedFormats: FileFormat[] = [
-    {
-      name: "Forsyth–Edwards Notation",
-      format: "fen",
-      extension: "fen",
-      mime: "application/vnd.chess-fen",
-      from: true,
-      to: true,
-      internal: "fen",
-      category: Category.TEXT,
-      lossless: true,
-    },
-    CommonFormats.JSON.builder("json").allowTo().allowFrom().markLossless(),
+    CommonFormats.FEN.builder("fen").lossless().fromTo(),
+    CommonFormats.JSON.builder("json").lossless().fromTo(),
   ];
   public ready: boolean = false;
   public offload: boolean = true;

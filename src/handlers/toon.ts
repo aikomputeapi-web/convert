@@ -1,22 +1,13 @@
-import { FormatDefinition } from "../FormatHandler.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { encode, decode } from "@toon-format/toon";
-
-const toonFormat = new FormatDefinition(
-  "Token-Oriented Object Notation",
-  "toon",
-  "toon",
-  "text/toon",
-  Category.DATA,
-);
 
 class toonHandler implements FormatHandler {
   public name: string = "toon";
 
   public supportedFormats?: FileFormat[] = [
-    CommonFormats.JSON.supported("json", true, true, true),
-    toonFormat.supported("toon", true, true, true),
+    CommonFormats.JSON.builder("json").lossless().fromTo(),
+    CommonFormats.TOON.builder("toon").lossless().fromTo(),
   ];
 
   public ready: boolean = false;
@@ -33,7 +24,7 @@ class toonHandler implements FormatHandler {
   ): Promise<FileData[]> {
     switch (inputFormat.mime) {
       case CommonFormats.JSON.mime:
-        if (outputFormat.mime !== toonFormat.mime) {
+        if (outputFormat.mime !== CommonFormats.TOON.mime) {
           throw new TypeError(`Unsupported output format MIME: ${outputFormat.mime}`);
         }
 
@@ -50,7 +41,7 @@ class toonHandler implements FormatHandler {
           };
         });
 
-      case toonFormat.mime:
+      case CommonFormats.TOON.mime:
         if (outputFormat.mime !== CommonFormats.JSON.mime) {
           throw new TypeError(`Unsupported output format MIME: ${outputFormat.mime}`);
         }

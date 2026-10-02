@@ -6,8 +6,8 @@ import pdfWorkerUrl from "../../node_modules/pdf-parse/dist/pdf-parse/web/pdf.wo
 class pdfparseHandler implements FormatHandler {
   public name: string = "pdfparse";
   public supportedFormats?: FileFormat[] = [
-    CommonFormats.PDF.builder("pdf").allowFrom(),
-    CommonFormats.TEXT.builder("txt").allowTo(),
+    CommonFormats.PDF.builder("pdf").from(),
+    CommonFormats.TEXT.builder("txt").to(),
   ];
   public ready: boolean = false;
   public offload: boolean = true;

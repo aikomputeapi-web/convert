@@ -510,27 +510,9 @@ export class opusMagnumMainHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.SVG.supported("svg", false, true),
-      {
-        name: "Opus Magnum puzzle",
-        format: "puzzle",
-        extension: "puzzle",
-        mime: "application/x-opus-magnum-puzzle",
-        from: true,
-        to: true,
-        internal: "puzzle",
-        lossless: false,
-      },
-      {
-        name: "Opus Magnum molecule",
-        format: "molecule",
-        extension: "molecule",
-        mime: "application/x-opus-magnum-molecule",
-        from: true,
-        to: true,
-        internal: "molecule",
-        lossless: false,
-      },
+      CommonFormats.SVG.builder("svg").to(),
+      CommonFormats.OM_PUZZLE.builder("puzzle").fromTo(),
+      CommonFormats.OM_MOLECULE.builder("molecule").fromTo(),
     ];
 
     this.ready = true;
@@ -914,17 +896,8 @@ export class opusMagnumITMHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.PNG.supported("png", true, false),
-      {
-        name: "Opus Magnum molecule",
-        format: "molecule",
-        extension: "molecule",
-        mime: "application/x-opus-magnum-molecule",
-        from: false,
-        to: true,
-        internal: "molecule",
-        lossless: false,
-      },
+      CommonFormats.PNG.builder("png").from(),
+      CommonFormats.OM_MOLECULE.builder("molecule").to(),
     ];
 
     this.#canvas = new OffscreenCanvas(1, 1);
@@ -1109,17 +1082,8 @@ export class opusMagnumTTMHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.TEXT.supported("txt", true, false),
-      {
-        name: "Opus Magnum molecule",
-        format: "molecule",
-        extension: "molecule",
-        mime: "application/x-opus-magnum-molecule",
-        from: false,
-        to: true,
-        internal: "molecule",
-        lossless: false,
-      },
+      CommonFormats.TEXT.builder("txt").from(),
+      CommonFormats.OM_MOLECULE.builder("molecule").to(),
     ];
 
     // Validation - testing

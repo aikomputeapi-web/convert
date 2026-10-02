@@ -1,6 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 
 class cybergrindHandler implements FormatHandler {
@@ -14,18 +14,8 @@ class cybergrindHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.PNG.supported("png", true, false),
-      {
-        name: "ULTRAKILL CyberGrind Pattern",
-        format: "cgp",
-        extension: "cgp",
-        mime: "text/plain",
-        category: Category.DATA,
-        from: false,
-        to: true,
-        internal: "cgp",
-        lossless: false,
-      },
+      CommonFormats.PNG.builder("png").from(),
+      CommonFormats.CGP.builder("cgp").to(),
     ];
 
     this.#canvas = new OffscreenCanvas(16, 16);

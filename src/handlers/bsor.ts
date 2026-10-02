@@ -1,25 +1,15 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { Replay } from "./bsor/replay.ts";
 import { render } from "./bsor/renderer.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 
 class bsorHandler implements FormatHandler {
   public name: string = "bsor";
   public supportedFormats: FileFormat[] = [
-    {
-      name: "Beat Saber Open Replay",
-      format: "bsor",
-      extension: "bsor",
-      mime: "application/x-bsor",
-      from: true,
-      to: false,
-      internal: "bsor",
-      category: Category.DATA,
-      lossless: false,
-    },
-    CommonFormats.PNG.supported("png", false, true),
-    CommonFormats.JPEG.supported("jpeg", false, true),
-    CommonFormats.JSON.supported("json", false, true, true),
+    CommonFormats.BSOR.builder("bsor").from(),
+    CommonFormats.PNG.builder("png").to(),
+    CommonFormats.JPEG.builder("jpeg").to(),
+    CommonFormats.JSON.builder("json").lossless().to(),
   ];
 
   public ready: boolean = true;

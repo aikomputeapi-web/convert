@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import JSZip from "jszip";
 
 function read_lendian_4(a: number, b: number, c: number, d: number): number {
@@ -40,19 +40,9 @@ class brarchiveHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.ZIP.supported("zip", true, true, true),
-      CommonFormats.JSON.supported("json", true, true, true),
-      {
-        name: "Minecraft Bedrock Archive",
-        format: "brarchive",
-        extension: "brarchive",
-        mime: "image/x-brarchive",
-        from: true,
-        to: true,
-        internal: "brarchive",
-        category: Category.ARCHIVE,
-        lossless: true,
-      },
+      CommonFormats.ZIP.builder("zip").lossless().fromTo(),
+      CommonFormats.JSON.builder("json").lossless().fromTo(),
+      CommonFormats.BRARCHIVE.builder("brarchive").lossless().fromTo(),
     ];
 
     this.ready = true;

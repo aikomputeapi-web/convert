@@ -3,7 +3,7 @@ import * as Pe from "pe-library";
 import JSZip from "jszip";
 
 import { Buffer } from "buffer";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 if (typeof window !== "undefined") {
   (window as any).Buffer = Buffer;
 }
@@ -12,19 +12,9 @@ class peToZipHandler implements FormatHandler {
   public name: string = "peToZip";
 
   public supportedFormats: FileFormat[] = [
-    CommonFormats.EXE.builder("exe").allowFrom(),
-    {
-      name: "Dynamic-Link Library",
-      format: "dll",
-      extension: "dll",
-      mime: "application/vnd.microsoft.portable-executable",
-      from: true,
-      to: false,
-      internal: "dll",
-      category: Category.CODE,
-      lossless: false,
-    },
-    CommonFormats.ZIP.builder("zip").allowTo().markLossless(),
+    CommonFormats.EXE.builder("exe").from(),
+    CommonFormats.DLL.builder("dll").from(),
+    CommonFormats.ZIP.builder("zip").lossless().to(),
   ];
 
   public ready: boolean = true;

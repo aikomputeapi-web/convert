@@ -10,8 +10,8 @@ export class espeakngHandler implements FormatHandler {
   #tts: SimpleTTS | undefined = undefined;
 
   public supportedFormats: FileFormat[] = [
-    CommonFormats.TEXT.supported("text", true, false),
-    CommonFormats.WAV.supported("wav", false, true),
+    CommonFormats.TEXT.builder("text").from(),
+    CommonFormats.WAV.builder("wav").to(),
   ];
 
   async init() {

@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import { Category } from "src/CommonFormats.ts";
+import CommonFormats, { Category } from "src/CommonFormats.ts";
 import SevenZip from "7z-wasm";
 import sevenZipWasmUrl from "7z-wasm/7zz.wasm?url";
 import mime from "mime";
@@ -101,50 +101,10 @@ class sevenZipHandler implements FormatHandler {
     }
 
     // Comic book support
-    this.supportedFormats.push({
-      name: "Comic Book Archive (ZIP)",
-      format: "cbz",
-      extension: "cbz",
-      mime: "application/vnd.comicbook+zip",
-      from: true,
-      to: zipTo,
-      internal: "cbz",
-      category: Category.ARCHIVE,
-      lossless: false,
-    });
-    this.supportedFormats.push({
-      name: "Comic Book Archive (TAR)",
-      format: "cbt",
-      extension: "cbt",
-      mime: "application/vnd.comicbook+tar",
-      from: true,
-      to: tarTo,
-      internal: "cbt",
-      category: Category.ARCHIVE,
-      lossless: false,
-    });
-    this.supportedFormats.push({
-      name: "Comic Book Archive (RAR)",
-      format: "cbr",
-      extension: "cbr",
-      mime: "application/vnd.comicbook+rar",
-      from: true,
-      to: rarTo,
-      internal: "cbr",
-      category: Category.ARCHIVE,
-      lossless: false,
-    });
-    this.supportedFormats.push({
-      name: "Comic Book Archive (7Z)",
-      format: "cb7",
-      extension: "cb7",
-      mime: "application/vnd.comicbook+7z",
-      from: true,
-      to: szTo,
-      internal: "cb7",
-      category: Category.ARCHIVE,
-      lossless: false,
-    });
+    this.supportedFormats.push(CommonFormats.CBZ.builder("cbz").fromTo(true, zipTo));
+    this.supportedFormats.push(CommonFormats.CBT.builder("cbt").fromTo(true, tarTo));
+    this.supportedFormats.push(CommonFormats.CBR.builder("cbr").fromTo(true, rarTo));
+    this.supportedFormats.push(CommonFormats.CB7.builder("cb7").fromTo(true, szTo));
 
     // push zip and tar up the list
     const priority = ["tar", "zip"];

@@ -2,7 +2,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { LZHDecoder } from "./lzh/decoder.ts";
 import { LZHEncoder, type LHAFileInput } from "./lzh/encoder.ts";
 import JSZip from "jszip";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 
 // Convert bytes to base64 string
@@ -33,19 +33,9 @@ export class lzhHandler implements FormatHandler {
   public name: string = "lzh";
 
   public supportedFormats: FileFormat[] = [
-    {
-      name: "LZH/LHA Archive",
-      format: "lzh",
-      extension: "lzh",
-      mime: "application/x-lzh-compressed",
-      from: true,
-      to: true,
-      internal: "lzh",
-      category: Category.ARCHIVE,
-      lossless: true,
-    },
-    CommonFormats.ZIP.builder("zip").allowFrom().allowTo().markLossless(),
-    CommonFormats.JSON.builder("json").allowTo(),
+    CommonFormats.LZH.builder("lzh").lossless().fromTo(),
+    CommonFormats.ZIP.builder("zip").lossless().fromTo(),
+    CommonFormats.JSON.builder("json").to(),
   ];
 
   public supportAnyInput: boolean = false;
@@ -199,19 +189,7 @@ export class lzhHandler implements FormatHandler {
 export class lzh2Handler implements FormatHandler {
   public name: string = "lzh2";
 
-  public supportedFormats: FileFormat[] = [
-    {
-      name: "LZH/LHA Archive",
-      format: "lzh",
-      extension: "lzh",
-      mime: "application/x-lzh-compressed",
-      from: false,
-      to: true,
-      internal: "lzh",
-      category: "archive",
-      lossless: true,
-    },
-  ];
+  public supportedFormats: FileFormat[] = [CommonFormats.LZH.builder("lzh").lossless().to()];
 
   public supportAnyInput: boolean = true;
   public ready: boolean = false;

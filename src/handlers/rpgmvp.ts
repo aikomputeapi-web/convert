@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { Decrypter } from "built/rpgmvp-decrypter/scripts/Decrypter.js";
 
 class rpgmvpHandler implements FormatHandler {
@@ -10,18 +10,8 @@ class rpgmvpHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      {
-        name: "RPG Maker MV PNG (RPGMVP)",
-        format: "rpgmvp",
-        extension: "rpgmvp",
-        mime: "application/x-rpgmvp",
-        from: true,
-        to: false,
-        internal: "rpgmvp",
-        category: Category.IMAGE,
-        lossless: true,
-      },
-      CommonFormats.PNG.builder("png").markLossless().allowFrom(false).allowTo(true),
+      CommonFormats.RPGMVP.builder("rpgmvp").lossless().from(),
+      CommonFormats.PNG.builder("png").lossless().to(),
     ];
     this.ready = true;
   }

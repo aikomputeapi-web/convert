@@ -1,16 +1,9 @@
 import CommonFormats from "src/CommonFormats.ts";
-import {
-  FormatDefinition,
-  type FileData,
-  type FileFormat,
-  type FormatHandler,
-} from "../FormatHandler.ts";
+import { type FileData, type FileFormat, type FormatHandler } from "../FormatHandler.ts";
 import { BadMagicError, InitializationError } from "src/errors.ts";
 
 const PNG_SIGNATURE = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
 const ICNS_MAGIC = "icns";
-const ICNS_FORMAT = new FormatDefinition("Apple Icon Image", "icns", "icns", "image/icns", "image");
-
 const ICON_SIZES = [16, 32, 64, 128, 256, 512, 1024];
 
 const ICON_TYPE_BY_SIZE = new Map<number, string>([
@@ -127,12 +120,9 @@ class icnsHandler implements FormatHandler {
   public name: string = "icns";
   public ready: boolean = false;
   public supportedFormats: FileFormat[] = [
-    CommonFormats.PNG.supported("png", true, true, true),
-    ICNS_FORMAT.builder("icns")
-      .allowFrom(true)
-      .allowTo(true)
-      // ICNS contains a finite icon set; conversions here are not guaranteed bit-exact round-trips.
-      .markLossless(false),
+    CommonFormats.PNG.builder("png").lossless().fromTo(),
+    // ICNS contains a finite icon set; conversions here are not guaranteed bit-exact round-trips.
+    CommonFormats.ICNS.builder("icns").fromTo(),
   ];
   public offload: boolean = true;
 

@@ -11,11 +11,11 @@ class svgTraceHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.PNG.builder("png").allowFrom(),
-      CommonFormats.JPEG.builder("jpeg").allowFrom(),
+      CommonFormats.PNG.builder("png").from(),
+      CommonFormats.JPEG.builder("jpeg").from(),
       // note there is both animated svgs, and animted webPs, although this converter does not support either
-      CommonFormats.WEBP.builder("webp").allowFrom(),
-      CommonFormats.SVG.builder("svg").allowTo(),
+      CommonFormats.WEBP.builder("webp").from(),
+      CommonFormats.SVG.builder("svg").to(),
     ];
     this.ready = true;
   }

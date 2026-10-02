@@ -9,18 +9,9 @@ class minecraftLangHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.JSON.builder("json").markLossless(true).allowFrom(true).allowTo(true),
+      CommonFormats.JSON.builder("json").lossless().fromTo(),
 
-      {
-        name: "Minecraft Language Localization File",
-        format: "minecraft-lang",
-        extension: "lang",
-        mime: "text/plain",
-        from: true,
-        to: true,
-        internal: "minecraft-lang",
-        lossless: true,
-      },
+      CommonFormats.MC_LANG.builder("minecraft-lang").lossless().fromTo(),
     ];
     this.ready = true;
   }

@@ -1,6 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 
 class otaHandler implements FormatHandler {
@@ -14,18 +14,8 @@ class otaHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.PNG.supported("png", true, true, true),
-      {
-        name: "Over The Air bitmap",
-        format: "ota",
-        extension: "otb",
-        mime: "image/x-ota",
-        from: true,
-        to: true,
-        internal: "ota",
-        category: Category.IMAGE,
-        lossless: false,
-      },
+      CommonFormats.PNG.builder("png").lossless().fromTo(),
+      CommonFormats.OTA.builder("ota").fromTo(),
     ];
 
     this.#canvas = new OffscreenCanvas(1, 1);

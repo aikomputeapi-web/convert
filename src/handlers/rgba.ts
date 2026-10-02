@@ -1,6 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 
 class rgbaHandler implements FormatHandler {
@@ -14,29 +14,9 @@ class rgbaHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.PNG.supported("png", true, true, true),
-      {
-        name: "Raw red, green, and blue samples",
-        format: "rgb",
-        extension: "rgb",
-        mime: "image/x-rgb",
-        from: true,
-        to: true,
-        internal: "rgb",
-        category: Category.IMAGE,
-        lossless: false,
-      },
-      {
-        name: "Raw red, green, blue, and alpha samples",
-        format: "rgba",
-        extension: "rgba",
-        mime: "image/x-rgba",
-        from: true,
-        to: true,
-        internal: "rgba",
-        category: Category.IMAGE,
-        lossless: true,
-      },
+      CommonFormats.PNG.builder("png").lossless().fromTo(),
+      CommonFormats.RGB.builder("rgb").fromTo(),
+      CommonFormats.RGBA.builder("rgba").lossless().fromTo(),
     ];
 
     this.#canvas = new OffscreenCanvas(1, 1);

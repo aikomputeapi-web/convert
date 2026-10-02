@@ -116,11 +116,7 @@ test(
 test(
   "mp4 → apng",
   async () => {
-    const conversion = await attemptConversion(
-      ["doom.mp4"],
-      CommonFormats.MP4,
-      CommonFormats.PNG.builder("apng").withFormat("apng"),
-    );
+    const conversion = await attemptConversion(["doom.mp4"], CommonFormats.MP4, CommonFormats.APNG);
 
     expect(conversion).toBeTruthy();
     expect(conversion!.path.map((c) => c.format.format)).toEqual(["mp4", "apng"]);

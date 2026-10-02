@@ -1,5 +1,5 @@
 import pako from "pako";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { BadMagicError, EOFError, InitializationError } from "src/errors.ts";
 
@@ -468,20 +468,10 @@ function decodeAseprite(bytes: Uint8Array): ParsedAseprite {
 class asepriteHandler implements FormatHandler {
   public name: string = "aseprite";
   public supportedFormats: FileFormat[] = [
-    {
-      name: "Aseprite Sprite",
-      format: "aseprite",
-      extension: "aseprite",
-      mime: "image/x-aseprite",
-      from: true,
-      to: false,
-      internal: "aseprite",
-      category: Category.IMAGE,
-      lossless: true,
-    },
-    CommonFormats.PNG.supported("png", false, true, true),
-    CommonFormats.JPEG.supported("jpeg", false, true),
-    CommonFormats.WEBP.supported("webp", false, true),
+    CommonFormats.ASEPRITE.builder("aseprite").lossless().from(),
+    CommonFormats.PNG.builder("png").lossless().to(),
+    CommonFormats.JPEG.builder("jpeg").to(),
+    CommonFormats.WEBP.builder("webp").to(),
   ];
 
   #canvas?: OffscreenCanvas;

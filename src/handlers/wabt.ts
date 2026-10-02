@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import { Category } from "../CommonFormats.ts";
+import CommonFormats from "../CommonFormats.ts";
 import wabt from "wabt";
 
 // WabtModule is not exported
@@ -32,29 +32,8 @@ export default class wabtHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      {
-        name: "WebAssembly Binary (Wasm)",
-        format: "wasm",
-        extension: "wasm",
-        mime: "application/wasm",
-        from: true,
-        to: true,
-        internal: "wasm",
-        category: Category.CODE,
-        lossless: true,
-      },
-      {
-        name: "WebAssembly Text Format (WAT)",
-        format: "wat",
-        extension: "wat",
-        // https://github.com/WebAssembly/spec/issues/1347
-        mime: "text/plain",
-        from: true,
-        to: true,
-        internal: "wat",
-        category: Category.CODE,
-        lossless: true,
-      },
+      CommonFormats.WASM.builder("wasm").lossless().fromTo(),
+      CommonFormats.WAT.builder("wat").lossless().fromTo(),
     ];
 
     this.wabtModule = await wabt();

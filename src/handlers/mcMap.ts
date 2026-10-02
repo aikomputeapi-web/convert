@@ -1,6 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 
 import pako from "pako";
@@ -87,40 +87,10 @@ class mcMapHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.PNG.supported("png", true, true, false),
-      {
-        name: "Raw red, green, and blue samples",
-        format: "rgb",
-        extension: "rgb",
-        mime: "image/x-rgb",
-        from: false,
-        to: true,
-        internal: "rgb",
-        category: Category.IMAGE,
-        lossless: true,
-      },
-      {
-        name: "Minecraft Map File",
-        format: "mcmap",
-        extension: "dat",
-        mime: "application/x-minecraft-map", // I am required to put something here
-        from: true,
-        to: true,
-        internal: "mcmap",
-        category: Category.DATA,
-        lossless: false,
-      },
-      {
-        name: "Minecraft Map File (Grid)",
-        format: "mcmap_grid",
-        extension: "dat",
-        mime: "application/x-minecraft-map",
-        from: false,
-        to: true,
-        internal: "mcmap_grid",
-        category: Category.DATA,
-        lossless: false,
-      },
+      CommonFormats.PNG.builder("png").fromTo(),
+      CommonFormats.RGB.builder("rgb").lossless().to(),
+      CommonFormats.MC_MAP.builder("mcmap").fromTo(),
+      CommonFormats.MC_MAP_GRID.builder("mcmap_grid").to(),
     ];
 
     this.#canvas = new OffscreenCanvas(128, 128);

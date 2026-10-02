@@ -35,9 +35,9 @@ class pdfjsHandler implements FormatHandler {
   public name: string = "pdfjs";
 
   public supportedFormats: FileFormat[] = [
-    CommonFormats.PDF.builder("pdf").allowFrom(),
-    CommonFormats.PNG.supported("png", false, true),
-    CommonFormats.JPEG.supported("jpeg", false, true),
+    CommonFormats.PDF.builder("pdf").from(),
+    CommonFormats.PNG.builder("png").to(),
+    CommonFormats.JPEG.builder("jpeg").to(),
   ];
 
   public ready: boolean = false;

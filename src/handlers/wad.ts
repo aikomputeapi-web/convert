@@ -1,16 +1,7 @@
-import { FormatDefinition } from "../FormatHandler.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import JSZip from "jszip";
 import { BadMagicError } from "src/errors.ts";
-
-const WADFormat = new FormatDefinition(
-  "Doom WAD Archive",
-  "wad",
-  "wad",
-  "application/x-doom-wad",
-  "archive",
-);
 
 interface WadLump {
   name: string;
@@ -28,9 +19,9 @@ class wadHandler implements FormatHandler {
   public offload: boolean = true;
 
   public supportedFormats: FileFormat[] = [
-    WADFormat.builder("wad").allowFrom().allowTo().markLossless(),
-    CommonFormats.ZIP.builder("zip").allowFrom().allowTo().markLossless(),
-    CommonFormats.JSON.builder("json").allowTo(),
+    CommonFormats.WAD.builder("wad").lossless().fromTo(),
+    CommonFormats.ZIP.builder("zip").lossless().fromTo(),
+    CommonFormats.JSON.builder("json").to(),
   ];
 
   async init() {

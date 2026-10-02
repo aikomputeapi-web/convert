@@ -1,26 +1,5 @@
-import {
-  FormatDefinition,
-  type FileData,
-  type FileFormat,
-  type FormatHandler,
-} from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
-
-const LESS_FORMAT = new FormatDefinition(
-  "LESS Stylesheet",
-  "less",
-  "less",
-  "text/less",
-  Category.CODE,
-);
-
-const SCSS_FORMAT = new FormatDefinition(
-  "SCSS Stylesheet",
-  "scss",
-  "scss",
-  "text/x-scss",
-  Category.CODE,
-);
+import { type FileData, type FileFormat, type FormatHandler } from "../FormatHandler.ts";
+import CommonFormats from "src/CommonFormats.ts";
 
 class cssHandler implements FormatHandler {
   public name: string = "css";
@@ -30,9 +9,9 @@ class cssHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.CSS.builder("css").allowFrom(true).allowTo(true).markLossless(),
-      LESS_FORMAT.builder("less").allowFrom(true),
-      SCSS_FORMAT.builder("scss").allowFrom(true),
+      CommonFormats.CSS.builder("css").lossless().fromTo(),
+      CommonFormats.LESS.builder("less").from(),
+      CommonFormats.SCSS.builder("scss").from(),
     ];
     this.ready = true;
   }

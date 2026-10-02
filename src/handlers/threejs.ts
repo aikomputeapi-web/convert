@@ -1,4 +1,4 @@
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { InitializationError } from "src/errors.ts";
 
@@ -10,42 +10,12 @@ import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
 class threejsHandler implements FormatHandler {
   public name: string = "threejs";
   public supportedFormats = [
-    {
-      name: "GL Transmission Format Binary",
-      format: "glb",
-      extension: "glb",
-      mime: "model/gltf-binary",
-      from: true,
-      to: false,
-      internal: "glb",
-      category: Category.MODEL,
-      lossless: false,
-    },
-    {
-      name: "GL Transmission Format",
-      format: "gltf",
-      extension: "gltf",
-      mime: "model/gltf+json",
-      from: true,
-      to: false,
-      internal: "glb",
-      category: Category.MODEL,
-      lossless: false,
-    },
-    {
-      name: "Wavefront OBJ",
-      format: "obj",
-      extension: "obj",
-      mime: "model/obj",
-      from: true,
-      to: false,
-      internal: "obj",
-      category: Category.MODEL,
-      lossless: false,
-    },
-    CommonFormats.PNG.supported("png", false, true),
-    CommonFormats.JPEG.supported("jpeg", false, true),
-    CommonFormats.WEBP.supported("webp", false, true),
+    CommonFormats.GLB.builder("glb").from(),
+    CommonFormats.GLTF.builder("glb").from(),
+    CommonFormats.OBJ.builder("obj").from(),
+    CommonFormats.PNG.builder("png").to(),
+    CommonFormats.JPEG.builder("jpeg").to(),
+    CommonFormats.WEBP.builder("webp").to(),
   ];
   public ready: boolean = false;
   public offload: boolean = true;

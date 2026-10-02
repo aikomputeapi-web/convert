@@ -300,24 +300,8 @@ class bbmodelHandler implements FormatHandler {
   public name: string = "bbmodel";
   public ready: boolean = false;
   public supportedFormats: FileFormat[] = [
-    {
-      name: "Wavefront OBJ",
-      format: "obj",
-      extension: "obj",
-      mime: "model/obj",
-      from: false,
-      to: true,
-      internal: "obj",
-      category: "model",
-      lossless: false,
-    },
-    CommonFormats.JSON.builder("bbmodel")
-      .named("Blockbench Project")
-      .withFormat("bbmodel")
-      .withExt("bbmodel")
-      .withCategory("model")
-      .allowFrom(true)
-      .allowTo(false),
+    CommonFormats.OBJ.builder("obj").to(),
+    CommonFormats.BBMODEL.builder("bbmodel").from(),
   ];
   public offload: boolean = true;
 

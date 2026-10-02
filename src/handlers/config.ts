@@ -12,45 +12,8 @@ import {
   stringifyTOML,
   stringifyINI,
 } from "confbox";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
-import {
-  FormatDefinition,
-  type FileData,
-  type FileFormat,
-  type FormatHandler,
-} from "../FormatHandler.ts";
-
-const JSON5_FORMAT = new FormatDefinition(
-  "JSON5",
-  "json5",
-  "json5",
-  "application/json5",
-  Category.DATA,
-);
-
-const JSONC_FORMAT = new FormatDefinition(
-  "JSON Comments",
-  "jsonc",
-  "jsonc",
-  "application/jsonc",
-  Category.DATA,
-);
-
-const TOML_FORMAT = new FormatDefinition(
-  "Tom's Obvious, Minimal Language",
-  "toml",
-  "toml",
-  "application/toml",
-  Category.DATA,
-);
-
-const INI_FORMAT = new FormatDefinition(
-  "Initialization file",
-  "ini",
-  "ini",
-  "text/plain",
-  Category.DATA,
-);
+import CommonFormats from "src/CommonFormats.ts";
+import { type FileData, type FileFormat, type FormatHandler } from "../FormatHandler.ts";
 
 class configHandler implements FormatHandler {
   public name: string = "config";
@@ -59,14 +22,13 @@ class configHandler implements FormatHandler {
 
   public supportedFormats: FileFormat[] = [
     // JSON maintains exact data equivalence to JS Objects natively
-    CommonFormats.JSON.builder("json").allowFrom().allowTo().markLossless(true),
+    CommonFormats.JSON.builder("json").lossless().fromTo(),
     // JSON5, YAML, and TOML have comments and other features lost when parsed to JS Objects
-    JSON5_FORMAT.builder("json5").allowFrom().allowTo().markLossless(false),
-    JSONC_FORMAT.builder("jsonc").allowFrom().allowTo().markLossless(false),
-    CommonFormats.YML.builder("yaml").allowFrom().allowTo().markLossless(false),
-    CommonFormats.YML.builder("yaml").withExt("yaml").allowFrom().allowTo().markLossless(false),
-    TOML_FORMAT.builder("toml").allowFrom().allowTo().markLossless(false),
-    INI_FORMAT.builder("ini").allowFrom().allowTo().markLossless(false),
+    CommonFormats.JSON5.builder("json5").fromTo(),
+    CommonFormats.JSONC.builder("jsonc").fromTo(),
+    CommonFormats.YML.builder("yaml").fromTo(),
+    CommonFormats.TOML.builder("toml").fromTo(),
+    CommonFormats.INI.builder("ini").fromTo(),
   ];
 
   async init() {

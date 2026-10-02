@@ -5,10 +5,10 @@ import { InitializationError } from "src/errors.ts";
 class svgToBlobHandler implements FormatHandler {
   public name: string = "svgToBlob";
   public supportedFormats: FileFormat[] = [
-    CommonFormats.PNG.supported("png", false, true),
-    CommonFormats.JPEG.supported("jpeg", false, true),
-    CommonFormats.WEBP.supported("webp", false, true),
-    CommonFormats.SVG.supported("svg", true, false),
+    CommonFormats.PNG.builder("png").to(),
+    CommonFormats.JPEG.builder("jpeg").to(),
+    CommonFormats.WEBP.builder("webp").to(),
+    CommonFormats.SVG.builder("svg").from(),
   ];
   public ready: boolean = false;
   public offload: boolean = false; // svg does not like createImageBitmap

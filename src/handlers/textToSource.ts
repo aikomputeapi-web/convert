@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 
 function python(text: string): string {
   return `print(${JSON.stringify(text)})`;
@@ -59,93 +59,15 @@ function rust(text: string): string {
 
 class textToSourceHandler implements FormatHandler {
   static converters: [FileFormat, (text: string) => string][] = [
-    [CommonFormats.PYTHON.builder("py").allowTo().markLossless(), python],
-    [
-      {
-        name: "Javascript Source File",
-        format: "js",
-        extension: "js",
-        mime: "text/javascript",
-        from: false,
-        to: true,
-        internal: "js",
-        category: Category.CODE,
-        lossless: true,
-      },
-      javascript,
-    ],
-    [
-      {
-        name: "C Source File",
-        format: "c",
-        extension: "c",
-        mime: "text/x-c",
-        from: false,
-        to: true,
-        internal: "c",
-        category: Category.CODE,
-        lossless: true,
-      },
-      c,
-    ],
-    [
-      {
-        name: "C++ Source File",
-        format: "cpp",
-        extension: "cpp",
-        mime: "text/x-c++src",
-        from: false,
-        to: true,
-        internal: "cpp",
-        category: Category.CODE,
-        lossless: true,
-      },
-      cpp,
-    ],
-    [
-      {
-        name: "Go Source File",
-        format: "go",
-        extension: "go",
-        mime: "text/x-go",
-        from: false,
-        to: true,
-        internal: "go",
-        category: Category.CODE,
-        lossless: true,
-      },
-      go,
-    ],
-    [CommonFormats.BATCH.builder("bat").allowTo().markLossless(), batch],
-    [CommonFormats.SH.builder("sh").allowTo().markLossless(), shell],
-    [
-      {
-        name: "C# Source File",
-        format: "cs",
-        extension: "cs",
-        mime: "text/csharp",
-        from: false,
-        to: true,
-        internal: "csharp",
-        category: Category.CODE,
-        lossless: true,
-      },
-      csharp,
-    ],
-    [
-      {
-        name: "Rust Source File",
-        format: "rs",
-        extension: "rs",
-        mime: "text/rust",
-        from: false,
-        to: true,
-        internal: "rs",
-        category: Category.CODE,
-        lossless: true,
-      },
-      rust,
-    ],
+    [CommonFormats.PYTHON.builder("py").lossless().to(), python],
+    [CommonFormats.JS.builder("js").lossless().to(), javascript],
+    [CommonFormats.C.builder("c").lossless().to(), c],
+    [CommonFormats.CPP.builder("cpp").lossless().to(), cpp],
+    [CommonFormats.GO.builder("go").lossless().to(), go],
+    [CommonFormats.BATCH.builder("bat").lossless().to(), batch],
+    [CommonFormats.SH.builder("sh").lossless().to(), shell],
+    [CommonFormats.CSHARP.builder("csharp").lossless().to(), csharp],
+    [CommonFormats.RUST.builder("rs").lossless().to(), rust],
   ];
 
   public name: string = "textToSource";
@@ -155,7 +77,7 @@ class textToSourceHandler implements FormatHandler {
 
   async init() {
     const formats = textToSourceHandler.converters.map(([format]) => format);
-    this.supportedFormats = [CommonFormats.TEXT.builder("txt").allowFrom().markLossless()];
+    this.supportedFormats = [CommonFormats.TEXT.builder("txt").lossless().from()];
     this.supportedFormats.push(...formats);
 
     this.ready = true;

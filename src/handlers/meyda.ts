@@ -11,10 +11,10 @@ class meydaHandler implements FormatHandler {
   public name: string = "meyda";
   public supportedFormats: FileFormat[] = [
     // Lossy reconstruction due to 2 channel encoding
-    CommonFormats.PNG.supported("image", true, true),
-    CommonFormats.JPEG.supported("image", true, true),
-    CommonFormats.WEBP.supported("image", true, true),
-    CommonFormats.WAV.builder("audio").allowFrom().allowTo(),
+    CommonFormats.PNG.builder("image").fromTo(),
+    CommonFormats.JPEG.builder("image").fromTo(),
+    CommonFormats.WEBP.builder("image").fromTo(),
+    CommonFormats.WAV.builder("audio").fromTo(),
   ];
   public ready: boolean = false;
   public offload: boolean = true;

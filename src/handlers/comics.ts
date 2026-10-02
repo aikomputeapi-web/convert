@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 
 import { parseTar } from "nanotar";
 import JSZip from "jszip";
@@ -24,25 +24,15 @@ export class comicsZipPackerHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.PNG.supported("png", true, false),
-      CommonFormats.JPEG.supported("jpg", true, false),
-      CommonFormats.WEBP.supported("webp", true, false),
-      CommonFormats.BMP.supported("bmp", true, false),
-      CommonFormats.TIFF.supported("tiff", true, false),
-      CommonFormats.GIF.supported("gif", true, false),
+      CommonFormats.PNG.builder("png").from(),
+      CommonFormats.JPEG.builder("jpg").from(),
+      CommonFormats.WEBP.builder("webp").from(),
+      CommonFormats.BMP.builder("bmp").from(),
+      CommonFormats.TIFF.builder("tiff").from(),
+      CommonFormats.GIF.builder("gif").from(),
 
-      CommonFormats.ZIP.supported("zip", false, true, true),
-      {
-        name: "Comic Book Archive (ZIP)",
-        format: "cbz",
-        extension: "cbz",
-        mime: "application/vnd.comicbook+zip",
-        from: false,
-        to: true,
-        internal: "cbz",
-        category: Category.ARCHIVE,
-        lossless: false,
-      },
+      CommonFormats.ZIP.builder("zip").lossless().to(),
+      CommonFormats.CBZ.builder("cbz").to(),
     ];
 
     this.ready = true;
@@ -109,25 +99,15 @@ export class comicsZipUnpackerHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.PNG.supported("png", false, true),
-      CommonFormats.JPEG.supported("jpg", false, true),
-      CommonFormats.WEBP.supported("webp", false, true),
-      CommonFormats.BMP.supported("bmp", false, true),
-      CommonFormats.TIFF.supported("tiff", false, true),
-      CommonFormats.GIF.supported("gif", false, true),
+      CommonFormats.PNG.builder("png").to(),
+      CommonFormats.JPEG.builder("jpg").to(),
+      CommonFormats.WEBP.builder("webp").to(),
+      CommonFormats.BMP.builder("bmp").to(),
+      CommonFormats.TIFF.builder("tiff").to(),
+      CommonFormats.GIF.builder("gif").to(),
 
-      CommonFormats.ZIP.supported("zip", true, false),
-      {
-        name: "Comic Book Archive (ZIP)",
-        format: "cbz",
-        extension: "cbz",
-        mime: "application/vnd.comicbook+zip",
-        from: true,
-        to: false,
-        internal: "cbz",
-        category: Category.ARCHIVE,
-        lossless: false,
-      },
+      CommonFormats.ZIP.builder("zip").from(),
+      CommonFormats.CBZ.builder("cbz").from(),
     ];
 
     this.ready = true;
@@ -189,25 +169,15 @@ export class comicsTarUnpackerHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.PNG.supported("png", false, true),
-      CommonFormats.JPEG.supported("jpg", false, true),
-      CommonFormats.WEBP.supported("webp", false, true),
-      CommonFormats.BMP.supported("bmp", false, true),
-      CommonFormats.TIFF.supported("tiff", false, true),
-      CommonFormats.GIF.supported("gif", false, true),
+      CommonFormats.PNG.builder("png").to(),
+      CommonFormats.JPEG.builder("jpg").to(),
+      CommonFormats.WEBP.builder("webp").to(),
+      CommonFormats.BMP.builder("bmp").to(),
+      CommonFormats.TIFF.builder("tiff").to(),
+      CommonFormats.GIF.builder("gif").to(),
 
-      CommonFormats.TAR.supported("tar", true, false),
-      {
-        name: "Comic Book Archive (TAR)",
-        format: "cbt",
-        extension: "cbt",
-        mime: "application/vnd.comicbook+tar",
-        from: true,
-        to: false,
-        internal: "cbt",
-        category: Category.ARCHIVE,
-        lossless: false,
-      },
+      CommonFormats.TAR.builder("tar").from(),
+      CommonFormats.CBT.builder("cbt").from(),
     ];
 
     this.ready = true;

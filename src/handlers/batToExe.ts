@@ -8,8 +8,8 @@ import footUrl from "./batToExe/exe65824foot.bin?url";
 class batToExeHandler implements FormatHandler {
   public name = "batToExe";
   public supportedFormats = [
-    CommonFormats.BATCH.supported("bat", true, false),
-    CommonFormats.EXE.supported("exe", false, true, true), // Lossless because it stores exact input side
+    CommonFormats.BATCH.builder("bat").from(),
+    CommonFormats.EXE.builder("exe").lossless().to(), // Lossless because it stores exact input side
   ];
   public ready = false;
   public offload: boolean = true;

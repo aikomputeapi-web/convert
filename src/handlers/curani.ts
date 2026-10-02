@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 
 function read_lendian(x: number, y: number): number {
   return x + y * 16 * 16;
@@ -13,39 +13,9 @@ class curaniHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      {
-        name: "Microsoft Windows ANI",
-        format: "ani",
-        extension: "ani",
-        mime: "application/x-navi-animation",
-        from: true,
-        to: true,
-        internal: "ani",
-        category: Category.IMAGE,
-        lossless: false,
-      },
-      {
-        name: "Microsoft Windows CUR",
-        format: "cur",
-        extension: "cur",
-        mime: "image/vnd.microsoft.icon",
-        from: true,
-        to: true,
-        internal: "cur",
-        category: Category.IMAGE,
-        lossless: false,
-      },
-      {
-        name: "Microsoft Windows ICO",
-        format: "ico",
-        extension: "ico",
-        mime: "image/vnd.microsoft.icon",
-        from: true,
-        to: true,
-        internal: "ico",
-        category: Category.IMAGE,
-        lossless: false,
-      },
+      CommonFormats.ANI.builder("ani").fromTo(),
+      CommonFormats.CUR.builder("cur").fromTo(),
+      CommonFormats.ICO.builder("ico").fromTo(),
     ];
     this.ready = true;
   }

@@ -1,33 +1,13 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { Chess } from "chess.js";
 
 class chessjsHandler implements FormatHandler {
   public name: string = "chessjs";
   public supportedFormats: FileFormat[] = [
-    {
-      name: "Forsyth–Edwards Notation",
-      format: "fen",
-      extension: "fen",
-      mime: "application/vnd.chess-fen",
-      from: true,
-      to: true,
-      internal: "fen",
-      category: Category.TEXT,
-      lossless: false,
-    },
-    {
-      name: "Portable Game Notation",
-      format: "pgn",
-      extension: "pgn",
-      mime: "application/vnd.chess-pgn",
-      from: true,
-      to: true,
-      internal: "pgn",
-      category: Category.TEXT,
-      lossless: true,
-    },
-    CommonFormats.TEXT.builder("txt").allowTo().markLossless(false),
+    CommonFormats.FEN.builder("fen").fromTo(),
+    CommonFormats.PGN.builder("pgn").lossless().fromTo(),
+    CommonFormats.TEXT.builder("txt").to(),
   ];
   public ready: boolean = false;
   public offload: boolean = true;

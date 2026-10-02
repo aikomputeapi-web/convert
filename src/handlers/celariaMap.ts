@@ -7,7 +7,7 @@ import { PlayerSpawnPoint } from "celaria-formats/class/maps/objects/PlayerSpawn
 import { Sphere } from "celaria-formats/class/maps/objects/Sphere.mjs";
 import { TutorialHologram } from "celaria-formats/class/maps/objects/TutorialHologram.mjs";
 import type { FlatVector3, Vector3 } from "celaria-formats/types/data.mts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { Buffer } from "buffer";
 
@@ -59,40 +59,10 @@ class celariaMapHandler implements FormatHandler {
   /**/
   async init() {
     this.supportedFormats = [
-      {
-        name: "Wavefront OBJ",
-        format: "obj",
-        extension: "obj",
-        mime: "model/obj",
-        from: false,
-        to: true,
-        internal: "obj",
-        category: Category.MODEL,
-        lossless: false,
-      },
-      CommonFormats.JSON.builder("json").allowFrom(true).allowTo(true).markLossless(false),
-      {
-        name: "Editable Celaria Map",
-        format: "ecmap",
-        extension: "ecmap",
-        mime: "application/x-editable-celaria-map",
-        from: true,
-        to: true,
-        internal: "ecmap",
-        category: Category.DATA,
-        lossless: false,
-      },
-      {
-        name: "Celaria Map",
-        format: "cmap",
-        extension: "cmap",
-        mime: "application/x-celaria-map",
-        from: true,
-        to: false,
-        internal: "cmap",
-        category: Category.DATA,
-        lossless: false,
-      },
+      CommonFormats.OBJ.builder("obj").to(),
+      CommonFormats.JSON.builder("json").fromTo(),
+      CommonFormats.ECMAP.builder("ecmap").fromTo(),
+      CommonFormats.CMAP.builder("cmap").from(),
     ];
 
     this.ready = true;

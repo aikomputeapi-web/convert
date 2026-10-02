@@ -13,9 +13,9 @@ class azw3Handler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.AZW3.supported("azw3", true, false),
-      CommonFormats.MOBI.supported("mobi", true, false),
-      CommonFormats.EPUB.supported("epub", false, true),
+      CommonFormats.AZW3.builder("azw3").from(),
+      CommonFormats.MOBI.builder("mobi").from(),
+      CommonFormats.EPUB.builder("epub").to(),
     ];
     this.ready = true;
   }

@@ -1,22 +1,12 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 
 class alsHandler implements FormatHandler {
   public name: string = "als";
 
   public supportedFormats: FileFormat[] = [
-    {
-      name: "Ableton Live Set",
-      format: "als",
-      extension: "als",
-      mime: "application/gzip",
-      from: true,
-      to: false,
-      internal: "als",
-      category: Category.DATA,
-      lossless: true,
-    },
-    CommonFormats.XML.builder("xml").allowTo(),
+    CommonFormats.ALS.builder("als").lossless().from(),
+    CommonFormats.XML.builder("xml").to(),
   ];
 
   public ready: boolean = false;

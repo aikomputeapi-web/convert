@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 
 class txtToInfiniteCraftHandler implements FormatHandler {
   public name: string = "txtToInfiniteCraft";
@@ -9,18 +9,8 @@ class txtToInfiniteCraftHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.TEXT.supported("text", true, false),
-      {
-        name: "Infinite Craft Save File",
-        format: "ic",
-        extension: "ic",
-        mime: "application/x-infinite-craft-ic",
-        internal: "ic",
-        category: Category.ARCHIVE,
-        from: false,
-        to: true,
-        lossless: false,
-      },
+      CommonFormats.TEXT.builder("text").from(),
+      CommonFormats.INFINITE_CRAFT.builder("ic").to(),
     ];
     this.ready = true;
   }
@@ -85,18 +75,8 @@ class infiniteCraftToJsonHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      {
-        name: "Infinite Craft Save File",
-        format: "ic",
-        extension: "ic",
-        mime: "application/x-infinite-craft-ic",
-        internal: "ic",
-        category: Category.ARCHIVE,
-        from: true,
-        to: false,
-        lossless: true,
-      },
-      CommonFormats.JSON.supported("json", false, true, true),
+      CommonFormats.INFINITE_CRAFT.builder("ic").lossless().from(),
+      CommonFormats.JSON.builder("json").lossless().to(),
     ];
     this.ready = true;
   }

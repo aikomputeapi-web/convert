@@ -1,17 +1,10 @@
 import { expect, test } from "bun:test";
 import CommonFormats from "../../src/CommonFormats.js";
-import { FormatDefinition } from "../../src/FormatHandler.js";
 import configHandler from "../../src/handlers/config.ts";
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
-const json5Format = new FormatDefinition(
-  "JSON5",
-  "json5",
-  "json5",
-  "application/json5",
-  "data",
-).supported("json5", true, true, true);
+const json5Format = CommonFormats.JSON5.builder("json5").lossless().fromTo();
 
 test("config handler parses JSON5 input and writes JSON output", async () => {
   const handler = new configHandler();
@@ -27,7 +20,7 @@ test("config handler parses JSON5 input and writes JSON output", async () => {
       },
     ],
     json5Format,
-    CommonFormats.JSON.supported("json", true, true, true),
+    CommonFormats.JSON.builder("json").lossless().fromTo(),
   );
 
   expect(output.name).toBe("config.json");
@@ -51,7 +44,7 @@ test("config handler writes JSON5 output that round-trips through the parser", a
         ),
       },
     ],
-    CommonFormats.JSON.supported("json", true, true, true),
+    CommonFormats.JSON.builder("json").lossless().fromTo(),
     json5Format,
   );
 
@@ -63,7 +56,7 @@ test("config handler writes JSON5 output that round-trips through the parser", a
   const reparsed = await handler.doConvert(
     [{ name: output.name, bytes: output.bytes }],
     json5Format,
-    CommonFormats.JSON.supported("json", true, true, true),
+    CommonFormats.JSON.builder("json").lossless().fromTo(),
   );
 
   expect(JSON.parse(decoder.decode(reparsed[0].bytes))).toEqual({

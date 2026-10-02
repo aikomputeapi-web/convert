@@ -5,8 +5,8 @@ import PDFDocument from "pdfkit/js/pdfkit.standalone";
 class textToPdfHandler implements FormatHandler {
   public name = "textToPdf";
   public supportedFormats?: FileFormat[] = [
-    CommonFormats.TEXT.builder("text").allowFrom(true).allowTo(false),
-    CommonFormats.PDF.builder("pdf").allowFrom(false).allowTo(true),
+    CommonFormats.TEXT.builder("text").from(),
+    CommonFormats.PDF.builder("pdf").to(),
   ];
   public ready = false;
   public offload: boolean = true;

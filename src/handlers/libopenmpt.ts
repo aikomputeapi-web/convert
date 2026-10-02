@@ -137,7 +137,7 @@ class libopenmptHandler implements FormatHandler {
       });
     }
 
-    this.supportedFormats.push(CommonFormats.WAV.builder("wav").allowTo().markLossless());
+    this.supportedFormats.push(CommonFormats.WAV.builder("wav").lossless().to());
 
     this.ready = true;
   }

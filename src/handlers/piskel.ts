@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import JSZip from "jszip";
 import { InitializationError } from "src/errors.ts";
 
@@ -14,19 +14,9 @@ class piskelHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.PNG.builder("png").markLossless().allowFrom(false).allowTo(true),
-      CommonFormats.ZIP.builder("zip").markLossless().allowFrom(false).allowTo(true),
-      {
-        name: "Piskel Sprite Save File",
-        format: "piskel",
-        extension: "piskel",
-        mime: "image/png+json",
-        from: true,
-        to: false,
-        category: Category.IMAGE,
-        internal: "piskel",
-        lossless: true,
-      },
+      CommonFormats.PNG.builder("png").lossless().to(),
+      CommonFormats.ZIP.builder("zip").lossless().to(),
+      CommonFormats.PISKEL.builder("piskel").lossless().from(),
     ];
 
     this.#canvas = new OffscreenCanvas(1, 1);

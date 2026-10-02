@@ -1,22 +1,13 @@
-import { FormatDefinition } from "../FormatHandler.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { BSON } from "bson";
-
-const bsonFormat = new FormatDefinition(
-  "Binary JSON",
-  "bson",
-  "bson",
-  "application/bson",
-  Category.DATA,
-);
 
 class bsonHandler implements FormatHandler {
   public name: string = "bson";
 
   public supportedFormats?: FileFormat[] = [
-    CommonFormats.JSON.supported("json", true, true, true),
-    bsonFormat.supported("bson", true, true, true),
+    CommonFormats.JSON.builder("json").lossless().fromTo(),
+    CommonFormats.BSON.builder("bson").lossless().fromTo(),
   ];
 
   public ready: boolean = false;
@@ -33,7 +24,7 @@ class bsonHandler implements FormatHandler {
   ): Promise<FileData[]> {
     switch (inputFormat.mime) {
       case CommonFormats.JSON.mime:
-        if (outputFormat.mime !== bsonFormat.mime) {
+        if (outputFormat.mime !== CommonFormats.BSON.mime) {
           throw new TypeError(`Unsupported output format: ${outputFormat.internal}`);
         }
 
@@ -55,7 +46,7 @@ class bsonHandler implements FormatHandler {
           };
         });
 
-      case bsonFormat.mime:
+      case CommonFormats.BSON.mime:
         if (outputFormat.mime !== CommonFormats.JSON.mime) {
           throw new TypeError(`Unsupported output format: ${outputFormat.internal}`);
         }

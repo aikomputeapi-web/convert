@@ -10,19 +10,9 @@ class kraHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.PNG.builder("png").allowFrom(false).allowTo(true),
+      CommonFormats.PNG.builder("png").to(),
 
-      {
-        name: "Krita Raster Archive (KRA)",
-        format: "kra",
-        extension: "kra",
-        mime: "application/x-krita",
-        from: true,
-        to: false,
-        internal: "kra",
-        category: ["archive"],
-        lossless: false,
-      },
+      CommonFormats.KRA.builder("kra").from(),
     ];
     this.ready = true;
   }

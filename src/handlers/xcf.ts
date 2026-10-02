@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import XCF from "built/gimper/src/main.js";
 import { InitializationError } from "src/errors.ts";
 
@@ -14,18 +14,8 @@ class xcfHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      {
-        name: "eXperimental Computing Facility (GIMP)",
-        format: "xcf",
-        extension: "xcf",
-        mime: "image/x-xcf",
-        from: true,
-        to: false,
-        internal: "xcf",
-        category: Category.IMAGE,
-        lossless: true,
-      },
-      CommonFormats.PNG.builder("png").markLossless().allowFrom(false).allowTo(true),
+      CommonFormats.XCF.builder("xcf").lossless().from(),
+      CommonFormats.PNG.builder("png").lossless().to(),
     ];
 
     this.#canvas = new OffscreenCanvas(1, 1);

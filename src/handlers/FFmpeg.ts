@@ -8,7 +8,7 @@ import ffmpegWasmUrl from "@ffmpeg/core/wasm?url";
 
 import mime from "mime";
 import normalizeMimeType from "../normalizeMimeType.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 
 class FFmpegHandler implements FormatHandler {
@@ -215,55 +215,18 @@ class FFmpegHandler implements FormatHandler {
     );
 
     // Add .qta (QuickTime Audio) support - uses same mov demuxer
-    this.supportedFormats.push({
-      name: "QuickTime Audio",
-      format: "qta",
-      extension: "qta",
-      mime: "video/quicktime",
-      from: true,
-      to: true,
-      internal: "mov",
-      category: Category.AUDIO,
-      lossless: false,
-    });
+    this.supportedFormats.push(CommonFormats.QTA.builder("mov").fromTo());
 
     // Add .wmv (Windows Media Video) support - uses ASF container
-    this.supportedFormats.push({
-      name: "Windows Media Video",
-      format: "wmv",
-      extension: "wmv",
-      mime: "video/x-ms-asf",
-      from: true,
-      to: true,
-      internal: "asf",
-      category: Category.VIDEO,
-    });
+    this.supportedFormats.push(CommonFormats.WMV.builder("asf").fromTo());
 
     // Add .mts (AVCHD) support — camcorder footage using the MPEG-TS container.
     // FFmpeg auto-discovers "mpegts" but assigns the ".ts" extension, leaving
     // ".mts" files (JVC, Sony, Panasonic AVCHD camcorders) unrecognised.
-    this.supportedFormats.push({
-      name: "AVCHD Video",
-      format: "mts",
-      extension: "mts",
-      mime: "video/mp2t",
-      from: true,
-      to: false,
-      internal: "mpegts",
-      category: Category.VIDEO,
-    });
+    this.supportedFormats.push(CommonFormats.MTS.builder("mpegts").from());
 
     // Add .m2ts (Blu-ray BDMV) support — same MPEG-TS container, different extension.
-    this.supportedFormats.push({
-      name: "Blu-ray BDMV Video",
-      format: "m2ts",
-      extension: "m2ts",
-      mime: "video/mp2t",
-      from: true,
-      to: false,
-      internal: "mpegts",
-      category: Category.VIDEO,
-    });
+    this.supportedFormats.push(CommonFormats.M2TS.builder("mpegts").from());
 
     // Normalize Bink metadata to ensure ".bik" files are detected by extension.
     const binkFormats = this.supportedFormats.filter(
@@ -284,16 +247,12 @@ class FFmpegHandler implements FormatHandler {
 
     // Add PNG input explicitly - FFmpeg otherwise treats both PNG and
     // APNG as the same thing.
-    this.supportedFormats.push(CommonFormats.PNG.builder("png").allowFrom());
+    this.supportedFormats.push(CommonFormats.PNG.builder("png").from());
 
     // Encoding-specific formats
-    this.supportedFormats.push(
-      CommonFormats.OGG.builder("ogg").named("Ogg Vorbis Audio").withFormat("ogg-vorbis").allowTo(),
-    );
+    this.supportedFormats.push(CommonFormats.OGG_VORBIS.builder("ogg").to());
 
-    this.supportedFormats.push(
-      CommonFormats.OGG.builder("ogg").named("Ogg Opus Audio").withFormat("ogg-opus").allowTo(),
-    );
+    this.supportedFormats.push(CommonFormats.OGG_OPUS.builder("ogg").to());
 
     this.#ffmpeg.terminate();
 

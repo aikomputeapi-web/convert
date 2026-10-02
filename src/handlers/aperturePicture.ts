@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { BadMagicError, InitializationError } from "src/errors.ts";
 
 class aperturePictureHandler implements FormatHandler {
@@ -13,18 +13,8 @@ class aperturePictureHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      {
-        name: "Aperture Picture Format",
-        format: "apf",
-        extension: "apf",
-        mime: "image/x-aperture-picture",
-        from: true,
-        to: true,
-        internal: "apf",
-        category: Category.IMAGE,
-        lossless: true,
-      },
-      CommonFormats.BMP.builder("bmp").allowFrom(true).allowTo(true).markLossless(),
+      CommonFormats.APF.builder("apf").lossless().fromTo(),
+      CommonFormats.BMP.builder("bmp").lossless().fromTo(),
     ];
     this.#canvas = new OffscreenCanvas(320, 200);
     this.#ctx = this.#canvas.getContext("2d") || undefined;

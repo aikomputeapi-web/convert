@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { FileReader } from "built/terraria-wld-parser/src/";
 
 // CODE BELOW IS WRITTEN BY PIXELKAT5 IN PR #244
@@ -886,19 +886,9 @@ class terrariaWldHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      {
-        name: "Terraria World",
-        format: "wld",
-        extension: "wld",
-        mime: "application/x-terraria-world",
-        from: true,
-        to: false,
-        internal: "wld",
-        category: Category.DATA,
-        lossless: false,
-      },
+      CommonFormats.TERRARIA_WLD.builder("wld").from(),
 
-      CommonFormats.PNG.builder("png").allowFrom(false).allowTo(true),
+      CommonFormats.PNG.builder("png").to(),
     ];
     this.ready = true;
   }

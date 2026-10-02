@@ -1,15 +1,6 @@
-import { FormatDefinition } from "../FormatHandler.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import JSZip from "jszip";
-
-const harFormat = new FormatDefinition(
-  "HTTP Archive",
-  "har",
-  "har",
-  "application/har+json",
-  Category.ARCHIVE,
-);
 
 class harHandler implements FormatHandler {
   public name: string = "har";
@@ -17,8 +8,8 @@ class harHandler implements FormatHandler {
   public offload: boolean = true;
 
   public supportedFormats?: FileFormat[] = [
-    harFormat.builder("har").allowFrom(),
-    CommonFormats.ZIP.builder("zip").allowTo(),
+    CommonFormats.HAR.builder("har").from(),
+    CommonFormats.ZIP.builder("zip").to(),
   ];
 
   async init() {}

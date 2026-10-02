@@ -336,9 +336,9 @@ class typstHandler implements FormatHandler {
   public offload: boolean = true;
 
   public supportedFormats: FileFormat[] = [
-    CommonFormats.TYPST.supported("typst", true, false, true),
-    CommonFormats.PDF.supported("pdf", false, true, true),
-    CommonFormats.SVG.supported("svg", true, true, false),
+    CommonFormats.TYPST.builder("typst").lossless().from(),
+    CommonFormats.PDF.builder("pdf").lossless().to(),
+    CommonFormats.SVG.builder("svg").fromTo(),
   ];
 
   private $typst?: TypstSnippet;

@@ -7,11 +7,11 @@ class canvasToBlobHandler implements FormatHandler {
   public name: string = "canvasToBlob";
 
   public supportedFormats: FileFormat[] = [
-    CommonFormats.PNG.supported("png", true, true, true),
-    CommonFormats.JPEG.supported("jpeg", true, true),
-    CommonFormats.WEBP.supported("webp", true, true),
-    CommonFormats.GIF.supported("gif", true, false),
-    CommonFormats.TEXT.supported("text", true, true),
+    CommonFormats.PNG.builder("png").lossless().fromTo(),
+    CommonFormats.JPEG.builder("jpeg").fromTo(),
+    CommonFormats.WEBP.builder("webp").fromTo(),
+    CommonFormats.GIF.builder("gif").from(),
+    CommonFormats.TEXT.builder("text").fromTo(),
   ];
 
   #canvas?: OffscreenCanvas;

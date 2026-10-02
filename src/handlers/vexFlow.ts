@@ -2,7 +2,7 @@ import * as vexml from "@stringsync/vexml";
 import VexFlow from "vexflow";
 import { DOMParser as WorkerDOMParser, Document } from "linkedom/worker";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { buildMidi, addNote } from "./midi/midifilelib.js";
 import bravuraUrl from "@vexflow-fonts/bravura/bravura.woff2?url";
 import academicoUrl from "@vexflow-fonts/academico/academico.woff2?url";
@@ -58,20 +58,10 @@ class vexFlowHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.MUSICXML.builder("musicxml").allowFrom(),
-      CommonFormats.MXL.builder("mxl").allowFrom(),
-      CommonFormats.HTML.builder("html").allowTo(),
-      {
-        name: "MIDI",
-        format: "mid",
-        extension: "mid",
-        mime: "audio/midi",
-        from: false,
-        to: true,
-        internal: "mid",
-        category: Category.AUDIO,
-        lossless: false,
-      },
+      CommonFormats.MUSICXML.builder("musicxml").from(),
+      CommonFormats.MXL.builder("mxl").from(),
+      CommonFormats.HTML.builder("html").to(),
+      CommonFormats.MIDI.builder("mid").to(),
     ];
 
     // Load VexFlow fonts (required for VexFlow 5)

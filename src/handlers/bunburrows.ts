@@ -1,6 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 
 const COLOR_WALKABLE = [0, 0, 0];
@@ -19,18 +19,8 @@ class bunburrowsHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.PNG.supported("png", true, true, false),
-      {
-        name: "Pâquerette: Down the Bunburrows Level File",
-        format: "bunlevel",
-        extension: "level",
-        mime: "application/x-bunburrows-level",
-        from: true,
-        to: false,
-        internal: "bunlevel",
-        category: Category.DATA,
-        lossless: false,
-      },
+      CommonFormats.PNG.builder("png").fromTo(),
+      CommonFormats.BUNLEVEL.builder("bunlevel").from(),
     ];
 
     this.#canvas = new OffscreenCanvas(1, 1);

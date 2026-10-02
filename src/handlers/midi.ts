@@ -12,7 +12,7 @@ import {
   midiToPng,
 } from "./midi/midifilelib.js";
 
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 import sfontUrl from "built/timgm6mb/TimGM6mb.sf2?url";
 import fluidsynthUrl from "js-synthesizer/externals/libfluidsynth-2.4.6.js?url";
@@ -84,54 +84,14 @@ export class midiCodecHandler implements FormatHandler {
 
   async init(): Promise<void> {
     this.supportedFormats.push(
-      {
-        name: "MIDI",
-        format: "mid",
-        extension: "mid",
-        mime: "audio/midi",
-        from: true,
-        to: true,
-        internal: "mid",
-        category: Category.AUDIO,
-        lossless: true,
-      },
-      {
-        name: "RTTTL",
-        format: "rtttl",
-        extension: "rtttl",
-        mime: "audio/rtttl",
-        from: true,
-        to: true,
-        internal: "rtttl",
-        category: Category.TEXT,
-        lossless: false,
-      },
-      {
-        name: "NokRing",
-        format: "rtttl",
-        extension: "nokring",
-        mime: "audio/rtttl",
-        from: true,
-        to: false,
-        internal: "rtttl",
-        category: Category.TEXT,
-        lossless: false,
-      },
-      {
-        name: "GRUB Init Tune",
-        format: "grub",
-        extension: "grub",
-        mime: "text/plain",
-        from: true,
-        to: true,
-        internal: "grub",
-        category: Category.TEXT,
-        lossless: false,
-      },
-      CommonFormats.TEXT.builder("txt").allowFrom().allowTo().markLossless(),
+      CommonFormats.MIDI.builder("mid").lossless().fromTo(),
+      CommonFormats.RTTTL.builder("rtttl").fromTo(),
+      CommonFormats.NOKRING.builder("rtttl").from(),
+      CommonFormats.GRUB.builder("grub").fromTo(),
+      CommonFormats.TEXT.builder("txt").lossless().fromTo(),
       // PNG spectrogram -> MIDI (matches meyda's internal="image" so routing picks
       // up the audio->png->mid path automatically)
-      CommonFormats.PNG.builder("png").allowFrom().allowTo(),
+      CommonFormats.PNG.builder("png").fromTo(),
     );
     this.ready = true;
   }
@@ -242,18 +202,8 @@ export class midiSynthHandler implements FormatHandler {
     this.#sfontBin = sfontBin;
 
     this.supportedFormats.push(
-      {
-        name: "MIDI",
-        format: "mid",
-        extension: "mid",
-        mime: "audio/midi",
-        from: true,
-        to: false,
-        internal: "mid",
-        category: Category.AUDIO,
-        lossless: true,
-      },
-      CommonFormats.WAV.builder("wav").allowTo().markLossless(),
+      CommonFormats.MIDI.builder("mid").lossless().from(),
+      CommonFormats.WAV.builder("wav").lossless().to(),
     );
 
     this.ready = true;

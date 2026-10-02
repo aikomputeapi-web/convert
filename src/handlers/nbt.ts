@@ -1,6 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "src/FormatHandler.ts";
 import * as NBT from "nbtify";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { gzipSync } from "fflate";
 
 class nbtHandler implements FormatHandler {
@@ -13,29 +13,9 @@ class nbtHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      {
-        name: "Named Binary Tag",
-        format: "nbt",
-        extension: "nbt",
-        mime: "application/x-minecraft-nbt",
-        from: true,
-        to: true,
-        internal: "nbt",
-        category: Category.DATA,
-        lossless: true,
-      },
-      CommonFormats.JSON.supported("json", true, true, true),
-      {
-        name: "String Named Binary Tag",
-        format: "snbt",
-        extension: "snbt",
-        mime: "application/x-minecraft-snbt",
-        from: true,
-        to: true,
-        internal: "snbt",
-        category: Category.DATA,
-        lossless: true, // only compression data is lost
-      },
+      CommonFormats.NBT.builder("nbt").lossless().fromTo(),
+      CommonFormats.JSON.builder("json").lossless().fromTo(),
+      CommonFormats.SNBT.builder("snbt").lossless().fromTo(), // only compression data is lost
     ];
     this.ready = true;
   }

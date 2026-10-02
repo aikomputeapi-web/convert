@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { Packager, largeAssets, downloadProject } from "turbowarp-packager";
 import unpackager from "turbowarp-unpackager";
 import scaffoldingUrl from "built/turbowarp-packager/scaffolding/scaffolding-full.js?url";
@@ -14,18 +14,8 @@ largeAssets.addons.src = addonsUrl;
 class turbowarpHandler implements FormatHandler {
   public name: string = "turbowarp";
   public supportedFormats: FileFormat[] = [
-    {
-      name: "Scratch 3 Project",
-      format: "sb3",
-      extension: "sb3",
-      mime: "application/x.scratch.sb3",
-      from: true,
-      to: true,
-      internal: "sb3",
-      category: Category.ARCHIVE,
-      lossless: true, // all project data is in the html
-    },
-    CommonFormats.HTML.builder("html").allowTo().allowFrom().markLossless(),
+    CommonFormats.SB3.builder("sb3").lossless().fromTo(), // all project data is in the html
+    CommonFormats.HTML.builder("html").lossless().fromTo(),
   ];
   public ready: boolean = false;
   public offload: boolean = true;

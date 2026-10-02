@@ -4,51 +4,21 @@ import { parseODT, parseODP, parseODS } from "built/envelope/parseODF.js";
 import parseDOCX from "built/envelope/parseDOCX.js";
 import parsePPTX from "built/envelope/parsePPTX.js";
 import parseXLSX from "built/envelope/parseXLSX.js";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 
 class envelopeHandler implements FormatHandler {
   public name: string = "envelope";
 
   public supportedFormats: FileFormat[] = [
-    CommonFormats.DOCX.builder("docx").allowFrom(),
+    CommonFormats.DOCX.builder("docx").from(),
     // Currently, Pancoc handles PPTX and XLSX better than Envelope.
-    // CommonFormats.PPTX.builder("pptx").allowFrom(),
-    // CommonFormats.XLSX.builder("xlsx").allowFrom(),
-    {
-      name: "OpenDocument Text",
-      format: "odt",
-      extension: "odt",
-      mime: "application/vnd.oasis.opendocument.text",
-      from: true,
-      to: false,
-      internal: "odt",
-      category: Category.DOCUMENT,
-      lossless: false,
-    },
-    {
-      name: "OpenDocument Presentation",
-      format: "odp",
-      extension: "odp",
-      mime: "application/vnd.oasis.opendocument.presentation",
-      from: true,
-      to: false,
-      internal: "odp",
-      category: Category.PRESENTATION,
-      lossless: false,
-    },
-    {
-      name: "OpenDocument Spreadsheet",
-      format: "ods",
-      extension: "ods",
-      mime: "application/vnd.oasis.opendocument.spreadsheet",
-      from: true,
-      to: false,
-      internal: "ods",
-      category: Category.SPREADSHEET,
-      lossless: false,
-    },
+    // CommonFormats.PPTX.builder("pptx").from(),
+    // CommonFormats.XLSX.builder("xlsx").from(),
+    CommonFormats.ODT.builder("odt").from(),
+    CommonFormats.ODP.builder("odp").from(),
+    CommonFormats.ODS.builder("ods").from(),
     // Technically not "lossless", but it's about as close as we'll ever get
-    CommonFormats.HTML.supported("html", false, true, true),
+    CommonFormats.HTML.builder("html").lossless().to(),
   ];
 
   public ready: boolean = true;

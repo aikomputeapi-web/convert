@@ -1,7 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import normalizeMimeType from "../normalizeMimeType.ts";
 
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 
 const ROM_MAGIC = {
@@ -11,47 +10,16 @@ const ROM_MAGIC = {
 };
 
 const MAX_CANVAS_DIMENSION = 16384;
-const N64_ROM_MIME = normalizeMimeType("application/x-n64-rom");
 
 type N64Order = "z64" | "n64" | "v64";
 
 class n64romHandler implements FormatHandler {
   public name: string = "n64rom";
   public supportedFormats: FileFormat[] = [
-    {
-      name: "Nintendo 64 ROM (Big Endian)",
-      format: "z64",
-      extension: "z64",
-      mime: N64_ROM_MIME,
-      from: true,
-      to: true,
-      internal: "z64",
-      category: Category.DATA,
-      lossless: true,
-    },
-    {
-      name: "Nintendo 64 ROM (Little Endian)",
-      format: "n64",
-      extension: "n64",
-      mime: N64_ROM_MIME,
-      from: true,
-      to: true,
-      internal: "n64",
-      category: Category.DATA,
-      lossless: true,
-    },
-    {
-      name: "Nintendo 64 ROM (Byte-swapped)",
-      format: "v64",
-      extension: "v64",
-      mime: N64_ROM_MIME,
-      from: true,
-      to: true,
-      internal: "v64",
-      category: Category.DATA,
-      lossless: true,
-    },
-    CommonFormats.PNG.builder("n64png").allowFrom().allowTo().markLossless(),
+    CommonFormats.Z64.builder("z64").lossless().fromTo(),
+    CommonFormats.N64.builder("n64").lossless().fromTo(),
+    CommonFormats.V64.builder("v64").lossless().fromTo(),
+    CommonFormats.PNG.builder("n64png").lossless().fromTo(),
   ];
   public ready: boolean = false;
   public offload: boolean = true;

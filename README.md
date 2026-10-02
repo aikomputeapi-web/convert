@@ -93,26 +93,15 @@ Below is a super barebones handler that does absolutely nothing. You can use thi
 // file: dummy.ts
 
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 
 class dummyHandler implements FormatHandler {
   public name: string = "dummy";
   public supportedFormats: FileFormat[] = [
-    // Example PNG format, with both input and output disabled
-    CommonFormats.PNG.builder("png").markLossless().allowFrom(false).allowTo(false),
-
-    // Alternatively, if you need a custom format, define it like so:
-    {
-      name: "CompuServe Graphics Interchange Format (GIF)",
-      format: "gif",
-      extension: "gif",
-      mime: "image/gif",
-      from: false,
-      to: false,
-      internal: "gif",
-      category: [Category.IMAGE, Category.VIDEO], // See src/CommonFormats.ts for valid categories
-      lossless: false,
-    },
+    CommonFormats.PNG.builder("png").lossless().fromTo(),
+    // modifiers go before the direction
+    CommonFormats.GIF.builder("gif").lossless().to(),
+    // add custom formats to CommonFormats.ts
   ];
   public ready: boolean = false;
   public offload: boolean = true;

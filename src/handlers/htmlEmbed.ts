@@ -4,15 +4,15 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 class htmlEmbedHandler implements FormatHandler {
   public name: string = "htmlEmbed";
   public supportedFormats: FileFormat[] = [
-    CommonFormats.HTML.supported("html", false, true, true),
-    CommonFormats.PNG.supported("png", true, false),
-    CommonFormats.JPEG.supported("jpeg", true, false),
-    CommonFormats.WEBP.supported("webp", true, false),
-    CommonFormats.GIF.supported("gif", true, false),
-    CommonFormats.SVG.supported("svg", true, false),
-    CommonFormats.TEXT.supported("text", true, false),
-    CommonFormats.MP4.builder("mp4").allowFrom(),
-    CommonFormats.MP3.supported("mp3", true, false),
+    CommonFormats.HTML.builder("html").lossless().to(),
+    CommonFormats.PNG.builder("png").from(),
+    CommonFormats.JPEG.builder("jpeg").from(),
+    CommonFormats.WEBP.builder("webp").from(),
+    CommonFormats.GIF.builder("gif").from(),
+    CommonFormats.SVG.builder("svg").from(),
+    CommonFormats.TEXT.builder("text").from(),
+    CommonFormats.MP4.builder("mp4").from(),
+    CommonFormats.MP3.builder("mp3").from(),
   ];
   public ready: boolean = false;
   public offload: boolean = true;

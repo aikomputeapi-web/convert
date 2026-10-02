@@ -120,8 +120,8 @@ class htmlToSvgHandler implements FormatHandler {
   public name: string = "htmlToSvg";
 
   public supportedFormats: FileFormat[] = [
-    CommonFormats.HTML.supported("html", true, false),
-    CommonFormats.SVG.supported("svg", false, true, false),
+    CommonFormats.HTML.builder("html").from(),
+    CommonFormats.SVG.builder("svg").to(),
   ];
 
   public ready: boolean = true;

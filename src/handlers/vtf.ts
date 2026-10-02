@@ -1,4 +1,4 @@
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { BadMagicError, InitializationError } from "src/errors.ts";
 
@@ -795,20 +795,10 @@ class vtfHandler implements FormatHandler {
   public name: string = "vtf";
 
   public supportedFormats: FileFormat[] = [
-    {
-      name: "Valve Texture Format",
-      format: "vtf",
-      extension: "vtf",
-      mime: "image/x-vtf",
-      from: true,
-      to: false,
-      internal: "vtf",
-      category: Category.IMAGE,
-      lossless: false,
-    },
-    CommonFormats.PNG.supported("png", false, true, true),
-    CommonFormats.JPEG.supported("jpeg", false, true),
-    CommonFormats.WEBP.supported("webp", false, true),
+    CommonFormats.VTF.builder("vtf").from(),
+    CommonFormats.PNG.builder("png").lossless().to(),
+    CommonFormats.JPEG.builder("jpeg").to(),
+    CommonFormats.WEBP.builder("webp").to(),
   ];
 
   #canvas?: OffscreenCanvas;

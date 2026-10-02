@@ -117,8 +117,8 @@ export default class epubHandler implements FormatHandler {
   public offload: boolean = true;
 
   public supportedFormats: FileFormat[] = [
-    CommonFormats.EPUB.supported("epub", true, false),
-    CommonFormats.HTML.supported("html", false, true),
+    CommonFormats.EPUB.builder("epub").from(),
+    CommonFormats.HTML.builder("html").to(),
   ];
 
   async init() {

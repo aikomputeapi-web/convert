@@ -1,77 +1,17 @@
 import type { ConvertContext } from "src/ui/ProgressStore.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 
 class wavebreakHandler implements FormatHandler {
   public name: string = "wavebreak";
   public supportedFormats: FileFormat[] = [
-    CommonFormats.WAV.builder("wav").allowTo().markLossless(),
-    {
-      name: "PCM signed 16-bit little-endian", // from ffmpeg
-      format: "s16le",
-      extension: "s16le",
-      mime: "audio/s16le", // interpreted as 44.1 kHz mono
-      from: true,
-      to: false,
-      internal: "s16le",
-      category: Category.AUDIO,
-      lossless: true,
-    },
-    {
-      name: "PCM unsigned 8-bit",
-      format: "u8",
-      extension: "u8",
-      mime: "audio/u8", // once again interpreted as std. mono
-      from: true,
-      to: false,
-      internal: "u8",
-      category: Category.AUDIO,
-      lossless: true,
-    },
-    {
-      name: "PCM signed 24-bit little-endian",
-      format: "s24le",
-      extension: "s24le",
-      mime: "audio/s24le",
-      from: true,
-      to: false,
-      internal: "s24le",
-      category: Category.AUDIO,
-      lossless: true,
-    },
-    {
-      name: "PCM signed 32-bit little-endian",
-      format: "s32le",
-      extension: "s32le",
-      mime: "audio/s32le",
-      from: true,
-      to: false,
-      internal: "s32le",
-      category: Category.AUDIO,
-      lossless: true,
-    },
-    {
-      name: "PCM 32-bit floating-point little-endian",
-      format: "f32le",
-      extension: "f32le",
-      mime: "audio/f32le",
-      from: true,
-      to: false,
-      internal: "f32le",
-      category: Category.AUDIO,
-      lossless: true,
-    },
-    {
-      name: "PCM 64-bit floating-point little-endian",
-      format: "f64le",
-      extension: "f64le",
-      mime: "audio/f64le",
-      from: true,
-      to: false,
-      internal: "f64le",
-      category: Category.AUDIO,
-      lossless: true,
-    },
+    CommonFormats.WAV.builder("wav").lossless().to(),
+    CommonFormats.S16LE.builder("s16le").lossless().from(), // interpreted as 44.1 kHz mono
+    CommonFormats.U8.builder("u8").lossless().from(), // once again interpreted as std. mono
+    CommonFormats.S24LE.builder("s24le").lossless().from(),
+    CommonFormats.S32LE.builder("s32le").lossless().from(),
+    CommonFormats.F32LE.builder("f32le").lossless().from(),
+    CommonFormats.F64LE.builder("f64le").lossless().from(),
   ];
   public ready: boolean = false;
   public offload: boolean = true;

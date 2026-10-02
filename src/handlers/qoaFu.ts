@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { QOAEncoder, QOADecoder, QOABase } from "qoa-fu";
 import { WaveFile } from "wavefile";
 
@@ -48,18 +48,8 @@ class uint8ArrayQOAEncoder extends QOAEncoder {
 class qoaFuHandler implements FormatHandler {
   public name: string = "qoaFu";
   public supportedFormats: FileFormat[] = [
-    {
-      name: "Quite OK Audio",
-      format: "qoa",
-      extension: "qoa",
-      mime: "audio/x-qoa", // I have to put something here
-      from: true,
-      to: true,
-      internal: "qoa",
-      category: Category.AUDIO,
-      lossless: false,
-    },
-    CommonFormats.WAV.builder("wav").allowFrom(true).allowTo(true),
+    CommonFormats.QOA.builder("qoa").fromTo(),
+    CommonFormats.WAV.builder("wav").fromTo(),
   ];
   public ready: boolean = false;
   public offload: boolean = true;

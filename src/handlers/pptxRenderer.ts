@@ -56,8 +56,8 @@ export default class pptxRendererHandler implements FormatHandler {
   private html2canvas?: any;
 
   public supportedFormats: FileFormat[] = [
-    CommonFormats.PPTX.supported("pptx", true, false),
-    CommonFormats.PDF.supported("pdf", false, true),
+    CommonFormats.PPTX.builder("pptx").from(),
+    CommonFormats.PDF.builder("pdf").to(),
   ];
 
   async init() {

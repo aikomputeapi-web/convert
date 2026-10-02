@@ -1,6 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { Buffer } from "buffer";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 
 (globalThis as any).Buffer = Buffer;
 
@@ -18,19 +18,9 @@ class flpToJsonHandler implements FormatHandler {
   public name: string = "flpToJson";
 
   public supportedFormats: FileFormat[] = [
-    {
-      name: "FL Studio Project File",
-      format: "flp",
-      extension: "flp",
-      mime: "application/octet-stream",
-      from: true,
-      to: false,
-      internal: "flp",
-      category: Category.AUDIO,
-      lossless: false,
-    },
+    CommonFormats.FLP.builder("flp").from(),
     // Unsure about this, it might be lossless
-    CommonFormats.JSON.supported("json", false, true),
+    CommonFormats.JSON.builder("json").to(),
   ];
 
   public ready: boolean = true;

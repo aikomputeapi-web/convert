@@ -1,24 +1,14 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 
 class xcursorHandler implements FormatHandler {
   public name: string = "xcursor";
   public supportedFormats: FileFormat[] = [
-    CommonFormats.PNG.builder("png").markLossless().allowFrom(false).allowTo(true),
-    CommonFormats.JPEG.builder("jpeg").allowFrom(false).allowTo(true),
-    {
-      name: "X11 cursor",
-      format: "xcur",
-      extension: "",
-      mime: "image/x-x11-cursor",
-      from: true,
-      to: false,
-      internal: "xcur",
-      category: Category.IMAGE,
-      lossless: true,
-    },
+    CommonFormats.PNG.builder("png").lossless().to(),
+    CommonFormats.JPEG.builder("jpeg").to(),
+    CommonFormats.XCUR.builder("xcur").lossless().from(),
   ];
   public ready: boolean = false;
   public offload: boolean = true;

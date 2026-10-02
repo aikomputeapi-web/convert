@@ -8,36 +8,32 @@ const handlers: FormatHandler[] = [
   new MockedHandler(
     "canvasToBlob",
     [
-      CommonFormats.PNG.supported("png", true, true, true),
-      CommonFormats.JPEG.supported("jpeg", true, true, false),
-      CommonFormats.SVG.supported("svg", true, true, true),
+      CommonFormats.PNG.builder("png").lossless().fromTo(),
+      CommonFormats.JPEG.builder("jpeg").fromTo(),
+      CommonFormats.SVG.builder("svg").lossless().fromTo(),
     ],
     false,
   ),
   new MockedHandler(
     "meyda",
     [
-      CommonFormats.JPEG.supported("jpeg", true, true, false),
-      CommonFormats.PNG.supported("png", true, true, false),
-      CommonFormats.WAV.supported("wav", true, true, false),
+      CommonFormats.JPEG.builder("jpeg").fromTo(),
+      CommonFormats.PNG.builder("png").fromTo(),
+      CommonFormats.WAV.builder("wav").fromTo(),
     ],
     false,
   ),
   new MockedHandler(
     "ffmpeg",
     [
-      CommonFormats.PNG.supported("png", true, true, true),
-      CommonFormats.MP3.supported("mp3", true, true, false),
-      CommonFormats.WAV.supported("wav", true, true, true),
-      CommonFormats.MP4.supported("mp4", true, true, true),
+      CommonFormats.PNG.builder("png").lossless().fromTo(),
+      CommonFormats.MP3.builder("mp3").fromTo(),
+      CommonFormats.WAV.builder("wav").lossless().fromTo(),
+      CommonFormats.MP4.builder("mp4").lossless().fromTo(),
     ],
     false,
   ),
-  new MockedHandler(
-    "archiver",
-    [CommonFormats.ZIP.builder("zip").allowTo().markLossless().withCategory("archive")],
-    true,
-  ),
+  new MockedHandler("archiver", [CommonFormats.ZIP.builder("zip").lossless().to()], true),
 ];
 
 console.log("Testing...\n");
@@ -48,11 +44,11 @@ test("should find the optimal path from image to audio\n", async () => {
   const paths = graph.searchPath(
     new ConvertPathNode(
       handlers.find((h) => h.name === "canvasToBlob")!,
-      CommonFormats.PNG.supported("png", true, true, true),
+      CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
       handlers.find((h) => h.name === "ffmpeg")!,
-      CommonFormats.MP3.supported("mp3", true, true, true),
+      CommonFormats.MP3.builder("mp3").lossless().fromTo(),
     ),
     true,
   );
@@ -71,11 +67,11 @@ test("should find the optimal path from image to audio in strict graph\n", async
   const paths = graph.searchPath(
     new ConvertPathNode(
       handlers.find((h) => h.name === "canvasToBlob")!,
-      CommonFormats.PNG.supported("png", true, true, true),
+      CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
       handlers.find((h) => h.name === "ffmpeg")!,
-      CommonFormats.MP3.supported("mp3", true, true, true),
+      CommonFormats.MP3.builder("mp3").lossless().fromTo(),
     ),
     true,
   );
@@ -94,11 +90,11 @@ test("add category change costs should affect pathfinding\n", async () => {
   const paths = graph.searchPath(
     new ConvertPathNode(
       handlers.find((h) => h.name === "canvasToBlob")!,
-      CommonFormats.PNG.supported("png", true, true, true),
+      CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
       handlers.find((h) => h.name === "ffmpeg")!,
-      CommonFormats.MP3.supported("mp3", true, true, true),
+      CommonFormats.MP3.builder("mp3").lossless().fromTo(),
     ),
     true,
   );
@@ -110,11 +106,11 @@ test("add category change costs should affect pathfinding\n", async () => {
   const newPaths = graph.searchPath(
     new ConvertPathNode(
       handlers.find((h) => h.name === "canvasToBlob")!,
-      CommonFormats.PNG.supported("png", true, true, true),
+      CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
       handlers.find((h) => h.name === "ffmpeg")!,
-      CommonFormats.MP3.supported("mp3", true, true, true),
+      CommonFormats.MP3.builder("mp3").lossless().fromTo(),
     ),
     true,
   );
@@ -133,11 +129,11 @@ test("remove category change costs should affect pathfinding\n", async () => {
   const paths = graph.searchPath(
     new ConvertPathNode(
       handlers.find((h) => h.name === "canvasToBlob")!,
-      CommonFormats.PNG.supported("png", true, true, true),
+      CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
       handlers.find((h) => h.name === "ffmpeg")!,
-      CommonFormats.MP3.supported("mp3", true, true, true),
+      CommonFormats.MP3.builder("mp3").lossless().fromTo(),
     ),
     true,
   );
@@ -149,11 +145,11 @@ test("remove category change costs should affect pathfinding\n", async () => {
   const newPaths = graph.searchPath(
     new ConvertPathNode(
       handlers.find((h) => h.name === "canvasToBlob")!,
-      CommonFormats.PNG.supported("png", true, true, true),
+      CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
       handlers.find((h) => h.name === "ffmpeg")!,
-      CommonFormats.MP3.supported("mp3", true, true, true),
+      CommonFormats.MP3.builder("mp3").lossless().fromTo(),
     ),
     true,
   );
@@ -171,11 +167,11 @@ test("add adaptive category costs should affect pathfinding\n", async () => {
   const paths = graph.searchPath(
     new ConvertPathNode(
       handlers.find((h) => h.name === "canvasToBlob")!,
-      CommonFormats.PNG.supported("png", true, true, true),
+      CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
       handlers.find((h) => h.name === "ffmpeg")!,
-      CommonFormats.MP3.supported("mp3", true, true, true),
+      CommonFormats.MP3.builder("mp3").lossless().fromTo(),
     ),
     true,
   );
@@ -187,11 +183,11 @@ test("add adaptive category costs should affect pathfinding\n", async () => {
   const newPaths = graph.searchPath(
     new ConvertPathNode(
       handlers.find((h) => h.name === "canvasToBlob")!,
-      CommonFormats.PNG.supported("png", true, true, true),
+      CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
       handlers.find((h) => h.name === "ffmpeg")!,
-      CommonFormats.MP3.supported("mp3", true, true, true),
+      CommonFormats.MP3.builder("mp3").lossless().fromTo(),
     ),
     true,
   );
@@ -209,11 +205,11 @@ test("remove adaptive category costs should affect pathfinding\n", async () => {
   const paths = graph.searchPath(
     new ConvertPathNode(
       handlers.find((h) => h.name === "canvasToBlob")!,
-      CommonFormats.PNG.supported("png", true, true, true),
+      CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
       handlers.find((h) => h.name === "ffmpeg")!,
-      CommonFormats.MP3.supported("mp3", true, true, true),
+      CommonFormats.MP3.builder("mp3").lossless().fromTo(),
     ),
     true,
   );
@@ -225,11 +221,11 @@ test("remove adaptive category costs should affect pathfinding\n", async () => {
   const newPaths = graph.searchPath(
     new ConvertPathNode(
       handlers.find((h) => h.name === "canvasToBlob")!,
-      CommonFormats.PNG.supported("png", true, true, true),
+      CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
       handlers.find((h) => h.name === "ffmpeg")!,
-      CommonFormats.MP3.supported("mp3", true, true, true),
+      CommonFormats.MP3.builder("mp3").lossless().fromTo(),
     ),
     true,
   );
@@ -247,11 +243,11 @@ test("should find path from image to archive via anyinput\n", async () => {
   const paths = graph.searchPath(
     new ConvertPathNode(
       handlers.find((h) => h.name === "canvasToBlob")!,
-      CommonFormats.PNG.supported("png", true, true, true),
+      CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
       handlers.find((h) => h.name === "archiver")!,
-      CommonFormats.ZIP.supported("zip", false, true, true),
+      CommonFormats.ZIP.builder("zip").lossless().to(),
     ),
     true,
   );

@@ -11,11 +11,11 @@ export class toJsonHandler implements FormatHandler {
   public offload: boolean = true;
 
   public supportedFormats: FileFormat[] = [
-    CommonFormats.CSV.builder("csv").allowFrom(),
-    CommonFormats.XML.builder("xml").allowFrom(),
-    CommonFormats.YML.builder("yaml").allowFrom(),
-    CommonFormats.JSONL.builder("jsonl").allowFrom(),
-    CommonFormats.JSON.supported("json", false, true, true),
+    CommonFormats.CSV.builder("csv").from(),
+    CommonFormats.XML.builder("xml").from(),
+    CommonFormats.YML.builder("yaml").from(),
+    CommonFormats.JSONL.builder("jsonl").from(),
+    CommonFormats.JSON.builder("json").lossless().to(),
   ];
 
   async init() {
@@ -77,11 +77,11 @@ export class fromJsonHandler {
   public offload: boolean = true;
 
   public supportedFormats: FileFormat[] = [
-    CommonFormats.CSV.builder("csv").allowTo(),
-    CommonFormats.XML.builder("xml").allowTo(),
-    CommonFormats.YML.builder("yaml").allowTo(),
-    CommonFormats.JSONL.builder("jsonl").allowTo(),
-    CommonFormats.JSON.supported("json", true, false),
+    CommonFormats.CSV.builder("csv").to(),
+    CommonFormats.XML.builder("xml").to(),
+    CommonFormats.YML.builder("yaml").to(),
+    CommonFormats.JSONL.builder("jsonl").to(),
+    CommonFormats.JSON.builder("json").from(),
   ];
 
   async init() {

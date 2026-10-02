@@ -1,22 +1,12 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { WASI, File, OpenFile, ConsoleStdout } from "@bjorn3/browser_wasi_shim";
 
 class wasiRunnerHandler implements FormatHandler {
   public name: string = "wasiRunner";
   public supportedFormats: FileFormat[] = [
-    {
-      name: "WebAssembly Binary (Wasm)",
-      format: "wasm",
-      extension: "wasm",
-      mime: "application/wasm",
-      from: true,
-      to: false,
-      internal: "wasm",
-      category: Category.CODE,
-      lossless: true,
-    },
-    CommonFormats.TEXT.builder("txt").allowTo(),
+    CommonFormats.WASM.builder("wasm").lossless().from(),
+    CommonFormats.TEXT.builder("txt").to(),
   ];
   public ready: boolean = false;
   public offload: boolean = true;

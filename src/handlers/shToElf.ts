@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 
 import elfUrl from "built/shtoelf/stub.elf?url";
 
@@ -17,17 +17,8 @@ function replaceUint32LE(file: Buffer, from: number, to: number) {
 class shToElfHandler implements FormatHandler {
   public name: string = "shToElf";
   public supportedFormats: FileFormat[] = [
-    CommonFormats.SH.builder("sh").allowFrom().markLossless(),
-    {
-      name: "x86-64 Linux Executable and Linkable Format",
-      format: "elf",
-      extension: "elf",
-      mime: "application/x-elf",
-      from: false,
-      to: true,
-      internal: "elf",
-      category: Category.CODE,
-    },
+    CommonFormats.SH.builder("sh").lossless().from(),
+    CommonFormats.ELF.builder("elf").to(),
   ];
   public ready: boolean = false;
   public offload: boolean = true;

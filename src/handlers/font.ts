@@ -231,11 +231,11 @@ class fontHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.TTF.builder("ttf").allowFrom().markLossless(),
-      CommonFormats.OTF.builder("otf").allowFrom().allowTo().markLossless(),
-      CommonFormats.WOFF.builder("woff").allowFrom().markLossless(),
-      CommonFormats.WOFF2.builder("woff2").allowFrom().allowTo().markLossless(),
-      CommonFormats.SVG.builder("svg").allowFrom().allowTo(), // svg fonts lose a lot of font metadata, since they only convert the glyphs, so we can't mark it as lossless
+      CommonFormats.TTF.builder("ttf").lossless().from(),
+      CommonFormats.OTF.builder("otf").lossless().fromTo(),
+      CommonFormats.WOFF.builder("woff").lossless().from(),
+      CommonFormats.WOFF2.builder("woff2").lossless().fromTo(),
+      CommonFormats.SVG.builder("svg").fromTo(), // svg fonts lose a lot of font metadata, since they only convert the glyphs, so we can't mark it as lossless
     ];
     this.ready = true;
   }

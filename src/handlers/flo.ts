@@ -1,6 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import normalizeMimeType from "../normalizeMimeType.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import initReflo, { decode, encode, get_flo_file_info } from "@flo-audio/reflo";
 import { WaveFile } from "wavefile";
 import refloWasmUrl from "@flo-audio/reflo/reflo_bg.wasm?url";
@@ -14,29 +13,9 @@ class floHandler implements FormatHandler {
   async init() {
     await initReflo({ module_or_path: refloWasmUrl });
     this.supportedFormats = [
-      {
-        name: "Flo Audio",
-        format: "flo",
-        extension: "flo",
-        mime: normalizeMimeType("audio/flo"),
-        from: true,
-        to: true,
-        internal: "flo",
-        category: Category.AUDIO,
-        lossless: false,
-      },
-      CommonFormats.WAV.builder("wav").allowFrom().allowTo().markLossless(),
-      {
-        name: "Raw PCM Float32LE",
-        format: "f32le",
-        extension: "pcm",
-        mime: normalizeMimeType("video/f32le"),
-        from: true,
-        to: true,
-        internal: "f32le",
-        category: Category.AUDIO,
-        lossless: true,
-      },
+      CommonFormats.FLO.builder("flo").fromTo(),
+      CommonFormats.WAV.builder("wav").lossless().fromTo(),
+      CommonFormats.F32LE.builder("f32le").lossless().fromTo(),
     ];
     this.ready = true;
   }

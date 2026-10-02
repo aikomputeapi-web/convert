@@ -1,4 +1,4 @@
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import sqlite3InitModule from "@sqlite.org/sqlite-wasm";
 import { parse } from "papaparse";
@@ -11,30 +11,10 @@ class sqliteHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      {
-        name: "SQLite3",
-        format: "sqlite3",
-        extension: "db",
-        mime: "application/vnd.sqlite3",
-        from: true,
-        to: true,
-        internal: "sqlite3",
-        category: Category.DATABASE,
-        lossless: false,
-      },
-      {
-        name: "iTunes Database",
-        format: "itdb",
-        extension: "itdb",
-        mime: "application/vnd.sqlite3",
-        from: true,
-        to: false,
-        internal: "sqlite3",
-        category: Category.DATABASE,
-        lossless: false,
-      },
+      CommonFormats.SQLITE3.builder("sqlite3").fromTo(),
+      CommonFormats.ITDB.builder("sqlite3").from(),
       // Lossy because extracts only tables
-      CommonFormats.CSV.builder("csv").allowTo().allowFrom(),
+      CommonFormats.CSV.builder("csv").fromTo(),
     ];
     this.ready = true;
   }

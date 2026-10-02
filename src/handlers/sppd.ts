@@ -6,7 +6,7 @@ import * as CSG from "three-bvh-csg";
 import { Demo } from "built/sppd/sppd/Demo.ts";
 import { Vector } from "built/sppd/sppd/Vector.ts";
 
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 
 function toThreeVector(vec: Vector) {
@@ -186,20 +186,10 @@ const wallPortalMaterial = new THREE.MeshLambertMaterial({ color: 0x505050 });
 class sppdHandler implements FormatHandler {
   public name: string = "sppd";
   public supportedFormats: FileFormat[] = [
-    {
-      name: "Portal 2 Demo File",
-      format: "dem",
-      extension: "dem",
-      mime: "application/x-portal2-demo",
-      from: true,
-      to: false,
-      internal: "dem",
-      category: Category.DATA,
-      lossless: false,
-    },
-    CommonFormats.PNG.supported("png", false, true),
-    CommonFormats.JPEG.supported("jpeg", false, true),
-    CommonFormats.JSON.supported("json", false, true, true),
+    CommonFormats.PORTAL2_DEM.builder("dem").from(),
+    CommonFormats.PNG.builder("png").to(),
+    CommonFormats.JPEG.builder("jpeg").to(),
+    CommonFormats.JSON.builder("json").lossless().to(),
   ];
 
   public ready: boolean = false;
