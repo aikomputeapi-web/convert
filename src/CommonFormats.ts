@@ -80,6 +80,7 @@ const CommonFormats = {
     Category.DATA,
   ),
   CSV: new FormatDefinition("Comma Separated Values", "csv", "csv", "text/csv", Category.DATA),
+  JSONL: new FormatDefinition("JSON Lines", "jsonl", "jsonl", "application/jsonl", Category.DATA),
   TEXT: new FormatDefinition("Plain Text", "text", "txt", "text/plain", Category.TEXT),
   HTML: new FormatDefinition("Hypertext Markup Language", "html", "html", "text/html", [
     Category.DOCUMENT,

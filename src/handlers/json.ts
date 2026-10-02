@@ -2,6 +2,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import parseXML from "built/envelope/parseXML.js";
 import * as yaml from "yaml";
+import { parse, unparse } from "papaparse";
 
 /// Converts things to JSON
 export class toJsonHandler implements FormatHandler {
@@ -13,6 +14,7 @@ export class toJsonHandler implements FormatHandler {
     CommonFormats.CSV.builder("csv").allowFrom(),
     CommonFormats.XML.builder("xml").allowFrom(),
     CommonFormats.YML.builder("yaml").allowFrom(),
+    CommonFormats.JSONL.builder("jsonl").allowFrom(),
     CommonFormats.JSON.supported("json", false, true, true),
   ];
 
@@ -27,36 +29,26 @@ export class toJsonHandler implements FormatHandler {
   ): Promise<FileData[]> {
     return inputFiles.map((file) => {
       const name = file.name.split(".").slice(0, -1).join(".") + ".json";
-      const text = new TextDecoder().decode(file.bytes);
+      const text = new TextDecoder().decode(file.bytes).trim();
       let object: any;
       switch (inputFormat.mime) {
-        case "text/csv": {
-          const data = text.split(/\r?\n/).map((x) => {
-            const arr = [...x.matchAll(/(?:(?:"(?:[^"]|"")*")|[^,]*)(?:,|$)/g)].map(([x]) => {
-              if (x.endsWith(",")) x = x.substring(0, x.length - 1);
-              if (x.endsWith('"')) x = x.substring(1, x.length - 1);
-              return x;
-            });
-            arr.pop(); // remove empty final match that exists for some reason (I'm not good at regex)
-            return arr;
-          });
-          data.pop(); // remove empty end entry
-          const keys = data.shift() ?? [];
-          object = [];
-          for (const entry of data) {
-            let jsonEntry: any = {};
-            for (let i = 0; i < entry.length; i++) {
-              jsonEntry[i < keys.length ? keys[i] : `column${i + 1}`] = entry[i];
-            }
-            object.push(jsonEntry);
-          }
+        case "text/csv":
+          ({ data: object } = parse(text, {
+            header: true,
+            skipEmptyLines: true,
+          }));
           break;
-        }
         case "application/xml":
           object = parseXML(text);
           break;
         case "application/yaml":
           object = yaml.parse(text);
+          break;
+        case "application/jsonl":
+          object = text
+            .split("\n")
+            .filter((l) => l.trim())
+            .map((l) => JSON.parse(l));
           break;
         default:
           throw new Error("Unreachable");
@@ -78,11 +70,6 @@ function xmlEscape(str: string): string {
     .replaceAll("&", "&amp;");
 }
 
-function csvEscape(str: string): string {
-  if (str.includes(",") || str.includes('"')) return `"${str.replaceAll('"', '""')}"`;
-  return str;
-}
-
 /// Converts to things from JSON
 export class fromJsonHandler {
   public name: string = "fromJson";
@@ -93,6 +80,7 @@ export class fromJsonHandler {
     CommonFormats.CSV.builder("csv").allowTo(),
     CommonFormats.XML.builder("xml").allowTo(),
     CommonFormats.YML.builder("yaml").allowTo(),
+    CommonFormats.JSONL.builder("jsonl").allowTo(),
     CommonFormats.JSON.supported("json", true, false),
   ];
 
@@ -111,43 +99,29 @@ export class fromJsonHandler {
       let text = "";
       switch (outputFormat.mime) {
         case "text/csv": {
-          let keys: string[] = [];
+          // hell
+          if (!Array.isArray(object) && object && typeof object === "object") {
+            object = Object.entries(object).map(([key, value]) => ({
+              _key: key,
+              ...(value && typeof value === "object" && !Array.isArray(value)
+                ? value
+                : { _value: value }),
+            }));
+          }
           if (!Array.isArray(object)) {
-            // turn into array
-            let newObject: any = [];
-            for (const [k, v] of Object.entries(object)) {
-              if (v != null && typeof v === "object" && !Array.isArray(v)) {
-                (v as any)._key = k;
-                newObject.push(v);
-              } else {
-                newObject.push({ _key: k, _value: v });
+            object = [object];
+          }
+          object = object
+            .map((r: any) => (r && typeof r === "object" ? r : { _value: r }))
+            .map((r: any) => {
+              for (const [key, value] of Object.entries(r)) {
+                r[key] = value && typeof value === "object" ? JSON.stringify(value) : value;
               }
-            }
-            object = newObject;
-          }
-          const keySet = new Set<string>();
-          for (const value of object) {
-            if (typeof value !== "object" || Array.isArray(value)) {
-              keySet.add("_value");
-              continue;
-            }
-            for (const key of Object.keys(value)) {
-              if (!keySet.has(key)) keySet.add(key);
-            }
-          }
-          keys = [...keySet].toSorted();
-          text += keys.map((x) => csvEscape(x)).join(",") + "\n";
-          for (const value of object) {
-            text +=
-              keys
-                .map((key) => {
-                  if (key === "_value" && (typeof value !== "object" || Array.isArray(value)))
-                    return value;
-                  return value[key] ?? "";
-                })
-                .map((x) => csvEscape(typeof x === "string" ? x : JSON.stringify(x)))
-                .join(",") + "\n";
-          }
+              return r;
+            });
+          const columns = [...new Set(object.flatMap((r: any) => Object.keys(r)))] as string[];
+          if (columns.length) text = unparse(object, { columns: columns, header: true });
+          else text = "";
           break;
         }
         case "application/xml": {
@@ -188,6 +162,11 @@ export class fromJsonHandler {
         }
         case "application/yaml":
           text = yaml.stringify(object);
+          break;
+        case "application/jsonl":
+          if (Array.isArray(object))
+            text = object.map((r: any) => JSON.stringify(r)).join("\n") + "\n";
+          else text = JSON.stringify(object);
           break;
         default:
           throw new Error("Unreachable");

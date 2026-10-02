@@ -80,6 +80,8 @@ function normalizeMimeType(mime: string) {
       return "application/json5";
     case "video/x-ms-wmv":
       return "video/x-ms-asf";
+    case "application/x-ndjson":
+      return "application/jsonl";
   }
   return mime;
 }
