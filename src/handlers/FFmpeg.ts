@@ -198,21 +198,15 @@ class FFmpegHandler implements FormatHandler {
       return priorityIndexB - priorityIndexA;
     });
 
-    // AV1 doesn't seem to be included in WASM FFmpeg
-    this.supportedFormats.splice(
-      this.supportedFormats.findIndex((c) => c.mime === "image/avif"),
-      1,
-    );
-    // HEVC stalls when attempted
-    this.supportedFormats.splice(
-      this.supportedFormats.findIndex((c) => c.internal === "hevc"),
-      1,
-    );
-    // RTSP stalls when attempted
-    this.supportedFormats.splice(
-      this.supportedFormats.findIndex((c) => c.internal === "rtsp"),
-      1,
-    );
+    const remove = [
+      // AV1 doesn't seem to be included in WASM FFmpeg
+      "avif",
+      // HEVC stalls when attempted
+      "hevc",
+      // RTSP stalls when attempted
+      "rtsp",
+    ];
+    this.supportedFormats = this.supportedFormats.filter((c) => !remove.includes(c.internal));
 
     // Add .qta (QuickTime Audio) support - uses same mov demuxer
     this.supportedFormats.push(CommonFormats.QTA.builder("mov").fromTo());

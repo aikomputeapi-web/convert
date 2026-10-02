@@ -199,10 +199,10 @@ export class ConvertPathNode {
 }
 
 export function stripHandler(handler: HandlerDefinition): HandlerDefinition {
-  return {
+  return structuredClone({
     name: handler.name,
     supportAnyInput: handler.supportAnyInput,
     supportedFormats: handler.supportedFormats,
     offload: handler.offload,
-  };
+  });
 }

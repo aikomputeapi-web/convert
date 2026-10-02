@@ -204,7 +204,7 @@ window.tryConvertByTraversing = async function (
     const { value: path, done } = await paths.next();
     if (done) return null;
     if (abort?.aborted) return null;
-    if (path.at(-1)?.handler === to.handler) {
+    if (path.at(-1)?.handler.name === to.handler.name) {
       path[path.length - 1] = to;
     }
     const attempt = await attemptConvertPath(files, path, abort);

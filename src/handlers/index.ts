@@ -110,6 +110,8 @@ const HANDLERS = {
 
 export type HandlerName = keyof typeof HANDLERS;
 
+const HANDLER_NAMES = Object.keys(HANDLERS) as HandlerName[];
+
 type HandlerModule = Partial<
   Record<
     Exclude<
@@ -122,28 +124,33 @@ type HandlerModule = Partial<
 
 const modules = import.meta.glob<HandlerModule>("./*.ts");
 
-const singletons = new Map<HandlerName, FormatHandler>();
+const singletons = new Map<HandlerName, Promise<FormatHandler>>();
 
 export async function getHandler(name: HandlerName) {
-  let handler = singletons.get(name);
-  if (handler) return handler;
+  let promise = singletons.get(name);
+  if (promise) return promise;
 
-  const handlerEntry = HANDLERS[name];
-  if (!handlerEntry) throw new Error(`Handler ${name} was not found!`);
+  promise = (async () => {
+    const handlerEntry = HANDLERS[name];
+    if (!handlerEntry) throw new Error(`Handler ${name} was not found!`);
 
-  const [modulePath = `./${name}.ts`, exportName = "default"] = handlerEntry;
+    const [modulePath = `./${name}.ts`, exportName = "default"] = handlerEntry;
 
-  const module = modules[modulePath];
-  const HandlerClass = (await module())[exportName];
-  if (!HandlerClass) throw new Error(`Handler ${handlerEntry[0]} did not have an export ${handlerEntry[1]}!`);
+    const module = modules[modulePath];
+    const HandlerClass = (await module())[exportName];
+    if (!HandlerClass) throw new Error(`Handler ${modulePath} did not have an export ${exportName}!`);
 
-  handler = new HandlerClass();
-  singletons.set(name, handler);
-  return handler;
+    const handler = new HandlerClass();
+    return handler;
+  })();
+  promise.catch(() => singletons.delete(name));
+
+  singletons.set(name, promise);
+  return promise;
 }
 
 export async function ensureDefinitions(cache: HandlerDefinition[]) {
-  await Promise.all((Object.keys(HANDLERS) as HandlerName[]).map(async handlerName => {
+  await Promise.all(HANDLER_NAMES.map(async handlerName => {
     if (cache.some(h => h.name === handlerName)) return;
 
     console.warn(`Cache miss for handler "${handlerName}"`);
@@ -159,4 +166,5 @@ export async function ensureDefinitions(cache: HandlerDefinition[]) {
       console.error(`Error while initializing ${handlerName}:`, error);
     }
   }));
+  cache.sort((a, b) => HANDLER_NAMES.indexOf(a.name) - HANDLER_NAMES.indexOf(b.name));
 }
