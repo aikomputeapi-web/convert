@@ -6,17 +6,15 @@ import { isMOBI, MOBI } from "built/foliate-mobi/mobi.js";
 import { DOMParser } from "linkedom/worker";
 
 class azw3Handler implements FormatHandler {
-  public name: string = "azw3";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "azw3";
+  public supportedFormats = [
+    CommonFormats.AZW3.builder("azw3").from(),
+    CommonFormats.MOBI.builder("mobi").from(),
+    CommonFormats.EPUB.builder("epub").to(),
+  ];
+  public ready = false;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.AZW3.builder("azw3").from(),
-      CommonFormats.MOBI.builder("mobi").from(),
-      CommonFormats.EPUB.builder("epub").to(),
-    ];
     this.ready = true;
   }
 

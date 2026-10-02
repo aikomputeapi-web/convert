@@ -466,18 +466,17 @@ function decodeAseprite(bytes: Uint8Array): ParsedAseprite {
 }
 
 class asepriteHandler implements FormatHandler {
-  public name: string = "aseprite";
-  public supportedFormats: FileFormat[] = [
+  public name = "aseprite";
+  public supportedFormats = [
     CommonFormats.ASEPRITE.builder("aseprite").lossless().from(),
     CommonFormats.PNG.builder("png").lossless().to(),
     CommonFormats.JPEG.builder("jpeg").to(),
     CommonFormats.WEBP.builder("webp").to(),
   ];
+  public ready = false;
 
   #canvas?: OffscreenCanvas;
   #ctx?: OffscreenCanvasRenderingContext2D;
-  public ready: boolean = false;
-  public offload: boolean = true;
 
   async init() {
     this.#canvas = new OffscreenCanvas(1, 1);

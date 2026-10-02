@@ -32,16 +32,13 @@ class WorkerCanvasFactory {
 }
 
 class pdfjsHandler implements FormatHandler {
-  public name: string = "pdfjs";
-
-  public supportedFormats: FileFormat[] = [
+  public name = "pdfjs";
+  public supportedFormats = [
     CommonFormats.PDF.builder("pdf").from(),
     CommonFormats.PNG.builder("png").to(),
     CommonFormats.JPEG.builder("jpeg").to(),
   ];
-
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   async init() {
     GlobalWorkerOptions.workerSrc = pdfWorkerUrl;

@@ -117,14 +117,13 @@ export function extractBestPngFromIcns(icnsBytes: Uint8Array): Uint8Array {
 }
 
 class icnsHandler implements FormatHandler {
-  public name: string = "icns";
-  public ready: boolean = false;
-  public supportedFormats: FileFormat[] = [
+  public name = "icns";
+  public supportedFormats = [
     CommonFormats.PNG.builder("png").lossless().fromTo(),
     // ICNS contains a finite icon set; conversions here are not guaranteed bit-exact round-trips.
     CommonFormats.ICNS.builder("icns").fromTo(),
   ];
-  public offload: boolean = true;
+  public ready = false;
 
   #canvas?: OffscreenCanvas;
   #ctx?: OffscreenCanvasRenderingContext2D;

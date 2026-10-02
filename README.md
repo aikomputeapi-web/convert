@@ -96,15 +96,14 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 
 class dummyHandler implements FormatHandler {
-  public name: string = "dummy";
-  public supportedFormats: FileFormat[] = [
+  public name = "dummy";
+  public supportedFormats = [
     CommonFormats.PNG.builder("png").lossless().fromTo(),
     // modifiers go before the direction
     CommonFormats.GIF.builder("gif").lossless().to(),
     // add custom formats to CommonFormats.ts
   ];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   async init() {
     this.ready = true;

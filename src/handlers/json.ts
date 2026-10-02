@@ -6,17 +6,15 @@ import { parse, unparse } from "papaparse";
 
 /// Converts things to JSON
 export class toJsonHandler implements FormatHandler {
-  public name: string = "toJson";
-  public ready: boolean = true;
-  public offload: boolean = true;
-
-  public supportedFormats: FileFormat[] = [
+  public name = "toJson";
+  public supportedFormats = [
     CommonFormats.CSV.builder("csv").from(),
     CommonFormats.XML.builder("xml").from(),
     CommonFormats.YML.builder("yaml").from(),
     CommonFormats.JSONL.builder("jsonl").from(),
     CommonFormats.JSON.builder("json").lossless().to(),
   ];
+  public ready = false;
 
   async init() {
     this.ready = true;
@@ -72,11 +70,9 @@ function xmlEscape(str: string): string {
 
 /// Converts to things from JSON
 export class fromJsonHandler {
-  public name: string = "fromJson";
-  public ready: boolean = true;
-  public offload: boolean = true;
-
-  public supportedFormats: FileFormat[] = [
+  public name = "fromJson";
+  public ready = false;
+  public supportedFormats = [
     CommonFormats.CSV.builder("csv").to(),
     CommonFormats.XML.builder("xml").to(),
     CommonFormats.YML.builder("yaml").to(),

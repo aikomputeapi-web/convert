@@ -3,13 +3,12 @@ import CommonFormats from "src/CommonFormats.ts";
 import { WASI, File, OpenFile, ConsoleStdout } from "@bjorn3/browser_wasi_shim";
 
 class wasiRunnerHandler implements FormatHandler {
-  public name: string = "wasiRunner";
-  public supportedFormats: FileFormat[] = [
+  public name = "wasiRunner";
+  public supportedFormats = [
     CommonFormats.WASM.builder("wasm").lossless().from(),
     CommonFormats.TEXT.builder("txt").to(),
   ];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   async init() {
     this.ready = true;

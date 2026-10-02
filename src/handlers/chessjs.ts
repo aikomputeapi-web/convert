@@ -3,14 +3,13 @@ import CommonFormats from "src/CommonFormats.ts";
 import { Chess } from "chess.js";
 
 class chessjsHandler implements FormatHandler {
-  public name: string = "chessjs";
-  public supportedFormats: FileFormat[] = [
+  public name = "chessjs";
+  public supportedFormats = [
     CommonFormats.FEN.builder("fen").fromTo(),
     CommonFormats.PGN.builder("pgn").lossless().fromTo(),
     CommonFormats.TEXT.builder("txt").to(),
   ];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   async init() {
     this.ready = true;

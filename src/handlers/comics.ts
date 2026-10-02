@@ -17,24 +17,20 @@ function padNumberString(num: number, digits: number): string {
 }
 
 export class comicsZipPackerHandler implements FormatHandler {
-  public name: string = "comicsZipPacker";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "comicsZipPacker";
+  public supportedFormats = [
+    CommonFormats.PNG.builder("png").from(),
+    CommonFormats.JPEG.builder("jpg").from(),
+    CommonFormats.WEBP.builder("webp").from(),
+    CommonFormats.BMP.builder("bmp").from(),
+    CommonFormats.TIFF.builder("tiff").from(),
+    CommonFormats.GIF.builder("gif").from(),
+    CommonFormats.ZIP.builder("zip").lossless().to(),
+    CommonFormats.CBZ.builder("cbz").to(),
+  ];
+  public ready = false;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.PNG.builder("png").from(),
-      CommonFormats.JPEG.builder("jpg").from(),
-      CommonFormats.WEBP.builder("webp").from(),
-      CommonFormats.BMP.builder("bmp").from(),
-      CommonFormats.TIFF.builder("tiff").from(),
-      CommonFormats.GIF.builder("gif").from(),
-
-      CommonFormats.ZIP.builder("zip").lossless().to(),
-      CommonFormats.CBZ.builder("cbz").to(),
-    ];
-
     this.ready = true;
   }
 
@@ -92,24 +88,20 @@ export class comicsZipPackerHandler implements FormatHandler {
 }
 
 export class comicsZipUnpackerHandler implements FormatHandler {
-  public name: string = "comicsZipUnpacker";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "comicsZipUnpacker";
+  public supportedFormats = [
+    CommonFormats.PNG.builder("png").to(),
+    CommonFormats.JPEG.builder("jpg").to(),
+    CommonFormats.WEBP.builder("webp").to(),
+    CommonFormats.BMP.builder("bmp").to(),
+    CommonFormats.TIFF.builder("tiff").to(),
+    CommonFormats.GIF.builder("gif").to(),
+    CommonFormats.ZIP.builder("zip").from(),
+    CommonFormats.CBZ.builder("cbz").from(),
+  ];
+  public ready = false;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.PNG.builder("png").to(),
-      CommonFormats.JPEG.builder("jpg").to(),
-      CommonFormats.WEBP.builder("webp").to(),
-      CommonFormats.BMP.builder("bmp").to(),
-      CommonFormats.TIFF.builder("tiff").to(),
-      CommonFormats.GIF.builder("gif").to(),
-
-      CommonFormats.ZIP.builder("zip").from(),
-      CommonFormats.CBZ.builder("cbz").from(),
-    ];
-
     this.ready = true;
   }
 
@@ -162,24 +154,20 @@ export class comicsZipUnpackerHandler implements FormatHandler {
 }
 
 export class comicsTarUnpackerHandler implements FormatHandler {
-  public name: string = "comicsTarUnpacker";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "comicsTarUnpacker";
+  public supportedFormats = [
+    CommonFormats.PNG.builder("png").to(),
+    CommonFormats.JPEG.builder("jpg").to(),
+    CommonFormats.WEBP.builder("webp").to(),
+    CommonFormats.BMP.builder("bmp").to(),
+    CommonFormats.TIFF.builder("tiff").to(),
+    CommonFormats.GIF.builder("gif").to(),
+    CommonFormats.TAR.builder("tar").from(),
+    CommonFormats.CBT.builder("cbt").from(),
+  ];
+  public ready = false;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.PNG.builder("png").to(),
-      CommonFormats.JPEG.builder("jpg").to(),
-      CommonFormats.WEBP.builder("webp").to(),
-      CommonFormats.BMP.builder("bmp").to(),
-      CommonFormats.TIFF.builder("tiff").to(),
-      CommonFormats.GIF.builder("gif").to(),
-
-      CommonFormats.TAR.builder("tar").from(),
-      CommonFormats.CBT.builder("cbt").from(),
-    ];
-
     this.ready = true;
   }
 

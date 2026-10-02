@@ -4,19 +4,17 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 
 class svgTraceHandler implements FormatHandler {
-  public name: string = "svgTrace";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "svgTrace";
+  public supportedFormats = [
+    CommonFormats.PNG.builder("png").from(),
+    CommonFormats.JPEG.builder("jpeg").from(),
+    // note there is both animated svgs, and animted webPs, although this converter does not support either
+    CommonFormats.WEBP.builder("webp").from(),
+    CommonFormats.SVG.builder("svg").to(),
+  ];
+  public ready = false;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.PNG.builder("png").from(),
-      CommonFormats.JPEG.builder("jpeg").from(),
-      // note there is both animated svgs, and animted webPs, although this converter does not support either
-      CommonFormats.WEBP.builder("webp").from(),
-      CommonFormats.SVG.builder("svg").to(),
-    ];
     this.ready = true;
   }
 

@@ -112,14 +112,12 @@ async function inlineBlobBackedAttributes(printDoc: Document, cache: Map<string,
 }
 
 export default class epubHandler implements FormatHandler {
-  public name: string = "epub";
-  public ready: boolean = false;
-  public offload: boolean = true;
-
-  public supportedFormats: FileFormat[] = [
+  public name = "epub";
+  public supportedFormats = [
     CommonFormats.EPUB.builder("epub").from(),
     CommonFormats.HTML.builder("html").to(),
   ];
+  public ready = false;
 
   async init() {
     this.ready = true;

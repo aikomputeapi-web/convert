@@ -4,21 +4,18 @@ import JSZip from "jszip";
 import { InitializationError } from "src/errors.ts";
 
 class piskelHandler implements FormatHandler {
-  public name: string = "piskel";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "piskel";
+  public supportedFormats = [
+    CommonFormats.PNG.builder("png").lossless().to(),
+    CommonFormats.ZIP.builder("zip").lossless().to(),
+    CommonFormats.PISKEL.builder("piskel").lossless().from(),
+  ];
+  public ready = false;
 
   #canvas?: OffscreenCanvas;
   #ctx?: OffscreenCanvasRenderingContext2D;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.PNG.builder("png").lossless().to(),
-      CommonFormats.ZIP.builder("zip").lossless().to(),
-      CommonFormats.PISKEL.builder("piskel").lossless().from(),
-    ];
-
     this.#canvas = new OffscreenCanvas(1, 1);
     const ctx = this.#canvas.getContext("2d");
     if (!ctx) {

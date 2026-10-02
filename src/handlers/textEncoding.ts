@@ -93,24 +93,22 @@ function decodeUsingTextDecoder(bytes: Uint8Array, label: string) {
   }
 }
 
-const formats: FileFormat[] = [
-  CommonFormats.TEXT.builder("txt").lossless().fromTo(), // May or may not have BOM depending on browser
-  CommonFormats.TEXT_UTF8_NO_BOM.builder("utf8NB").lossless().to(), // In case the broeser defaults to with BOM, we can choose to force BOMless UTF-8.
-  CommonFormats.TEXT_UTF8_BOM.builder("utf8WB").lossless().to(), // UTF8 with forced BOM.
-  CommonFormats.TEXT_UTF16LE.builder("utf16le").lossless().fromTo(),
-  CommonFormats.TEXT_UTF16BE.builder("utf16be").lossless().fromTo(),
-  CommonFormats.TEXT_UTF32LE.builder("utf32le").lossless().fromTo(),
-  CommonFormats.TEXT_UTF32BE.builder("utf32be").lossless().fromTo(),
-];
-
 export default class textEncodingHandler implements FormatHandler {
-  name = "textEncoding";
-  supportedFormats = formats;
-  ready = true;
-  offload: boolean = true;
-  init = async () => {
+  public name = "textEncoding";
+  public supportedFormats = [
+    CommonFormats.TEXT.builder("txt").lossless().fromTo(), // May or may not have BOM depending on browser
+    CommonFormats.TEXT_UTF8_NO_BOM.builder("utf8NB").lossless().to(), // In case the broeser defaults to with BOM, we can choose to force BOMless UTF-8.
+    CommonFormats.TEXT_UTF8_BOM.builder("utf8WB").lossless().to(), // UTF8 with forced BOM.
+    CommonFormats.TEXT_UTF16LE.builder("utf16le").lossless().fromTo(),
+    CommonFormats.TEXT_UTF16BE.builder("utf16be").lossless().fromTo(),
+    CommonFormats.TEXT_UTF32LE.builder("utf32le").lossless().fromTo(),
+    CommonFormats.TEXT_UTF32BE.builder("utf32be").lossless().fromTo(),
+  ];
+  public ready = false;
+
+  async init() {
     this.ready = true;
-  };
+  }
 
   async doConvert(inputFiles: FileData[], inputFormat: FileFormat, outputFormat: FileFormat) {
     const results: FileData[] = [];

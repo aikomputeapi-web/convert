@@ -4,21 +4,18 @@ import { imageToText, rgbaToGrayscale } from "built/image-to-txt/src/convert.ts"
 import { InitializationError } from "src/errors.ts";
 
 class canvasToBlobHandler implements FormatHandler {
-  public name: string = "canvasToBlob";
-
-  public supportedFormats: FileFormat[] = [
+  public name = "canvasToBlob";
+  public supportedFormats = [
     CommonFormats.PNG.builder("png").lossless().fromTo(),
     CommonFormats.JPEG.builder("jpeg").fromTo(),
     CommonFormats.WEBP.builder("webp").fromTo(),
     CommonFormats.GIF.builder("gif").from(),
     CommonFormats.TEXT.builder("text").fromTo(),
   ];
+  public ready = false;
 
   #canvas?: OffscreenCanvas;
   #ctx?: OffscreenCanvasRenderingContext2D;
-
-  public ready: boolean = false;
-  public offload: boolean = true;
 
   async init() {
     this.#canvas = new OffscreenCanvas(1, 1);

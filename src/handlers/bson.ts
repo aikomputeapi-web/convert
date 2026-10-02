@@ -3,15 +3,12 @@ import CommonFormats from "src/CommonFormats.ts";
 import { BSON } from "bson";
 
 class bsonHandler implements FormatHandler {
-  public name: string = "bson";
-
-  public supportedFormats?: FileFormat[] = [
+  public name = "bson";
+  public supportedFormats = [
     CommonFormats.JSON.builder("json").lossless().fromTo(),
     CommonFormats.BSON.builder("bson").lossless().fromTo(),
   ];
-
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   async init() {
     this.ready = true;

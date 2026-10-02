@@ -6,17 +6,15 @@ function read_lendian(x: number, y: number): number {
 }
 
 class curaniHandler implements FormatHandler {
-  public name: string = "curani";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "curani";
+  public supportedFormats = [
+    CommonFormats.ANI.builder("ani").fromTo(),
+    CommonFormats.CUR.builder("cur").fromTo(),
+    CommonFormats.ICO.builder("ico").fromTo(),
+  ];
+  public ready = false;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.ANI.builder("ani").fromTo(),
-      CommonFormats.CUR.builder("cur").fromTo(),
-      CommonFormats.ICO.builder("ico").fromTo(),
-    ];
     this.ready = true;
   }
 

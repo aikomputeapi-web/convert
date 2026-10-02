@@ -4,16 +4,14 @@ import { render } from "./bsor/renderer.ts";
 import CommonFormats from "src/CommonFormats.ts";
 
 class bsorHandler implements FormatHandler {
-  public name: string = "bsor";
-  public supportedFormats: FileFormat[] = [
+  public name = "bsor";
+  public supportedFormats = [
     CommonFormats.BSOR.builder("bsor").from(),
     CommonFormats.PNG.builder("png").to(),
     CommonFormats.JPEG.builder("jpeg").to(),
     CommonFormats.JSON.builder("json").lossless().to(),
   ];
-
-  public ready: boolean = true;
-  public offload: boolean = true;
+  public ready = false;
 
   async init() {
     this.ready = true;

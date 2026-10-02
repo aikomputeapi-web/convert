@@ -6,16 +6,15 @@ import { QOIDecoder, QOIEncoder } from "qoi-fu";
 import { InitializationError } from "src/errors.ts";
 
 class qoiFuHandler implements FormatHandler {
-  public name: string = "qoiFu";
-  public supportedFormats: FileFormat[] = [
+  public name = "qoiFu";
+  public supportedFormats = [
     CommonFormats.PNG.builder("png").lossless().fromTo(),
     CommonFormats.JPEG.builder("jpeg").fromTo(),
     CommonFormats.WEBP.builder("webp").fromTo(),
     CommonFormats.GIF.builder("gif").from(),
     CommonFormats.QOI.builder("qoi").lossless().fromTo(),
   ];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   #canvas?: OffscreenCanvas;
   #ctx?: OffscreenCanvasRenderingContext2D;

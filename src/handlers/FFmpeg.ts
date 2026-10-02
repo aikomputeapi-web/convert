@@ -26,10 +26,9 @@ class FFmpegHandler implements FormatHandler {
     ["asf", "Windows Media Video (WMV)"],
   ]);
 
-  public name: string = "FFmpeg";
+  public name = "FFmpeg";
   public supportedFormats: FileFormat[] = [];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   #ffmpeg?: FFmpeg;
 
@@ -117,6 +116,7 @@ class FFmpegHandler implements FormatHandler {
     });
     const lines = stdout.split(" --\n")[1].split("\n");
 
+    this.supportedFormats = [];
     for (let line of lines) {
       let len;
       do {

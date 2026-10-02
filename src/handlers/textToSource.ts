@@ -70,16 +70,14 @@ class textToSourceHandler implements FormatHandler {
     [CommonFormats.RUST.builder("rs").lossless().to(), rust],
   ];
 
-  public name: string = "textToSource";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "textToSource";
+  public supportedFormats = [
+    CommonFormats.TEXT.builder("txt").lossless().from(),
+    ...textToSourceHandler.converters.map(([format]) => format),
+  ];
+  public ready = false;
 
   async init() {
-    const formats = textToSourceHandler.converters.map(([format]) => format);
-    this.supportedFormats = [CommonFormats.TEXT.builder("txt").lossless().from()];
-    this.supportedFormats.push(...formats);
-
     this.ready = true;
   }
 

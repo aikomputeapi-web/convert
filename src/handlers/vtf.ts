@@ -792,20 +792,17 @@ function decodeVTF(bytes: Uint8Array): DecodedImage {
 }
 
 class vtfHandler implements FormatHandler {
-  public name: string = "vtf";
-
-  public supportedFormats: FileFormat[] = [
+  public name = "vtf";
+  public supportedFormats = [
     CommonFormats.VTF.builder("vtf").from(),
     CommonFormats.PNG.builder("png").lossless().to(),
     CommonFormats.JPEG.builder("jpeg").to(),
     CommonFormats.WEBP.builder("webp").to(),
   ];
+  public ready = false;
 
   #canvas?: OffscreenCanvas;
   #ctx?: OffscreenCanvasRenderingContext2D;
-
-  public ready: boolean = false;
-  public offload: boolean = true;
 
   async init() {
     this.#canvas = new OffscreenCanvas(1, 1);

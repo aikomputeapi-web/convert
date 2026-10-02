@@ -4,19 +4,17 @@ import { gunzipSync, gzipSync } from "fflate";
 import CommonFormats from "src/CommonFormats.ts";
 
 class mcSchematicHandler implements FormatHandler {
-  public name: string = "mcSchematic";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "mcSchematic";
+  public supportedFormats = [
+    CommonFormats.MC_SCHEMATIC.builder("schematic").lossless().fromTo(),
+    CommonFormats.MC_SCHEM.builder("schem").lossless().fromTo(),
+    CommonFormats.MC_LITEMATIC.builder("litematic").lossless().fromTo(),
+    // Target internal format for graph routing
+    CommonFormats.NBT.builder("nbt").lossless().to(),
+  ];
+  public ready = false;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.MC_SCHEMATIC.builder("schematic").lossless().fromTo(),
-      CommonFormats.MC_SCHEM.builder("schem").lossless().fromTo(),
-      CommonFormats.MC_LITEMATIC.builder("litematic").lossless().fromTo(),
-      // Target internal format for graph routing
-      CommonFormats.NBT.builder("nbt").lossless().to(),
-    ];
     this.ready = true;
   }
 

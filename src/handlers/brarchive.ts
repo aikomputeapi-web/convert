@@ -33,18 +33,15 @@ function write_lendian_4(x: number): number[] {
 }
 
 class brarchiveHandler implements FormatHandler {
-  public name: string = "brarchive";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "brarchive";
+  public supportedFormats = [
+    CommonFormats.ZIP.builder("zip").lossless().fromTo(),
+    CommonFormats.JSON.builder("json").lossless().fromTo(),
+    CommonFormats.BRARCHIVE.builder("brarchive").lossless().fromTo(),
+  ];
+  public ready = false;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.ZIP.builder("zip").lossless().fromTo(),
-      CommonFormats.JSON.builder("json").lossless().fromTo(),
-      CommonFormats.BRARCHIVE.builder("brarchive").lossless().fromTo(),
-    ];
-
     this.ready = true;
   }
 

@@ -117,15 +117,13 @@ async function htmlContentToSvgString(
 }
 
 class htmlToSvgHandler implements FormatHandler {
-  public name: string = "htmlToSvg";
-
-  public supportedFormats: FileFormat[] = [
+  public name = "htmlToSvg";
+  public supportedFormats = [
     CommonFormats.HTML.builder("html").from(),
     CommonFormats.SVG.builder("svg").to(),
   ];
-
-  public ready: boolean = true;
-  public offload: boolean = false; // very dom heavy
+  public ready = false;
+  public offload = false; // very dom heavy
 
   async init() {
     this.ready = true;

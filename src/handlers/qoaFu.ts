@@ -46,13 +46,12 @@ class uint8ArrayQOAEncoder extends QOAEncoder {
 }
 
 class qoaFuHandler implements FormatHandler {
-  public name: string = "qoaFu";
-  public supportedFormats: FileFormat[] = [
+  public name = "qoaFu";
+  public supportedFormats = [
     CommonFormats.QOA.builder("qoa").fromTo(),
     CommonFormats.WAV.builder("wav").fromTo(),
   ];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   async init() {
     this.ready = true;

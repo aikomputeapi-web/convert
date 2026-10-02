@@ -143,11 +143,13 @@ export interface HandlerDefinition {
   supportAnyInput?: boolean;
 
   /** Whether the handler supports running in a Web Worker.
-   * Unless you are doing something extraordinary, this should be enabled. If you do need to disable it,
-   * make sure your reason is really good. Try replacing `HTMLCanvasElement` -> `OffscreenCanvas`
-   * (`toBlob()` -> `convertToBlob()`), `new Image()` -> `createImageBitmap()`, and avoiding audio APIs.
+   * Unless you are doing something extraordinary, this should be enabled. If you plan to disable it,
+   * your reason better be REALLY good. Try replacing `HTMLCanvasElement` -> `OffscreenCanvas`
+   * (`toBlob()` -> `convertToBlob()`), `new Image()` -> `createImageBitmap()`, using linkedom
+   * and avoiding audio APIs.
+   * Defaults to `true`.
    */
-  offload: boolean;
+  offload?: boolean;
 }
 
 /**

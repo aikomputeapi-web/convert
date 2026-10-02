@@ -78,21 +78,19 @@ function loadFluidSynth(): Promise<{ JSSynth: any; sfontBin: ArrayBuffer }> {
 
 export class midiCodecHandler implements FormatHandler {
   public name = "midiCodec";
-  public supportedFormats: FileFormat[] = [];
+  public supportedFormats = [
+    CommonFormats.MIDI.builder("mid").lossless().fromTo(),
+    CommonFormats.RTTTL.builder("rtttl").fromTo(),
+    CommonFormats.NOKRING.builder("rtttl").from(),
+    CommonFormats.GRUB.builder("grub").fromTo(),
+    CommonFormats.TEXT.builder("txt").lossless().fromTo(),
+    // PNG spectrogram -> MIDI (matches meyda's internal="image" so routing picks
+    // up the audio->png->mid path automatically)
+    CommonFormats.PNG.builder("png").fromTo(),
+  ];
   public ready = false;
-  public offload: boolean = true;
 
   async init(): Promise<void> {
-    this.supportedFormats.push(
-      CommonFormats.MIDI.builder("mid").lossless().fromTo(),
-      CommonFormats.RTTTL.builder("rtttl").fromTo(),
-      CommonFormats.NOKRING.builder("rtttl").from(),
-      CommonFormats.GRUB.builder("grub").fromTo(),
-      CommonFormats.TEXT.builder("txt").lossless().fromTo(),
-      // PNG spectrogram -> MIDI (matches meyda's internal="image" so routing picks
-      // up the audio->png->mid path automatically)
-      CommonFormats.PNG.builder("png").fromTo(),
-    );
     this.ready = true;
   }
 
@@ -189,9 +187,11 @@ export class midiCodecHandler implements FormatHandler {
 
 export class midiSynthHandler implements FormatHandler {
   public name = "midiSynth";
-  public supportedFormats: FileFormat[] = [];
+  public supportedFormats = [
+    CommonFormats.MIDI.builder("mid").lossless().from(),
+    CommonFormats.WAV.builder("wav").lossless().to(),
+  ];
   public ready = false;
-  public offload: boolean = true;
 
   #sfontBin?: ArrayBuffer;
   #JSSynth?: any;
@@ -200,11 +200,6 @@ export class midiSynthHandler implements FormatHandler {
     const { JSSynth, sfontBin } = await loadFluidSynth();
     this.#JSSynth = JSSynth;
     this.#sfontBin = sfontBin;
-
-    this.supportedFormats.push(
-      CommonFormats.MIDI.builder("mid").lossless().from(),
-      CommonFormats.WAV.builder("wav").lossless().to(),
-    );
 
     this.ready = true;
   }

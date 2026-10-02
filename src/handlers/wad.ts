@@ -14,15 +14,13 @@ interface ParsedWAD {
 }
 
 class wadHandler implements FormatHandler {
-  public name: string = "wad";
-  public ready: boolean = true;
-  public offload: boolean = true;
-
-  public supportedFormats: FileFormat[] = [
+  public name = "wad";
+  public supportedFormats = [
     CommonFormats.WAD.builder("wad").lossless().fromTo(),
     CommonFormats.ZIP.builder("zip").lossless().fromTo(),
     CommonFormats.JSON.builder("json").to(),
   ];
+  public ready = false;
 
   async init() {
     this.ready = true;

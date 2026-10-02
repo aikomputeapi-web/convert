@@ -8,14 +8,12 @@ const DEBUG_EXE_TO_BAT = false;
 const EXE_MIME = "application/vnd.microsoft.portable-executable";
 
 export default class exeToBatHandler implements FormatHandler {
-  name = "exeToBat";
-  supportedFormats: FileFormat[] = [
+  public name = "exeToBat";
+  public supportedFormats = [
     CommonFormats.EXE.builder("exe").from(),
     CommonFormats.BATCH.builder("bat").lossless().to(),
   ];
-
-  ready = false;
-  public offload: boolean = true;
+  public ready = false;
 
   async init() {
     if (DEBUG_EXE_TO_BAT) console.log("[exe2bat] Initializing handler...");
@@ -159,6 +157,4 @@ exit /b 0
 ${payload}
 -----END PAYLOAD-----`;
   }
-
-  supportAnyInput = false;
 }

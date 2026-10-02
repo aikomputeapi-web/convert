@@ -3,16 +3,14 @@ import CommonFormats from "src/CommonFormats.ts";
 import { Decrypter } from "built/rpgmvp-decrypter/scripts/Decrypter.js";
 
 class rpgmvpHandler implements FormatHandler {
-  public name: string = "rpgmvp";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "rpgmvp";
+  public supportedFormats = [
+    CommonFormats.RPGMVP.builder("rpgmvp").lossless().from(),
+    CommonFormats.PNG.builder("png").lossless().to(),
+  ];
+  public ready = false;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.RPGMVP.builder("rpgmvp").lossless().from(),
-      CommonFormats.PNG.builder("png").lossless().to(),
-    ];
     this.ready = true;
   }
 

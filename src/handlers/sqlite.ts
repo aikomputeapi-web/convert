@@ -4,18 +4,16 @@ import sqlite3InitModule from "@sqlite.org/sqlite-wasm";
 import { parse } from "papaparse";
 
 class sqliteHandler implements FormatHandler {
-  public name: string = "sqlite";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "sqlite";
+  public supportedFormats = [
+    CommonFormats.SQLITE3.builder("sqlite3").fromTo(),
+    CommonFormats.ITDB.builder("sqlite3").from(),
+    // Lossy because extracts only tables
+    CommonFormats.CSV.builder("csv").fromTo(),
+  ];
+  public ready = false;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.SQLITE3.builder("sqlite3").fromTo(),
-      CommonFormats.ITDB.builder("sqlite3").from(),
-      // Lossy because extracts only tables
-      CommonFormats.CSV.builder("csv").fromTo(),
-    ];
     this.ready = true;
   }
 

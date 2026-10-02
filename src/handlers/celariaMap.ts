@@ -52,19 +52,16 @@ function putInstances(
 }
 
 class celariaMapHandler implements FormatHandler {
-  public name: string = "celariaMap";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "celariaMap";
+  public supportedFormats = [
+    CommonFormats.OBJ.builder("obj").to(),
+    CommonFormats.JSON.builder("json").fromTo(),
+    CommonFormats.ECMAP.builder("ecmap").fromTo(),
+    CommonFormats.CMAP.builder("cmap").from(),
+  ];
+  public ready = false;
   /**/
   async init() {
-    this.supportedFormats = [
-      CommonFormats.OBJ.builder("obj").to(),
-      CommonFormats.JSON.builder("json").fromTo(),
-      CommonFormats.ECMAP.builder("ecmap").fromTo(),
-      CommonFormats.CMAP.builder("cmap").from(),
-    ];
-
     this.ready = true;
   }
 

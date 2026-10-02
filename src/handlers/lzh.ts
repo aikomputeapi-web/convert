@@ -30,17 +30,13 @@ function sanitizeString(str: string): string {
  * - Multiple compression methods (lh0, lh1, lh4, lh5, lh6, lh7)
  */
 export class lzhHandler implements FormatHandler {
-  public name: string = "lzh";
-
-  public supportedFormats: FileFormat[] = [
+  public name = "lzh";
+  public supportedFormats = [
     CommonFormats.LZH.builder("lzh").lossless().fromTo(),
     CommonFormats.ZIP.builder("zip").lossless().fromTo(),
     CommonFormats.JSON.builder("json").to(),
   ];
-
-  public supportAnyInput: boolean = false;
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   async init() {
     this.ready = true;
@@ -187,13 +183,10 @@ export class lzhHandler implements FormatHandler {
 
 // Packs any input(s) into a singular LZH file. Separated for tree purposes.
 export class lzh2Handler implements FormatHandler {
-  public name: string = "lzh2";
-
-  public supportedFormats: FileFormat[] = [CommonFormats.LZH.builder("lzh").lossless().to()];
-
-  public supportAnyInput: boolean = true;
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "lzh2";
+  public supportedFormats = [CommonFormats.LZH.builder("lzh").lossless().to()];
+  public supportAnyInput = true;
+  public ready = false;
 
   async init() {
     this.ready = true;

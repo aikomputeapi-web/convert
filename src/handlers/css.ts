@@ -2,17 +2,15 @@ import { type FileData, type FileFormat, type FormatHandler } from "../FormatHan
 import CommonFormats from "src/CommonFormats.ts";
 
 class cssHandler implements FormatHandler {
-  public name: string = "css";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "css";
+  public supportedFormats = [
+    CommonFormats.CSS.builder("css").lossless().fromTo(),
+    CommonFormats.LESS.builder("less").from(),
+    CommonFormats.SCSS.builder("scss").from(),
+  ];
+  public ready = false;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.CSS.builder("css").lossless().fromTo(),
-      CommonFormats.LESS.builder("less").from(),
-      CommonFormats.SCSS.builder("scss").from(),
-    ];
     this.ready = true;
   }
 

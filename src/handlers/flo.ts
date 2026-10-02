@@ -5,18 +5,16 @@ import { WaveFile } from "wavefile";
 import refloWasmUrl from "@flo-audio/reflo/reflo_bg.wasm?url";
 
 class floHandler implements FormatHandler {
-  public name: string = "flo";
-  public supportedFormats: FileFormat[] = [];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "flo";
+  public supportedFormats = [
+    CommonFormats.FLO.builder("flo").fromTo(),
+    CommonFormats.WAV.builder("wav").lossless().fromTo(),
+    CommonFormats.F32LE.builder("f32le").lossless().fromTo(),
+  ];
+  public ready = false;
 
   async init() {
     await initReflo({ module_or_path: refloWasmUrl });
-    this.supportedFormats = [
-      CommonFormats.FLO.builder("flo").fromTo(),
-      CommonFormats.WAV.builder("wav").lossless().fromTo(),
-      CommonFormats.F32LE.builder("f32le").lossless().fromTo(),
-    ];
     this.ready = true;
   }
 

@@ -4,20 +4,17 @@ import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 
 class cybergrindHandler implements FormatHandler {
-  public name: string = "cybergrind";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "cybergrind";
+  public supportedFormats = [
+    CommonFormats.PNG.builder("png").from(),
+    CommonFormats.CGP.builder("cgp").to(),
+  ];
+  public ready = false;
 
   #canvas?: OffscreenCanvas;
   #ctx?: OffscreenCanvasRenderingContext2D;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.PNG.builder("png").from(),
-      CommonFormats.CGP.builder("cgp").to(),
-    ];
-
     this.#canvas = new OffscreenCanvas(16, 16);
     this.#ctx = this.#canvas.getContext("2d") || undefined;
 

@@ -4,12 +4,11 @@ import PDFDocument from "pdfkit/js/pdfkit.standalone";
 
 class textToPdfHandler implements FormatHandler {
   public name = "textToPdf";
-  public supportedFormats?: FileFormat[] = [
+  public supportedFormats = [
     CommonFormats.TEXT.builder("text").from(),
     CommonFormats.PDF.builder("pdf").to(),
   ];
   public ready = false;
-  public offload: boolean = true;
 
   async init() {
     this.ready = true;

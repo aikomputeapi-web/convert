@@ -54,7 +54,6 @@ console.log("Setup finished.");
 const dummyHandler: FormatHandler = {
   name: "dummy",
   ready: true,
-  offload: true,
   async init() {},
   async doConvert(_inputFiles, inputFormat, outputFormat, _args) {
     return [];

@@ -331,15 +331,13 @@ function parseSvgPageDimensions(svgBytes: Uint8Array): { widthPt: number; height
 }
 
 class typstHandler implements FormatHandler {
-  public name: string = "typst";
-  public ready: boolean = false;
-  public offload: boolean = true;
-
-  public supportedFormats: FileFormat[] = [
+  public name = "typst";
+  public supportedFormats = [
     CommonFormats.TYPST.builder("typst").lossless().from(),
     CommonFormats.PDF.builder("pdf").lossless().to(),
     CommonFormats.SVG.builder("svg").fromTo(),
   ];
+  public ready = false;
 
   private $typst?: TypstSnippet;
 

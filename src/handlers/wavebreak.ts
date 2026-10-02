@@ -3,8 +3,8 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 
 class wavebreakHandler implements FormatHandler {
-  public name: string = "wavebreak";
-  public supportedFormats: FileFormat[] = [
+  public name = "wavebreak";
+  public supportedFormats = [
     CommonFormats.WAV.builder("wav").lossless().to(),
     CommonFormats.S16LE.builder("s16le").lossless().from(), // interpreted as 44.1 kHz mono
     CommonFormats.U8.builder("u8").lossless().from(), // once again interpreted as std. mono
@@ -13,8 +13,7 @@ class wavebreakHandler implements FormatHandler {
     CommonFormats.F32LE.builder("f32le").lossless().from(),
     CommonFormats.F64LE.builder("f64le").lossless().from(),
   ];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   async init() {
     this.ready = true;

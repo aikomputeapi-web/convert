@@ -4,14 +4,13 @@ import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 
 class xcursorHandler implements FormatHandler {
-  public name: string = "xcursor";
-  public supportedFormats: FileFormat[] = [
+  public name = "xcursor";
+  public supportedFormats = [
     CommonFormats.PNG.builder("png").lossless().to(),
     CommonFormats.JPEG.builder("jpeg").to(),
     CommonFormats.XCUR.builder("xcur").lossless().from(),
   ];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   #canvas?: OffscreenCanvas;
   #ctx?: OffscreenCanvasRenderingContext2D;

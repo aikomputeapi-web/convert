@@ -8,7 +8,7 @@ import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
 
 class threejsHandler implements FormatHandler {
-  public name: string = "threejs";
+  public name = "threejs";
   public supportedFormats = [
     CommonFormats.GLB.builder("glb").from(),
     CommonFormats.GLTF.builder("glb").from(),
@@ -17,8 +17,7 @@ class threejsHandler implements FormatHandler {
     CommonFormats.JPEG.builder("jpeg").to(),
     CommonFormats.WEBP.builder("webp").to(),
   ];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   private scene = new THREE.Scene();
   private camera = new THREE.PerspectiveCamera(90, 16 / 9, 0.1, 4096);

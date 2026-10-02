@@ -3,15 +3,12 @@ import CommonFormats from "src/CommonFormats.ts";
 import { encode, decode } from "@toon-format/toon";
 
 class toonHandler implements FormatHandler {
-  public name: string = "toon";
-
-  public supportedFormats?: FileFormat[] = [
+  public name = "toon";
+  public supportedFormats = [
     CommonFormats.JSON.builder("json").lossless().fromTo(),
     CommonFormats.TOON.builder("toon").lossless().fromTo(),
   ];
-
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   async init() {
     this.ready = true;

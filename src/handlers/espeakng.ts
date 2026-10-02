@@ -4,15 +4,13 @@ import { SimpleTTS } from "built/espeakng.js/js/espeakng-simple.js";
 import { WaveFile } from "wavefile";
 
 export class espeakngHandler implements FormatHandler {
-  public name: string = "espeakng";
-  public ready: boolean = true;
-  public offload: boolean = true;
-  #tts: SimpleTTS | undefined = undefined;
-
-  public supportedFormats: FileFormat[] = [
+  public name = "espeakng";
+  public supportedFormats = [
     CommonFormats.TEXT.builder("text").from(),
     CommonFormats.WAV.builder("wav").to(),
   ];
+  public ready = false;
+  #tts: SimpleTTS | undefined = undefined;
 
   async init() {
     this.ready = true;

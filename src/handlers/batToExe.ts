@@ -12,7 +12,6 @@ class batToExeHandler implements FormatHandler {
     CommonFormats.EXE.builder("exe").lossless().to(), // Lossless because it stores exact input side
   ];
   public ready = false;
-  public offload: boolean = true;
 
   private header: Uint8Array | null = null;
   private footer: Uint8Array | null = null;

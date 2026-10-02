@@ -110,10 +110,9 @@ const TRACKER_FORMATS: Array<{ ext: string; name: string; mime?: string }> = [
 const SAMPLE_RATE = 48000;
 
 class libopenmptHandler implements FormatHandler {
-  public name: string = "libopenmpt";
+  public name = "libopenmpt";
   public supportedFormats: FileFormat[] = [];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   #module?: LibOpenMPTModule;
 
@@ -123,6 +122,7 @@ class libopenmptHandler implements FormatHandler {
     );
     this.#module = await createModule({ locateFile: () => wasmUrl });
 
+    this.supportedFormats = [];
     for (const fmt of TRACKER_FORMATS) {
       this.supportedFormats.push({
         name: fmt.name,

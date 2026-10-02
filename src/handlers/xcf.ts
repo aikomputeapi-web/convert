@@ -4,20 +4,17 @@ import XCF from "built/gimper/src/main.js";
 import { InitializationError } from "src/errors.ts";
 
 class xcfHandler implements FormatHandler {
-  public name: string = "xcf";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "xcf";
+  public supportedFormats = [
+    CommonFormats.XCF.builder("xcf").lossless().from(),
+    CommonFormats.PNG.builder("png").lossless().to(),
+  ];
+  public ready = false;
 
   #canvas?: OffscreenCanvas;
   #ctx?: OffscreenCanvasRenderingContext2D;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.XCF.builder("xcf").lossless().from(),
-      CommonFormats.PNG.builder("png").lossless().to(),
-    ];
-
     this.#canvas = new OffscreenCanvas(1, 1);
     const ctx = this.#canvas.getContext("2d");
     if (!ctx) {

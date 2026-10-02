@@ -10,8 +10,7 @@ export class MockedHandler implements FormatHandler {
     public supportedFormats?: FileFormat[],
     public supportAnyInput?: boolean,
   ) {}
-  ready: boolean = false;
-  offload: boolean = true;
+  public ready = false;
   init() {
     this.ready = true;
     return Promise.resolve();

@@ -297,13 +297,12 @@ export function bbmodelToObj(input: string | BBModel) {
 }
 
 class bbmodelHandler implements FormatHandler {
-  public name: string = "bbmodel";
-  public ready: boolean = false;
-  public supportedFormats: FileFormat[] = [
+  public name = "bbmodel";
+  public supportedFormats = [
     CommonFormats.OBJ.builder("obj").to(),
     CommonFormats.BBMODEL.builder("bbmodel").from(),
   ];
-  public offload: boolean = true;
+  public ready = false;
 
   async init() {
     this.ready = true;

@@ -3,15 +3,15 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { InitializationError } from "src/errors.ts";
 
 class svgToBlobHandler implements FormatHandler {
-  public name: string = "svgToBlob";
-  public supportedFormats: FileFormat[] = [
+  public name = "svgToBlob";
+  public supportedFormats = [
     CommonFormats.PNG.builder("png").to(),
     CommonFormats.JPEG.builder("jpeg").to(),
     CommonFormats.WEBP.builder("webp").to(),
     CommonFormats.SVG.builder("svg").from(),
   ];
-  public ready: boolean = false;
-  public offload: boolean = false; // svg does not like createImageBitmap
+  public ready = false;
+  public offload = false; // svg does not like createImageBitmap
 
   #canvas?: OffscreenCanvas;
   #ctx?: OffscreenCanvasRenderingContext2D;

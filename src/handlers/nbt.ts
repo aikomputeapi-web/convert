@@ -4,19 +4,17 @@ import CommonFormats from "src/CommonFormats.ts";
 import { gzipSync } from "fflate";
 
 class nbtHandler implements FormatHandler {
-  public name: string = "nbt";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "nbt";
+  public supportedFormats = [
+    CommonFormats.NBT.builder("nbt").lossless().fromTo(),
+    CommonFormats.JSON.builder("json").lossless().fromTo(),
+    CommonFormats.SNBT.builder("snbt").lossless().fromTo(), // only compression data is lost
+  ];
+  public ready = false;
 
   public indent: number = 2;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.NBT.builder("nbt").lossless().fromTo(),
-      CommonFormats.JSON.builder("json").lossless().fromTo(),
-      CommonFormats.SNBT.builder("snbt").lossless().fromTo(), // only compression data is lost
-    ];
     this.ready = true;
   }
 

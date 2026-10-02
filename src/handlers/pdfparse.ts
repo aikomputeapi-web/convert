@@ -4,13 +4,12 @@ import { PDFParse } from "pdf-parse";
 import pdfWorkerUrl from "../../node_modules/pdf-parse/dist/pdf-parse/web/pdf.worker.mjs?url";
 
 class pdfparseHandler implements FormatHandler {
-  public name: string = "pdfparse";
-  public supportedFormats?: FileFormat[] = [
+  public name = "pdfparse";
+  public supportedFormats = [
     CommonFormats.PDF.builder("pdf").from(),
     CommonFormats.TEXT.builder("txt").to(),
   ];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   async init() {
     PDFParse.setWorker(pdfWorkerUrl);

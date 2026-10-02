@@ -9,16 +9,13 @@ if (typeof window !== "undefined") {
 }
 
 class peToZipHandler implements FormatHandler {
-  public name: string = "peToZip";
-
-  public supportedFormats: FileFormat[] = [
+  public name = "peToZip";
+  public supportedFormats = [
     CommonFormats.EXE.builder("exe").from(),
     CommonFormats.DLL.builder("dll").from(),
     CommonFormats.ZIP.builder("zip").lossless().to(),
   ];
-
-  public ready: boolean = true;
-  public offload: boolean = true;
+  public ready = false;
 
   async init() {
     this.ready = true;

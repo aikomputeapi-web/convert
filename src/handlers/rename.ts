@@ -1,12 +1,11 @@
 import CommonFormats from "src/CommonFormats.ts";
-import type { FileData, FileFormat } from "../FormatHandler.ts";
+import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 function createRenameHandler(name: string, formats: FileFormat[]) {
-  return class {
+  return class implements FormatHandler {
     public name = name;
-    public ready = true;
     public supportedFormats = formats;
-    public offload = true;
+    public ready = false;
 
     async init() {
       this.ready = true;
@@ -24,6 +23,7 @@ function createRenameHandler(name: string, formats: FileFormat[]) {
     }
   };
 }
+
 /// handler for renaming various aliased zip files
 export const renameZipHandler = createRenameHandler("renameZip", [
   CommonFormats.ZIP.builder("zip").to(),

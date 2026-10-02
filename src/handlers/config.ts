@@ -16,11 +16,8 @@ import CommonFormats from "src/CommonFormats.ts";
 import { type FileData, type FileFormat, type FormatHandler } from "../FormatHandler.ts";
 
 class configHandler implements FormatHandler {
-  public name: string = "config";
-  public ready: boolean = true;
-  public offload: boolean = true;
-
-  public supportedFormats: FileFormat[] = [
+  public name = "config";
+  public supportedFormats = [
     // JSON maintains exact data equivalence to JS Objects natively
     CommonFormats.JSON.builder("json").lossless().fromTo(),
     // JSON5, YAML, and TOML have comments and other features lost when parsed to JS Objects
@@ -30,6 +27,7 @@ class configHandler implements FormatHandler {
     CommonFormats.TOML.builder("toml").fromTo(),
     CommonFormats.INI.builder("ini").fromTo(),
   ];
+  public ready = false;
 
   async init() {
     this.ready = true;

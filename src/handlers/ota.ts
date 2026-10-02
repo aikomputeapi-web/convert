@@ -4,20 +4,17 @@ import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 
 class otaHandler implements FormatHandler {
-  public name: string = "ota";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "ota";
+  public supportedFormats = [
+    CommonFormats.PNG.builder("png").lossless().fromTo(),
+    CommonFormats.OTA.builder("ota").fromTo(),
+  ];
+  public ready = false;
 
   #canvas?: OffscreenCanvas;
   #ctx?: OffscreenCanvasRenderingContext2D;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.PNG.builder("png").lossless().fromTo(),
-      CommonFormats.OTA.builder("ota").fromTo(),
-    ];
-
     this.#canvas = new OffscreenCanvas(1, 1);
     this.#ctx = this.#canvas.getContext("2d") || undefined;
 

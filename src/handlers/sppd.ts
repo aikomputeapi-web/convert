@@ -184,16 +184,14 @@ const wallMaterial = new THREE.MeshLambertMaterial({ color: 0x242424 });
 const wallPortalMaterial = new THREE.MeshLambertMaterial({ color: 0x505050 });
 
 class sppdHandler implements FormatHandler {
-  public name: string = "sppd";
-  public supportedFormats: FileFormat[] = [
+  public name = "sppd";
+  public supportedFormats = [
     CommonFormats.PORTAL2_DEM.builder("dem").from(),
     CommonFormats.PNG.builder("png").to(),
     CommonFormats.JPEG.builder("jpeg").to(),
     CommonFormats.JSON.builder("json").lossless().to(),
   ];
-
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   private renderBounds = { width: 640, height: 360 };
 

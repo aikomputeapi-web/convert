@@ -21,12 +21,10 @@ function padNumberString(num: number, digits: number): string {
 }
 
 class sevenZipHandler implements FormatHandler {
-  public name: string = "sevenZip";
+  public name = "sevenZip";
   public supportedFormats: FileFormat[] = [];
-  public ready: boolean = false;
-
-  public supportAnyInput: boolean = true;
-  public offload: boolean = true;
+  public supportAnyInput = true;
+  public ready = false;
 
   #tarCompressedFormats: string[] = [];
 

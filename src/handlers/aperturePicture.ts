@@ -3,19 +3,17 @@ import CommonFormats from "src/CommonFormats.ts";
 import { BadMagicError, InitializationError } from "src/errors.ts";
 
 class aperturePictureHandler implements FormatHandler {
-  public name: string = "aperturePicture";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "aperturePicture";
+  public supportedFormats = [
+    CommonFormats.APF.builder("apf").lossless().fromTo(),
+    CommonFormats.BMP.builder("bmp").lossless().fromTo(),
+  ];
+  public ready = false;
 
   #canvas?: OffscreenCanvas;
   #ctx?: OffscreenCanvasRenderingContext2D;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.APF.builder("apf").lossless().fromTo(),
-      CommonFormats.BMP.builder("bmp").lossless().fromTo(),
-    ];
     this.#canvas = new OffscreenCanvas(320, 200);
     this.#ctx = this.#canvas.getContext("2d") || undefined;
     this.ready = true;

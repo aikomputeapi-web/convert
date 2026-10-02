@@ -8,14 +8,12 @@ export default class jsonToCHandler implements FormatHandler {
   /* Class to handle conversion between JSON and C  */
   /**************************************************/
 
-  public name: string = "jsonToC";
-  public supportedFormats?: FileFormat[] = [
+  public name = "jsonToC";
+  public supportedFormats = [
     CommonFormats.C.builder("c").fromTo(),
     CommonFormats.JSON.builder("json").fromTo(),
   ];
-
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   async init() {
     this.ready = true;

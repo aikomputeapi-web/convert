@@ -503,18 +503,15 @@ function renderMolecule(molecule: OM_Molecule, format: string): Uint8Array {
 }
 
 export class opusMagnumMainHandler implements FormatHandler {
-  public name: string = "opusMagnumMain";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "opusMagnumMain";
+  public supportedFormats = [
+    CommonFormats.SVG.builder("svg").to(),
+    CommonFormats.OM_PUZZLE.builder("puzzle").fromTo(),
+    CommonFormats.OM_MOLECULE.builder("molecule").fromTo(),
+  ];
+  public ready = false;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.SVG.builder("svg").to(),
-      CommonFormats.OM_PUZZLE.builder("puzzle").fromTo(),
-      CommonFormats.OM_MOLECULE.builder("molecule").fromTo(),
-    ];
-
     this.ready = true;
   }
 
@@ -886,20 +883,17 @@ export class opusMagnumMainHandler implements FormatHandler {
 
 // Image-to-molecule handler
 export class opusMagnumITMHandler implements FormatHandler {
-  public name: string = "opusMagnumITM";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "opusMagnumITM";
+  public supportedFormats = [
+    CommonFormats.PNG.builder("png").from(),
+    CommonFormats.OM_MOLECULE.builder("molecule").to(),
+  ];
+  public ready = false;
 
   #canvas?: OffscreenCanvas;
   #ctx?: OffscreenCanvasRenderingContext2D;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.PNG.builder("png").from(),
-      CommonFormats.OM_MOLECULE.builder("molecule").to(),
-    ];
-
     this.#canvas = new OffscreenCanvas(1, 1);
     this.#ctx = this.#canvas.getContext("2d") || undefined;
 
@@ -1075,17 +1069,14 @@ export class opusMagnumITMHandler implements FormatHandler {
 
 // Text-to-molecule handler
 export class opusMagnumTTMHandler implements FormatHandler {
-  public name: string = "opusMagnumTTM";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "opusMagnumTTM";
+  public supportedFormats = [
+    CommonFormats.TEXT.builder("txt").from(),
+    CommonFormats.OM_MOLECULE.builder("molecule").to(),
+  ];
+  public ready = false;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.TEXT.builder("txt").from(),
-      CommonFormats.OM_MOLECULE.builder("molecule").to(),
-    ];
-
     // Validation - testing
     for (const key in molecule_dict) {
       const el_rl = molecule_dict[key][0];

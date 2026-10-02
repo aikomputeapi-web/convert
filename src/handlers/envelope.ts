@@ -7,9 +7,8 @@ import parseXLSX from "built/envelope/parseXLSX.js";
 import CommonFormats from "src/CommonFormats.ts";
 
 class envelopeHandler implements FormatHandler {
-  public name: string = "envelope";
-
-  public supportedFormats: FileFormat[] = [
+  public name = "envelope";
+  public supportedFormats = [
     CommonFormats.DOCX.builder("docx").from(),
     // Currently, Pancoc handles PPTX and XLSX better than Envelope.
     // CommonFormats.PPTX.builder("pptx").from(),
@@ -20,9 +19,7 @@ class envelopeHandler implements FormatHandler {
     // Technically not "lossless", but it's about as close as we'll ever get
     CommonFormats.HTML.builder("html").lossless().to(),
   ];
-
-  public ready: boolean = true;
-  public offload: boolean = true;
+  public ready = false;
 
   async init() {
     this.ready = true;

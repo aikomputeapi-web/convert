@@ -9,20 +9,17 @@ const COLOR_UNBREAKABLE = [46, 76, 24];
 const COLOR_BUNNY = [255, 255, 255];
 
 class bunburrowsHandler implements FormatHandler {
-  public name: string = "bunburrows";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "bunburrows";
+  public supportedFormats = [
+    CommonFormats.PNG.builder("png").fromTo(),
+    CommonFormats.BUNLEVEL.builder("bunlevel").from(),
+  ];
+  public ready = false;
 
   #canvas?: OffscreenCanvas;
   #ctx?: OffscreenCanvasRenderingContext2D;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.PNG.builder("png").fromTo(),
-      CommonFormats.BUNLEVEL.builder("bunlevel").from(),
-    ];
-
     this.#canvas = new OffscreenCanvas(1, 1);
     this.#ctx = this.#canvas.getContext("2d") || undefined;
 

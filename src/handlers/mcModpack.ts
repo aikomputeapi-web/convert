@@ -3,16 +3,14 @@ import CommonFormats from "src/CommonFormats";
 import JSZip from "jszip";
 
 class mcModpackHandler implements FormatHandler {
-  public name: string = "mcModpack";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "mcModpack";
+  public supportedFormats = [
+    CommonFormats.MRPACK.builder("mrpack").lossless().fromTo(),
+    CommonFormats.ZIP.builder("zip").lossless().fromTo(), // Only handles generic .zip modpacks when routed appropriately
+  ];
+  public ready = false;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.MRPACK.builder("mrpack").lossless().fromTo(),
-      CommonFormats.ZIP.builder("zip").lossless().fromTo(), // Only handles generic .zip modpacks when routed appropriately
-    ];
     this.ready = true;
   }
 

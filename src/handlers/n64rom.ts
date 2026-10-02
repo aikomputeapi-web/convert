@@ -14,15 +14,14 @@ const MAX_CANVAS_DIMENSION = 16384;
 type N64Order = "z64" | "n64" | "v64";
 
 class n64romHandler implements FormatHandler {
-  public name: string = "n64rom";
-  public supportedFormats: FileFormat[] = [
+  public name = "n64rom";
+  public supportedFormats = [
     CommonFormats.Z64.builder("z64").lossless().fromTo(),
     CommonFormats.N64.builder("n64").lossless().fromTo(),
     CommonFormats.V64.builder("v64").lossless().fromTo(),
     CommonFormats.PNG.builder("n64png").lossless().fromTo(),
   ];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   #canvas?: OffscreenCanvas;
   #ctx?: OffscreenCanvasRenderingContext2D;

@@ -3,16 +3,16 @@ import CommonFormats from "src/CommonFormats.ts";
 import JSZip from "jszip";
 
 class harHandler implements FormatHandler {
-  public name: string = "har";
-  public ready: boolean = true;
-  public offload: boolean = true;
-
-  public supportedFormats?: FileFormat[] = [
+  public name = "har";
+  public supportedFormats = [
     CommonFormats.HAR.builder("har").from(),
     CommonFormats.ZIP.builder("zip").to(),
   ];
+  public ready = false;
 
-  async init() {}
+  async init() {
+    this.ready = true;
+  }
 
   private base64ToUint8Array(base64: string): Uint8Array {
     const binaryString = atob(base64);

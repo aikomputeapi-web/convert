@@ -4,21 +4,18 @@ import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 
 class rgbaHandler implements FormatHandler {
-  public name: string = "rgba";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "rgba";
+  public supportedFormats = [
+    CommonFormats.PNG.builder("png").lossless().fromTo(),
+    CommonFormats.RGB.builder("rgb").fromTo(),
+    CommonFormats.RGBA.builder("rgba").lossless().fromTo(),
+  ];
+  public ready = false;
 
   #canvas?: OffscreenCanvas;
   #ctx?: OffscreenCanvasRenderingContext2D;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.PNG.builder("png").lossless().fromTo(),
-      CommonFormats.RGB.builder("rgb").fromTo(),
-      CommonFormats.RGBA.builder("rgba").lossless().fromTo(),
-    ];
-
     this.#canvas = new OffscreenCanvas(1, 1);
     this.#ctx = this.#canvas.getContext("2d") || undefined;
 

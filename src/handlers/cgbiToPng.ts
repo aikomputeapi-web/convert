@@ -147,13 +147,11 @@ async function revertCgBIBuffer(input: Uint8Array | ArrayBuffer): Promise<Uint8A
 
 class cgbiToPngHandler implements FormatHandler {
   public name = "cgbiToPng";
-  public ready = true;
-  public offload: boolean = true;
-
-  public supportedFormats: FileFormat[] = [
+  public supportedFormats = [
     CommonFormats.CGBI_PNG.builder("cgbi-png").lossless().from(),
     CommonFormats.PNG.builder("png").lossless().to(),
   ];
+  public ready = false;
 
   async init(): Promise<void> {
     this.ready = true;

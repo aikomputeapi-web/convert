@@ -15,16 +15,13 @@ import {
 } from "ts-flp";
 
 class flpToJsonHandler implements FormatHandler {
-  public name: string = "flpToJson";
-
-  public supportedFormats: FileFormat[] = [
+  public name = "flpToJson";
+  public supportedFormats = [
     CommonFormats.FLP.builder("flp").from(),
     // Unsure about this, it might be lossless
     CommonFormats.JSON.builder("json").to(),
   ];
-
-  public ready: boolean = true;
-  public offload: boolean = true;
+  public ready = false;
 
   async init() {
     this.ready = true;

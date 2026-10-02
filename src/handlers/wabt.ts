@@ -6,10 +6,12 @@ import wabt from "wabt";
 type WabtModule = Awaited<ReturnType<typeof wabt>>;
 
 export default class wabtHandler implements FormatHandler {
-  public name: string = "wabt";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "wabt";
+  public supportedFormats = [
+    CommonFormats.WASM.builder("wasm").lossless().fromTo(),
+    CommonFormats.WAT.builder("wat").lossless().fromTo(),
+  ];
+  public ready = false;
 
   private wabtModule?: WabtModule;
 
@@ -31,11 +33,6 @@ export default class wabtHandler implements FormatHandler {
   }
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.WASM.builder("wasm").lossless().fromTo(),
-      CommonFormats.WAT.builder("wat").lossless().fromTo(),
-    ];
-
     this.wabtModule = await wabt();
 
     this.ready = true;

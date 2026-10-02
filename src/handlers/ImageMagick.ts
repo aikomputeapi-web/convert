@@ -15,12 +15,9 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import type { ConvertContext } from "../ui/ProgressStore.js";
 
 class ImageMagickHandler implements FormatHandler {
-  public name: string = "ImageMagick";
-
+  public name = "ImageMagick";
   public supportedFormats: FileFormat[] = [];
-
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   async init() {
     const wasmBuffer = await fetch(magickWasmUrl).then((r) => r.arrayBuffer());
@@ -28,6 +25,7 @@ class ImageMagickHandler implements FormatHandler {
 
     await initializeImageMagick(wasmBytes);
 
+    this.supportedFormats = [];
     Magick.supportedFormats.forEach((format) => {
       const formatName = format.format.toLowerCase();
       if (formatName === "apng") return;

@@ -158,10 +158,9 @@ class pandocHandler implements FormatHandler {
     ["mathml", "mml"],
   ]);
 
-  public name: string = "pandoc";
+  public name = "pandoc";
   public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   private query?: (options: any) => Promise<any>;
   private convert?: (

@@ -50,20 +50,17 @@ function renderCanvases(xml: string): OffscreenCanvas[] {
 }
 
 class vexFlowHandler implements FormatHandler {
-  public name: string = "vexFlow";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "vexFlow";
+  public supportedFormats = [
+    CommonFormats.MUSICXML.builder("musicxml").from(),
+    CommonFormats.MXL.builder("mxl").from(),
+    CommonFormats.HTML.builder("html").to(),
+    CommonFormats.MIDI.builder("mid").to(),
+  ];
+  public ready = false;
   private static fontsLoaded = false;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.MUSICXML.builder("musicxml").from(),
-      CommonFormats.MXL.builder("mxl").from(),
-      CommonFormats.HTML.builder("html").to(),
-      CommonFormats.MIDI.builder("mid").to(),
-    ];
-
     // Load VexFlow fonts (required for VexFlow 5)
     if (!vexFlowHandler.fontsLoaded) {
       try {

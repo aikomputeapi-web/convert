@@ -3,17 +3,14 @@ import CommonFormats from "src/CommonFormats.ts";
 import JSZip from "jszip";
 
 class krzHandler implements FormatHandler {
-  public name: string = "krz";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "krz";
+  public supportedFormats = [
+    CommonFormats.PNG.builder("png").to(),
+    CommonFormats.KRZ.builder("krz").from(),
+  ];
+  public ready = false;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.PNG.builder("png").to(),
-
-      CommonFormats.KRZ.builder("krz").from(),
-    ];
     this.ready = true;
   }
 

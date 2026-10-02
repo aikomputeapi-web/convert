@@ -224,19 +224,17 @@ async function normalizeToSfnt(
 }
 
 class fontHandler implements FormatHandler {
-  public name: string = "font";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "font";
+  public supportedFormats = [
+    CommonFormats.TTF.builder("ttf").lossless().from(),
+    CommonFormats.OTF.builder("otf").lossless().fromTo(),
+    CommonFormats.WOFF.builder("woff").lossless().from(),
+    CommonFormats.WOFF2.builder("woff2").lossless().fromTo(),
+    CommonFormats.SVG.builder("svg").fromTo(), // svg fonts lose a lot of font metadata, since they only convert the glyphs, so we can't mark it as lossless
+  ];
+  public ready = false;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.TTF.builder("ttf").lossless().from(),
-      CommonFormats.OTF.builder("otf").lossless().fromTo(),
-      CommonFormats.WOFF.builder("woff").lossless().from(),
-      CommonFormats.WOFF2.builder("woff2").lossless().fromTo(),
-      CommonFormats.SVG.builder("svg").fromTo(), // svg fonts lose a lot of font metadata, since they only convert the glyphs, so we can't mark it as lossless
-    ];
     this.ready = true;
   }
 

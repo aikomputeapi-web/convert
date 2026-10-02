@@ -77,22 +77,19 @@ const base_colours = [
 ];
 
 class mcMapHandler implements FormatHandler {
-  public name: string = "mcMap";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "mcMap";
+  public supportedFormats = [
+    CommonFormats.PNG.builder("png").fromTo(),
+    CommonFormats.RGB.builder("rgb").lossless().to(),
+    CommonFormats.MC_MAP.builder("mcmap").fromTo(),
+    CommonFormats.MC_MAP_GRID.builder("mcmap_grid").to(),
+  ];
+  public ready = false;
 
   #canvas?: OffscreenCanvas;
   #ctx?: OffscreenCanvasRenderingContext2D;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.PNG.builder("png").fromTo(),
-      CommonFormats.RGB.builder("rgb").lossless().to(),
-      CommonFormats.MC_MAP.builder("mcmap").fromTo(),
-      CommonFormats.MC_MAP_GRID.builder("mcmap_grid").to(),
-    ];
-
     this.#canvas = new OffscreenCanvas(128, 128);
     this.#ctx = this.#canvas.getContext("2d") || undefined;
 

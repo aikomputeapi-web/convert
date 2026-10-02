@@ -116,7 +116,7 @@ async function attemptConvertPath(
     abort.addEventListener("abort", sendAbort, { once: true });
 
     try {
-      const converter = handlerDef.offload ? converterWorker : converterMain;
+      const converter = handlerDef.offload !== false ? converterWorker : converterMain;
 
       console.log(`Chose converter ${await converter.name} for ${handlerDef.name}`);
 

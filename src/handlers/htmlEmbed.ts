@@ -2,8 +2,8 @@ import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 class htmlEmbedHandler implements FormatHandler {
-  public name: string = "htmlEmbed";
-  public supportedFormats: FileFormat[] = [
+  public name = "htmlEmbed";
+  public supportedFormats = [
     CommonFormats.HTML.builder("html").lossless().to(),
     CommonFormats.PNG.builder("png").from(),
     CommonFormats.JPEG.builder("jpeg").from(),
@@ -14,8 +14,7 @@ class htmlEmbedHandler implements FormatHandler {
     CommonFormats.MP4.builder("mp4").from(),
     CommonFormats.MP3.builder("mp3").from(),
   ];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   async init() {
     this.ready = true;

@@ -38,16 +38,14 @@ function safeMax(arr: number[]) {
 }
 
 class pyTurtleHandler implements FormatHandler {
-  public name: string = "pyTurtle";
-  public supportedFormats?: FileFormat[];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public name = "pyTurtle";
+  public supportedFormats = [
+    CommonFormats.PYTHON.builder("py").to(),
+    CommonFormats.SVG.builder("svg").from(),
+  ];
+  public ready = false;
 
   async init() {
-    this.supportedFormats = [
-      CommonFormats.PYTHON.builder("py").to(),
-      CommonFormats.SVG.builder("svg").from(),
-    ];
     this.ready = true;
   }
   async doConvert(

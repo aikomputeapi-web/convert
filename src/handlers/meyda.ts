@@ -8,16 +8,15 @@ import { InitializationError } from "src/errors.ts";
 const SAMPLE_RATE = 34000;
 
 class meydaHandler implements FormatHandler {
-  public name: string = "meyda";
-  public supportedFormats: FileFormat[] = [
+  public name = "meyda";
+  public supportedFormats = [
     // Lossy reconstruction due to 2 channel encoding
     CommonFormats.PNG.builder("image").fromTo(),
     CommonFormats.JPEG.builder("image").fromTo(),
     CommonFormats.WEBP.builder("image").fromTo(),
     CommonFormats.WAV.builder("audio").fromTo(),
   ];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   #canvas?: OffscreenCanvas;
   #ctx?: OffscreenCanvasRenderingContext2D;

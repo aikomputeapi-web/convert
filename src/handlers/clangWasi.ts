@@ -3,15 +3,14 @@ import CommonFormats from "src/CommonFormats.ts";
 import { commands } from "@yowasp/clang";
 
 class clangWasiHandler implements FormatHandler {
-  public name: string = "clangWasi";
-  public supportedFormats: FileFormat[] = [
+  public name = "clangWasi";
+  public supportedFormats = [
     CommonFormats.C.builder("c").from(),
     CommonFormats.CPP.builder("cpp").from(),
     CommonFormats.ASM.builder("asm").from(),
     CommonFormats.WASM.builder("wasm").lossless().to(),
   ];
-  public ready: boolean = false;
-  public offload: boolean = true;
+  public ready = false;
 
   async init() {
     this.ready = true;
