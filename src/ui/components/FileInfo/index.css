@@ -64,8 +64,8 @@
     flex-shrink: 0;
 
     &:hover {
-      color: #ef4444;
-      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+      background: var(--danger-transparent);
     }
   }
 }

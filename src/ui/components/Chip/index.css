@@ -5,13 +5,17 @@
   gap: 0.35rem;
   padding: 0.25rem 0.6rem;
   border-radius: 6px;
-  border: 1px solid var(--border-transparent);
+  border: 1px solid transparent;
   background: var(--bg-section);
   color: var(--text-secondary);
   font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 150ms ease;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    opacity 150ms ease;
   user-select: none;
   white-space: nowrap;
 

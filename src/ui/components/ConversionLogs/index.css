@@ -1,6 +1,6 @@
 .conversion-logs-inline {
   background: var(--bg-section);
-  border: 1px solid var(--border-transparent);
+  border: 1px solid transparent;
   border-radius: 8px;
   width: 100%;
   height: 120px;
@@ -11,7 +11,6 @@
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
-  box-sizing: border-box;
 }
 
 .conversion-logs-empty {
@@ -29,7 +28,7 @@
   padding: 0.1rem 0;
 }
 .log-entry:hover {
-  background: var(--bg-hover);
+  background: var(--bg-card-alt-hover);
 }
 .log-time {
   opacity: 0;
@@ -45,7 +44,7 @@
   opacity: 1;
 }
 .log-plugin {
-  color: #a855f7;
+  color: var(--log-plugin);
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -53,10 +52,10 @@
   color: var(--text-primary);
 }
 .log-entry.level-warn .log-message {
-  color: #f59e0b;
+  color: var(--warning);
 }
 .log-entry.level-error .log-message {
-  color: #ef4444;
+  color: var(--danger);
 }
 .log-entry.level-debug .log-message {
   color: var(--text-muted);

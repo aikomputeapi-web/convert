@@ -2,7 +2,6 @@ button.logo {
   background: none;
   border: none;
   padding: 0;
-  font: inherit;
   cursor: pointer;
   text-align: inherit;
 }
@@ -23,6 +22,10 @@ button.logo {
 
   &:hover:not(:disabled) .logo-icon {
     transform: rotate(-45deg);
+
+    @media (prefers-reduced-motion: reduce) {
+      transform: none;
+    }
   }
 
   &:disabled {

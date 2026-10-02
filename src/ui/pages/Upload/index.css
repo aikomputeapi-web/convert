@@ -2,22 +2,9 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-height: 100dvh;
   align-items: stretch;
   background-color: var(--bg-page);
-}
-
-@keyframes upload-pattern-drift {
-  from {
-    background-position:
-      0 0,
-      0 0;
-  }
-
-  to {
-    background-position:
-      calc(-1 * var(--upload-pattern-s)) calc(-1 * var(--upload-pattern-s)),
-      calc(-1 * var(--upload-pattern-s)) calc(-1 * var(--upload-pattern-s));
-  }
 }
 
 .upload-card {
@@ -60,8 +47,7 @@
     user-select: none;
     outline: none;
 
-    &:hover,
-    &.active-drag {
+    &:hover {
       background-color: var(--bg-card-alt-hover);
       border-color: var(--primary);
     }
@@ -99,8 +85,7 @@
       }
     }
 
-    &:hover .upload-icon-wrap,
-    &.active-drag .upload-icon-wrap {
+    &:hover .upload-icon-wrap {
       transform: scale(1.08);
     }
 
@@ -124,7 +109,6 @@
     }
 
     &.upload-dropzone--pending {
-      cursor: not-allowed;
       opacity: 0.6;
       pointer-events: none;
     }
@@ -139,21 +123,21 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .upload-dropzone {
+  /* Nested under .upload-card to match the specificity of the rules above */
+  .upload-card .upload-dropzone {
     transition:
       background-color 100ms ease,
-      border-color 100ms ease !important;
+      border-color 100ms ease;
 
     &:active:not(.upload-dropzone--pending) {
       transform: none;
     }
 
     .upload-icon-wrap {
-      transition: none !important;
+      transition: none;
     }
 
     &:hover .upload-icon-wrap,
-    &.active-drag .upload-icon-wrap,
     &:active:not(.upload-dropzone--pending) .upload-icon-wrap {
       transform: none;
     }

@@ -51,7 +51,6 @@
     border-radius: 12px;
     background: var(--bg-card);
     gap: 0.75rem;
-    box-sizing: border-box;
   }
 
   .loading-conversion-info {
@@ -64,7 +63,6 @@
     padding: 0.5rem 1rem;
     border-radius: 8px;
     border: 1px solid var(--border-primary);
-    box-sizing: border-box;
     margin-bottom: 1rem;
     background: repeating-linear-gradient(
       -45deg,
@@ -119,7 +117,6 @@
     color: var(--text-primary);
     min-width: 132px;
     justify-content: center;
-    box-sizing: border-box;
   }
 
   .loading-format-ext {
@@ -164,8 +161,15 @@
     color: var(--text-muted);
   }
   .loading-action-btn.danger:hover {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-    border-color: rgba(239, 68, 68, 0.2);
+    background: var(--danger-transparent);
+    color: var(--danger);
+    border-color: color-mix(in srgb, var(--danger) 20%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-screen .loading-conversion-info,
+  .loading-screen .loading-conversion-info::before {
+    animation: none;
   }
 }

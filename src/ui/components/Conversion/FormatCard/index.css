@@ -9,7 +9,6 @@
   min-width: 0;
   gap: 0.35rem;
   text-align: left;
-  font: inherit;
   cursor: pointer;
   transition:
     border-color 120ms,

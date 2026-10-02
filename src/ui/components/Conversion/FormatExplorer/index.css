@@ -37,12 +37,15 @@
       width: 100%;
       padding: 0.6rem 2.2rem 0.6rem 2.4rem;
       border-radius: 6px;
-      border: 1px solid var(--border-transparent);
+      border: 1px solid transparent;
       color: var(--text-primary);
       background-color: var(--bg-section);
       outline: none;
       font-size: 0.875rem;
-      transition: all 150ms;
+      transition:
+        background-color 150ms,
+        border-color 150ms,
+        box-shadow 150ms;
 
       &::placeholder {
         color: var(--text-muted);
@@ -141,7 +144,10 @@
     font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 150ms;
+    transition:
+      background 150ms,
+      color 150ms,
+      border-color 150ms;
 
     &:hover {
       background: var(--primary);
