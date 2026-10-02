@@ -3,7 +3,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import { commands } from "@yowasp/clang";
 
 class clangWasiHandler implements FormatHandler {
-  public name = "clangWasi";
+  public readonly name = "clangWasi";
   public supportedFormats = [
     CommonFormats.C.builder("c").from(),
     CommonFormats.CPP.builder("cpp").from(),

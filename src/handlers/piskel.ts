@@ -4,7 +4,7 @@ import JSZip from "jszip";
 import { InitializationError } from "src/errors.ts";
 
 class piskelHandler implements FormatHandler {
-  public name = "piskel";
+  public readonly name = "piskel";
   public supportedFormats = [
     CommonFormats.PNG.builder("png").lossless().to(),
     CommonFormats.ZIP.builder("zip").lossless().to(),

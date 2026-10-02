@@ -2,7 +2,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 
 class minecraftLangHandler implements FormatHandler {
-  public name = "minecraftLang";
+  public readonly name = "minecraftLang";
   public supportedFormats = [
     CommonFormats.JSON.builder("json").lossless().fromTo(),
     CommonFormats.MC_LANG.builder("minecraft-lang").lossless().fromTo(),

@@ -158,7 +158,7 @@ class pandocHandler implements FormatHandler {
     ["mathml", "mml"],
   ]);
 
-  public name = "pandoc";
+  public readonly name = "pandoc";
   public supportedFormats?: FileFormat[];
   public ready = false;
 

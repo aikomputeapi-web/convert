@@ -3,7 +3,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 
 class wavebreakHandler implements FormatHandler {
-  public name = "wavebreak";
+  public readonly name = "wavebreak";
   public supportedFormats = [
     CommonFormats.WAV.builder("wav").lossless().to(),
     CommonFormats.S16LE.builder("s16le").lossless().from(), // interpreted as 44.1 kHz mono

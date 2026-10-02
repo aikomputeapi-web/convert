@@ -1,4 +1,5 @@
-import { FileData, FileFormat, FormatHandler } from "../src/FormatHandler";
+import type { FileData, FileFormat, FormatHandler } from "../src/FormatHandler";
+import type { HandlerName } from "../src/handlers/index.ts";
 
 /**
  * A mock implementation of the FormatHandler interface for testing purposes.
@@ -6,7 +7,7 @@ import { FileData, FileFormat, FormatHandler } from "../src/FormatHandler";
  */
 export class MockedHandler implements FormatHandler {
   constructor(
-    public name: string,
+    public readonly name: HandlerName,
     public supportedFormats?: FileFormat[],
     public supportAnyInput?: boolean,
   ) {}

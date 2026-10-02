@@ -4,7 +4,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 
 class rgbaHandler implements FormatHandler {
-  public name = "rgba";
+  public readonly name = "rgba";
   public supportedFormats = [
     CommonFormats.PNG.builder("png").lossless().fromTo(),
     CommonFormats.RGB.builder("rgb").fromTo(),

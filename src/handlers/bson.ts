@@ -3,7 +3,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import { BSON } from "bson";
 
 class bsonHandler implements FormatHandler {
-  public name = "bson";
+  public readonly name = "bson";
   public supportedFormats = [
     CommonFormats.JSON.builder("json").lossless().fromTo(),
     CommonFormats.BSON.builder("bson").lossless().fromTo(),

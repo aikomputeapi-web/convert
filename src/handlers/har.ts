@@ -3,7 +3,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import JSZip from "jszip";
 
 class harHandler implements FormatHandler {
-  public name = "har";
+  public readonly name = "har";
   public supportedFormats = [
     CommonFormats.HAR.builder("har").from(),
     CommonFormats.ZIP.builder("zip").to(),

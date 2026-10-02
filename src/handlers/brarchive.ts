@@ -33,7 +33,7 @@ function write_lendian_4(x: number): number[] {
 }
 
 class brarchiveHandler implements FormatHandler {
-  public name = "brarchive";
+  public readonly name = "brarchive";
   public supportedFormats = [
     CommonFormats.ZIP.builder("zip").lossless().fromTo(),
     CommonFormats.JSON.builder("json").lossless().fromTo(),

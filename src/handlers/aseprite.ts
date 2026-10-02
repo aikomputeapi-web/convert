@@ -466,7 +466,7 @@ function decodeAseprite(bytes: Uint8Array): ParsedAseprite {
 }
 
 class asepriteHandler implements FormatHandler {
-  public name = "aseprite";
+  public readonly name = "aseprite";
   public supportedFormats = [
     CommonFormats.ASEPRITE.builder("aseprite").lossless().from(),
     CommonFormats.PNG.builder("png").lossless().to(),

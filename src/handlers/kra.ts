@@ -3,7 +3,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import JSZip from "jszip";
 
 class kraHandler implements FormatHandler {
-  public name = "kra";
+  public readonly name = "kra";
   public supportedFormats = [
     CommonFormats.PNG.builder("png").to(),
     CommonFormats.KRA.builder("kra").from(),

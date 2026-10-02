@@ -297,7 +297,7 @@ export function bbmodelToObj(input: string | BBModel) {
 }
 
 class bbmodelHandler implements FormatHandler {
-  public name = "bbmodel";
+  public readonly name = "bbmodel";
   public supportedFormats = [
     CommonFormats.OBJ.builder("obj").to(),
     CommonFormats.BBMODEL.builder("bbmodel").from(),

@@ -5,7 +5,7 @@ import { WaveFile } from "wavefile";
 import refloWasmUrl from "@flo-audio/reflo/reflo_bg.wasm?url";
 
 class floHandler implements FormatHandler {
-  public name = "flo";
+  public readonly name = "flo";
   public supportedFormats = [
     CommonFormats.FLO.builder("flo").fromTo(),
     CommonFormats.WAV.builder("wav").lossless().fromTo(),

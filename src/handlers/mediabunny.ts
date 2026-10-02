@@ -25,7 +25,7 @@ const can = async <T>(items: T[], fn: (item: T) => Promise<boolean>) =>
 const LAZY_ENCODERS = ["flac", "mp3", "aac"];
 
 class mediabunnyHandler implements FormatHandler {
-  public name = "mediabunny";
+  public readonly name = "mediabunny";
   public supportedFormats: FileFormat[] = [];
   public ready = false;
 

@@ -15,7 +15,7 @@ import {
 } from "ts-flp";
 
 class flpToJsonHandler implements FormatHandler {
-  public name = "flpToJson";
+  public readonly name = "flpToJson";
   public supportedFormats = [
     CommonFormats.FLP.builder("flp").from(),
     // Unsure about this, it might be lossless

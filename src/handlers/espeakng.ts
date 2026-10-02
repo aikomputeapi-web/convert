@@ -4,7 +4,7 @@ import { SimpleTTS } from "built/espeakng.js/js/espeakng-simple.js";
 import { WaveFile } from "wavefile";
 
 export class espeakngHandler implements FormatHandler {
-  public name = "espeakng";
+  public readonly name = "espeakng";
   public supportedFormats = [
     CommonFormats.TEXT.builder("text").from(),
     CommonFormats.WAV.builder("wav").to(),

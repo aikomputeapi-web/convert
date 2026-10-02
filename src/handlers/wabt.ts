@@ -6,7 +6,7 @@ import wabt from "wabt";
 type WabtModule = Awaited<ReturnType<typeof wabt>>;
 
 export default class wabtHandler implements FormatHandler {
-  public name = "wabt";
+  public readonly name = "wabt";
   public supportedFormats = [
     CommonFormats.WASM.builder("wasm").lossless().fromTo(),
     CommonFormats.WAT.builder("wat").lossless().fromTo(),

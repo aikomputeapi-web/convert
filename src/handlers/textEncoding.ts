@@ -94,7 +94,7 @@ function decodeUsingTextDecoder(bytes: Uint8Array, label: string) {
 }
 
 export default class textEncodingHandler implements FormatHandler {
-  public name = "textEncoding";
+  public readonly name = "textEncoding";
   public supportedFormats = [
     CommonFormats.TEXT.builder("txt").lossless().fromTo(), // May or may not have BOM depending on browser
     CommonFormats.TEXT_UTF8_NO_BOM.builder("utf8NB").lossless().to(), // In case the broeser defaults to with BOM, we can choose to force BOMless UTF-8.

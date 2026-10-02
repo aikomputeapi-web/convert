@@ -3,7 +3,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { InitializationError } from "src/errors.ts";
 
 class svgToBlobHandler implements FormatHandler {
-  public name = "svgToBlob";
+  public readonly name = "svgToBlob";
   public supportedFormats = [
     CommonFormats.PNG.builder("png").to(),
     CommonFormats.JPEG.builder("jpeg").to(),

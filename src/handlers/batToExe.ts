@@ -6,7 +6,7 @@ import headUrl from "./batToExe/exe65824head.bin?url";
 import footUrl from "./batToExe/exe65824foot.bin?url";
 
 class batToExeHandler implements FormatHandler {
-  public name = "batToExe";
+  public readonly name = "batToExe";
   public supportedFormats = [
     CommonFormats.BATCH.builder("bat").from(),
     CommonFormats.EXE.builder("exe").lossless().to(), // Lossless because it stores exact input side

@@ -792,7 +792,7 @@ function decodeVTF(bytes: Uint8Array): DecodedImage {
 }
 
 class vtfHandler implements FormatHandler {
-  public name = "vtf";
+  public readonly name = "vtf";
   public supportedFormats = [
     CommonFormats.VTF.builder("vtf").from(),
     CommonFormats.PNG.builder("png").lossless().to(),

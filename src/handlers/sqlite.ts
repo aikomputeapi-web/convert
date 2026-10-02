@@ -4,7 +4,7 @@ import sqlite3InitModule from "@sqlite.org/sqlite-wasm";
 import { parse } from "papaparse";
 
 class sqliteHandler implements FormatHandler {
-  public name = "sqlite";
+  public readonly name = "sqlite";
   public supportedFormats = [
     CommonFormats.SQLITE3.builder("sqlite3").fromTo(),
     CommonFormats.ITDB.builder("sqlite3").from(),

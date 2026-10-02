@@ -224,7 +224,7 @@ async function normalizeToSfnt(
 }
 
 class fontHandler implements FormatHandler {
-  public name = "font";
+  public readonly name = "font";
   public supportedFormats = [
     CommonFormats.TTF.builder("ttf").lossless().from(),
     CommonFormats.OTF.builder("otf").lossless().fromTo(),

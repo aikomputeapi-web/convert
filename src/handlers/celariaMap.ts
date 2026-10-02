@@ -52,7 +52,7 @@ function putInstances(
 }
 
 class celariaMapHandler implements FormatHandler {
-  public name = "celariaMap";
+  public readonly name = "celariaMap";
   public supportedFormats = [
     CommonFormats.OBJ.builder("obj").to(),
     CommonFormats.JSON.builder("json").fromTo(),

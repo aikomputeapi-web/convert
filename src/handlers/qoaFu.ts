@@ -46,7 +46,7 @@ class uint8ArrayQOAEncoder extends QOAEncoder {
 }
 
 class qoaFuHandler implements FormatHandler {
-  public name = "qoaFu";
+  public readonly name = "qoaFu";
   public supportedFormats = [
     CommonFormats.QOA.builder("qoa").fromTo(),
     CommonFormats.WAV.builder("wav").fromTo(),

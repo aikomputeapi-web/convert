@@ -4,7 +4,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 
 class svgTraceHandler implements FormatHandler {
-  public name = "svgTrace";
+  public readonly name = "svgTrace";
   public supportedFormats = [
     CommonFormats.PNG.builder("png").from(),
     CommonFormats.JPEG.builder("jpeg").from(),

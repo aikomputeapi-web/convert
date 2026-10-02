@@ -4,7 +4,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 
 class otaHandler implements FormatHandler {
-  public name = "ota";
+  public readonly name = "ota";
   public supportedFormats = [
     CommonFormats.PNG.builder("png").lossless().fromTo(),
     CommonFormats.OTA.builder("ota").fromTo(),

@@ -879,7 +879,7 @@ const MOD_TILE_COLORS: [number, number, number][] = [
 // CODE ABOVE IS WRITTEN BY PIXELKAT5 IN PR #244
 
 class terrariaWldHandler implements FormatHandler {
-  public name = "terrariaWld";
+  public readonly name = "terrariaWld";
   public supportedFormats = [
     CommonFormats.TERRARIA_WLD.builder("wld").from(),
     CommonFormats.PNG.builder("png").to(),

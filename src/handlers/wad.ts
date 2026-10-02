@@ -14,7 +14,7 @@ interface ParsedWAD {
 }
 
 class wadHandler implements FormatHandler {
-  public name = "wad";
+  public readonly name = "wad";
   public supportedFormats = [
     CommonFormats.WAD.builder("wad").lossless().fromTo(),
     CommonFormats.ZIP.builder("zip").lossless().fromTo(),

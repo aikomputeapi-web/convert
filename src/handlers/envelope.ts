@@ -7,7 +7,7 @@ import parseXLSX from "built/envelope/parseXLSX.js";
 import CommonFormats from "src/CommonFormats.ts";
 
 class envelopeHandler implements FormatHandler {
-  public name = "envelope";
+  public readonly name = "envelope";
   public supportedFormats = [
     CommonFormats.DOCX.builder("docx").from(),
     // Currently, Pancoc handles PPTX and XLSX better than Envelope.

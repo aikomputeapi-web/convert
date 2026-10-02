@@ -6,7 +6,7 @@ import { isMOBI, MOBI } from "built/foliate-mobi/mobi.js";
 import { DOMParser } from "linkedom/worker";
 
 class azw3Handler implements FormatHandler {
-  public name = "azw3";
+  public readonly name = "azw3";
   public supportedFormats = [
     CommonFormats.AZW3.builder("azw3").from(),
     CommonFormats.MOBI.builder("mobi").from(),

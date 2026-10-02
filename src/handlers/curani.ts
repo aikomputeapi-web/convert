@@ -6,7 +6,7 @@ function read_lendian(x: number, y: number): number {
 }
 
 class curaniHandler implements FormatHandler {
-  public name = "curani";
+  public readonly name = "curani";
   public supportedFormats = [
     CommonFormats.ANI.builder("ani").fromTo(),
     CommonFormats.CUR.builder("cur").fromTo(),

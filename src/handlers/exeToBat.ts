@@ -8,7 +8,7 @@ const DEBUG_EXE_TO_BAT = false;
 const EXE_MIME = "application/vnd.microsoft.portable-executable";
 
 export default class exeToBatHandler implements FormatHandler {
-  public name = "exeToBat";
+  public readonly name = "exeToBat";
   public supportedFormats = [
     CommonFormats.EXE.builder("exe").from(),
     CommonFormats.BATCH.builder("bat").lossless().to(),

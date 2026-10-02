@@ -15,7 +15,7 @@ function replaceUint32LE(file: Buffer, from: number, to: number) {
 }
 
 class shToElfHandler implements FormatHandler {
-  public name = "shToElf";
+  public readonly name = "shToElf";
   public supportedFormats = [
     CommonFormats.SH.builder("sh").lossless().from(),
     CommonFormats.ELF.builder("elf").to(),

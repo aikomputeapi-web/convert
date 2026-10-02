@@ -3,7 +3,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import { BadMagicError, InitializationError } from "src/errors.ts";
 
 class aperturePictureHandler implements FormatHandler {
-  public name = "aperturePicture";
+  public readonly name = "aperturePicture";
   public supportedFormats = [
     CommonFormats.APF.builder("apf").lossless().fromTo(),
     CommonFormats.BMP.builder("bmp").lossless().fromTo(),

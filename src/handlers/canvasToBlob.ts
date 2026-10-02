@@ -4,7 +4,7 @@ import { imageToText, rgbaToGrayscale } from "built/image-to-txt/src/convert.ts"
 import { InitializationError } from "src/errors.ts";
 
 class canvasToBlobHandler implements FormatHandler {
-  public name = "canvasToBlob";
+  public readonly name = "canvasToBlob";
   public supportedFormats = [
     CommonFormats.PNG.builder("png").lossless().fromTo(),
     CommonFormats.JPEG.builder("jpeg").fromTo(),

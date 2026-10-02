@@ -2,7 +2,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 
 class alsHandler implements FormatHandler {
-  public name = "als";
+  public readonly name = "als";
   public supportedFormats = [
     CommonFormats.ALS.builder("als").lossless().from(),
     CommonFormats.XML.builder("xml").to(),

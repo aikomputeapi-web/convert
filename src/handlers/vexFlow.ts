@@ -50,7 +50,7 @@ function renderCanvases(xml: string): OffscreenCanvas[] {
 }
 
 class vexFlowHandler implements FormatHandler {
-  public name = "vexFlow";
+  public readonly name = "vexFlow";
   public supportedFormats = [
     CommonFormats.MUSICXML.builder("musicxml").from(),
     CommonFormats.MXL.builder("mxl").from(),

@@ -77,7 +77,7 @@ const base_colours = [
 ];
 
 class mcMapHandler implements FormatHandler {
-  public name = "mcMap";
+  public readonly name = "mcMap";
   public supportedFormats = [
     CommonFormats.PNG.builder("png").fromTo(),
     CommonFormats.RGB.builder("rgb").lossless().to(),

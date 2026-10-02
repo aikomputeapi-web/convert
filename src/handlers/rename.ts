@@ -1,9 +1,10 @@
 import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
+import type { HandlerName } from "./index.ts";
 
-function createRenameHandler(name: string, formats: FileFormat[]) {
+function createRenameHandler(name: HandlerName, formats: FileFormat[]) {
   return class implements FormatHandler {
-    public name = name;
+    public readonly name = name;
     public supportedFormats = formats;
     public ready = false;
 

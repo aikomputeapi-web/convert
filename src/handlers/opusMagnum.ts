@@ -503,7 +503,7 @@ function renderMolecule(molecule: OM_Molecule, format: string): Uint8Array {
 }
 
 export class opusMagnumMainHandler implements FormatHandler {
-  public name = "opusMagnumMain";
+  public readonly name = "opusMagnumMain";
   public supportedFormats = [
     CommonFormats.SVG.builder("svg").to(),
     CommonFormats.OM_PUZZLE.builder("puzzle").fromTo(),
@@ -883,7 +883,7 @@ export class opusMagnumMainHandler implements FormatHandler {
 
 // Image-to-molecule handler
 export class opusMagnumITMHandler implements FormatHandler {
-  public name = "opusMagnumITM";
+  public readonly name = "opusMagnumITM";
   public supportedFormats = [
     CommonFormats.PNG.builder("png").from(),
     CommonFormats.OM_MOLECULE.builder("molecule").to(),
@@ -1069,7 +1069,7 @@ export class opusMagnumITMHandler implements FormatHandler {
 
 // Text-to-molecule handler
 export class opusMagnumTTMHandler implements FormatHandler {
-  public name = "opusMagnumTTM";
+  public readonly name = "opusMagnumTTM";
   public supportedFormats = [
     CommonFormats.TEXT.builder("txt").from(),
     CommonFormats.OM_MOLECULE.builder("molecule").to(),

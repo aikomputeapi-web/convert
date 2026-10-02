@@ -6,7 +6,7 @@ import { parse, unparse } from "papaparse";
 
 /// Converts things to JSON
 export class toJsonHandler implements FormatHandler {
-  public name = "toJson";
+  public readonly name = "toJson";
   public supportedFormats = [
     CommonFormats.CSV.builder("csv").from(),
     CommonFormats.XML.builder("xml").from(),
@@ -70,7 +70,7 @@ function xmlEscape(str: string): string {
 
 /// Converts to things from JSON
 export class fromJsonHandler {
-  public name = "fromJson";
+  public readonly name = "fromJson";
   public ready = false;
   public supportedFormats = [
     CommonFormats.CSV.builder("csv").to(),

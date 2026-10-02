@@ -4,7 +4,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 
 class xcursorHandler implements FormatHandler {
-  public name = "xcursor";
+  public readonly name = "xcursor";
   public supportedFormats = [
     CommonFormats.PNG.builder("png").lossless().to(),
     CommonFormats.JPEG.builder("jpeg").to(),

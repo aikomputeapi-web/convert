@@ -4,7 +4,7 @@ import { gunzipSync, gzipSync } from "fflate";
 import CommonFormats from "src/CommonFormats.ts";
 
 class mcSchematicHandler implements FormatHandler {
-  public name = "mcSchematic";
+  public readonly name = "mcSchematic";
   public supportedFormats = [
     CommonFormats.MC_SCHEMATIC.builder("schematic").lossless().fromTo(),
     CommonFormats.MC_SCHEM.builder("schem").lossless().fromTo(),

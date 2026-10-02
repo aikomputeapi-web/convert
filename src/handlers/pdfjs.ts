@@ -32,7 +32,7 @@ class WorkerCanvasFactory {
 }
 
 class pdfjsHandler implements FormatHandler {
-  public name = "pdfjs";
+  public readonly name = "pdfjs";
   public supportedFormats = [
     CommonFormats.PDF.builder("pdf").from(),
     CommonFormats.PNG.builder("png").to(),

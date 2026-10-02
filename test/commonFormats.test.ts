@@ -2,6 +2,7 @@ import { afterAll, expect, test } from "bun:test";
 import puppeteer from "puppeteer";
 import type { FileData, FormatHandler, FileFormat, ConvertPathNode } from "../src/FormatHandler.js";
 import CommonFormats from "../src/CommonFormats.js";
+import type { HandlerName } from "../src/handlers/index.js";
 
 declare global {
   interface Window {
@@ -52,7 +53,7 @@ await Promise.all([
 console.log("Setup finished.");
 
 const dummyHandler: FormatHandler = {
-  name: "dummy",
+  name: "dummy" as HandlerName,
   ready: true,
   async init() {},
   async doConvert(_inputFiles, inputFormat, outputFormat, _args) {

@@ -146,7 +146,7 @@ async function revertCgBIBuffer(input: Uint8Array | ArrayBuffer): Promise<Uint8A
 }
 
 class cgbiToPngHandler implements FormatHandler {
-  public name = "cgbiToPng";
+  public readonly name = "cgbiToPng";
   public supportedFormats = [
     CommonFormats.CGBI_PNG.builder("cgbi-png").lossless().from(),
     CommonFormats.PNG.builder("png").lossless().to(),

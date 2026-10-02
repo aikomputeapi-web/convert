@@ -48,7 +48,7 @@ function toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
 }
 
 export default class pptxRendererHandler implements FormatHandler {
-  public name = "pptxRenderer";
+  public readonly name = "pptxRenderer";
   public supportedFormats = [
     CommonFormats.PPTX.builder("pptx").from(),
     CommonFormats.PDF.builder("pdf").to(),

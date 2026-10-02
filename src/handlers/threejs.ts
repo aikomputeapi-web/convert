@@ -8,7 +8,7 @@ import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
 
 class threejsHandler implements FormatHandler {
-  public name = "threejs";
+  public readonly name = "threejs";
   public supportedFormats = [
     CommonFormats.GLB.builder("glb").from(),
     CommonFormats.GLTF.builder("glb").from(),

@@ -16,7 +16,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import { type FileData, type FileFormat, type FormatHandler } from "../FormatHandler.ts";
 
 class configHandler implements FormatHandler {
-  public name = "config";
+  public readonly name = "config";
   public supportedFormats = [
     // JSON maintains exact data equivalence to JS Objects natively
     CommonFormats.JSON.builder("json").lossless().fromTo(),

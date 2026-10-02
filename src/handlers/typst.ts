@@ -331,7 +331,7 @@ function parseSvgPageDimensions(svgBytes: Uint8Array): { widthPt: number; height
 }
 
 class typstHandler implements FormatHandler {
-  public name = "typst";
+  public readonly name = "typst";
   public supportedFormats = [
     CommonFormats.TYPST.builder("typst").lossless().from(),
     CommonFormats.PDF.builder("pdf").lossless().to(),

@@ -4,7 +4,7 @@ import XCF from "built/gimper/src/main.js";
 import { InitializationError } from "src/errors.ts";
 
 class xcfHandler implements FormatHandler {
-  public name = "xcf";
+  public readonly name = "xcf";
   public supportedFormats = [
     CommonFormats.XCF.builder("xcf").lossless().from(),
     CommonFormats.PNG.builder("png").lossless().to(),

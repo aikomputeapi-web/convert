@@ -6,7 +6,7 @@ import { QOIDecoder, QOIEncoder } from "qoi-fu";
 import { InitializationError } from "src/errors.ts";
 
 class qoiFuHandler implements FormatHandler {
-  public name = "qoiFu";
+  public readonly name = "qoiFu";
   public supportedFormats = [
     CommonFormats.PNG.builder("png").lossless().fromTo(),
     CommonFormats.JPEG.builder("jpeg").fromTo(),

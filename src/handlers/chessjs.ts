@@ -3,7 +3,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import { Chess } from "chess.js";
 
 class chessjsHandler implements FormatHandler {
-  public name = "chessjs";
+  public readonly name = "chessjs";
   public supportedFormats = [
     CommonFormats.FEN.builder("fen").fromTo(),
     CommonFormats.PGN.builder("pgn").lossless().fromTo(),

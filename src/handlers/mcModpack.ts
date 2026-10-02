@@ -3,7 +3,7 @@ import CommonFormats from "src/CommonFormats";
 import JSZip from "jszip";
 
 class mcModpackHandler implements FormatHandler {
-  public name = "mcModpack";
+  public readonly name = "mcModpack";
   public supportedFormats = [
     CommonFormats.MRPACK.builder("mrpack").lossless().fromTo(),
     CommonFormats.ZIP.builder("zip").lossless().fromTo(), // Only handles generic .zip modpacks when routed appropriately

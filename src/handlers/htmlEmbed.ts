@@ -2,7 +2,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 class htmlEmbedHandler implements FormatHandler {
-  public name = "htmlEmbed";
+  public readonly name = "htmlEmbed";
   public supportedFormats = [
     CommonFormats.HTML.builder("html").lossless().to(),
     CommonFormats.PNG.builder("png").from(),

@@ -70,7 +70,7 @@ class textToSourceHandler implements FormatHandler {
     [CommonFormats.RUST.builder("rs").lossless().to(), rust],
   ];
 
-  public name = "textToSource";
+  public readonly name = "textToSource";
   public supportedFormats = [
     CommonFormats.TEXT.builder("txt").lossless().from(),
     ...textToSourceHandler.converters.map(([format]) => format),

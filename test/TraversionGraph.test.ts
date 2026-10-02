@@ -24,7 +24,7 @@ const handlers: FormatHandler[] = [
     false,
   ),
   new MockedHandler(
-    "ffmpeg",
+    "FFmpeg",
     [
       CommonFormats.PNG.builder("png").lossless().fromTo(),
       CommonFormats.MP3.builder("mp3").fromTo(),
@@ -33,7 +33,7 @@ const handlers: FormatHandler[] = [
     ],
     false,
   ),
-  new MockedHandler("archiver", [CommonFormats.ZIP.builder("zip").lossless().to()], true),
+  new MockedHandler("sevenZip", [CommonFormats.ZIP.builder("zip").lossless().to()], true),
 ];
 
 console.log("Testing...\n");
@@ -47,7 +47,7 @@ test("should find the optimal path from image to audio\n", async () => {
       CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
-      handlers.find((h) => h.name === "ffmpeg")!,
+      handlers.find((h) => h.name === "FFmpeg")!,
       CommonFormats.MP3.builder("mp3").lossless().fromTo(),
     ),
     true,
@@ -57,7 +57,7 @@ test("should find the optimal path from image to audio\n", async () => {
   expect(extractedPaths.length).toBeGreaterThan(0);
   const optimalPath = extractedPaths[0];
   expect(optimalPath[0].handler.name).toBe("canvasToBlob");
-  expect(optimalPath[optimalPath.length - 1].handler.name).toBe("ffmpeg");
+  expect(optimalPath[optimalPath.length - 1].handler.name).toBe("FFmpeg");
 });
 
 test("should find the optimal path from image to audio in strict graph\n", async () => {
@@ -70,7 +70,7 @@ test("should find the optimal path from image to audio in strict graph\n", async
       CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
-      handlers.find((h) => h.name === "ffmpeg")!,
+      handlers.find((h) => h.name === "FFmpeg")!,
       CommonFormats.MP3.builder("mp3").lossless().fromTo(),
     ),
     true,
@@ -80,7 +80,7 @@ test("should find the optimal path from image to audio in strict graph\n", async
   expect(extractedPaths.length).toBeGreaterThan(0);
   const optimalPath = extractedPaths[0];
   expect(optimalPath[0].handler.name).toBe("canvasToBlob");
-  expect(optimalPath[optimalPath.length - 1].handler.name).toBe("ffmpeg");
+  expect(optimalPath[optimalPath.length - 1].handler.name).toBe("FFmpeg");
 });
 
 test("add category change costs should affect pathfinding\n", async () => {
@@ -93,7 +93,7 @@ test("add category change costs should affect pathfinding\n", async () => {
       CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
-      handlers.find((h) => h.name === "ffmpeg")!,
+      handlers.find((h) => h.name === "FFmpeg")!,
       CommonFormats.MP3.builder("mp3").lossless().fromTo(),
     ),
     true,
@@ -109,7 +109,7 @@ test("add category change costs should affect pathfinding\n", async () => {
       CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
-      handlers.find((h) => h.name === "ffmpeg")!,
+      handlers.find((h) => h.name === "FFmpeg")!,
       CommonFormats.MP3.builder("mp3").lossless().fromTo(),
     ),
     true,
@@ -132,7 +132,7 @@ test("remove category change costs should affect pathfinding\n", async () => {
       CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
-      handlers.find((h) => h.name === "ffmpeg")!,
+      handlers.find((h) => h.name === "FFmpeg")!,
       CommonFormats.MP3.builder("mp3").lossless().fromTo(),
     ),
     true,
@@ -148,7 +148,7 @@ test("remove category change costs should affect pathfinding\n", async () => {
       CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
-      handlers.find((h) => h.name === "ffmpeg")!,
+      handlers.find((h) => h.name === "FFmpeg")!,
       CommonFormats.MP3.builder("mp3").lossless().fromTo(),
     ),
     true,
@@ -170,7 +170,7 @@ test("add adaptive category costs should affect pathfinding\n", async () => {
       CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
-      handlers.find((h) => h.name === "ffmpeg")!,
+      handlers.find((h) => h.name === "FFmpeg")!,
       CommonFormats.MP3.builder("mp3").lossless().fromTo(),
     ),
     true,
@@ -186,7 +186,7 @@ test("add adaptive category costs should affect pathfinding\n", async () => {
       CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
-      handlers.find((h) => h.name === "ffmpeg")!,
+      handlers.find((h) => h.name === "FFmpeg")!,
       CommonFormats.MP3.builder("mp3").lossless().fromTo(),
     ),
     true,
@@ -208,7 +208,7 @@ test("remove adaptive category costs should affect pathfinding\n", async () => {
       CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
-      handlers.find((h) => h.name === "ffmpeg")!,
+      handlers.find((h) => h.name === "FFmpeg")!,
       CommonFormats.MP3.builder("mp3").lossless().fromTo(),
     ),
     true,
@@ -224,7 +224,7 @@ test("remove adaptive category costs should affect pathfinding\n", async () => {
       CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
-      handlers.find((h) => h.name === "ffmpeg")!,
+      handlers.find((h) => h.name === "FFmpeg")!,
       CommonFormats.MP3.builder("mp3").lossless().fromTo(),
     ),
     true,
@@ -246,7 +246,7 @@ test("should find path from image to archive via anyinput\n", async () => {
       CommonFormats.PNG.builder("png").lossless().fromTo(),
     ),
     new ConvertPathNode(
-      handlers.find((h) => h.name === "archiver")!,
+      handlers.find((h) => h.name === "sevenZip")!,
       CommonFormats.ZIP.builder("zip").lossless().to(),
     ),
     true,
@@ -256,5 +256,5 @@ test("should find path from image to archive via anyinput\n", async () => {
   expect(extractedPaths.length).toBeGreaterThan(0);
   expect(extractedPaths[0][0].format.format).toBe("png");
   expect(extractedPaths[0][extractedPaths[0].length - 1].format.format).toBe("zip");
-  expect(extractedPaths[0][extractedPaths[0].length - 1].handler.name).toBe("archiver");
+  expect(extractedPaths[0][extractedPaths[0].length - 1].handler.name).toBe("sevenZip");
 });

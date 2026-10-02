@@ -21,7 +21,7 @@ function padNumberString(num: number, digits: number): string {
 }
 
 class sevenZipHandler implements FormatHandler {
-  public name = "sevenZip";
+  public readonly name = "sevenZip";
   public supportedFormats: FileFormat[] = [];
   public supportAnyInput = true;
   public ready = false;

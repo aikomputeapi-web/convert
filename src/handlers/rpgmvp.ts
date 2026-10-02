@@ -3,7 +3,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import { Decrypter } from "built/rpgmvp-decrypter/scripts/Decrypter.js";
 
 class rpgmvpHandler implements FormatHandler {
-  public name = "rpgmvp";
+  public readonly name = "rpgmvp";
   public supportedFormats = [
     CommonFormats.RPGMVP.builder("rpgmvp").lossless().from(),
     CommonFormats.PNG.builder("png").lossless().to(),

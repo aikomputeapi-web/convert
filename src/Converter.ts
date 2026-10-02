@@ -1,7 +1,7 @@
 import * as comlink from "comlink";
 import type { ConvertPathNode, FileData, HandlerDefinition } from "./FormatHandler";
 import { createRemoteContext, type IProgressStore } from "./ui/ProgressStore";
-import { getHandler, type HandlerName } from "./handlers/index.js";
+import { getHandler } from "./handlers/index.js";
 
 if (!("window" in globalThis)) {
   (globalThis as unknown as { window: typeof globalThis }).window = globalThis;
@@ -68,7 +68,7 @@ export class Converter {
           `Handler "${def.name}" doesn't support the "${path[0].format.format}" format.`,
         );
 
-      const handler = await getHandler(def.name as HandlerName); // todo
+      const handler = await getHandler(def.name);
 
       if (!handler.ready) {
         ctx.log(`Initializing ${def.name}...`);

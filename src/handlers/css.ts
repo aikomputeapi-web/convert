@@ -2,7 +2,7 @@ import { type FileData, type FileFormat, type FormatHandler } from "../FormatHan
 import CommonFormats from "src/CommonFormats.ts";
 
 class cssHandler implements FormatHandler {
-  public name = "css";
+  public readonly name = "css";
   public supportedFormats = [
     CommonFormats.CSS.builder("css").lossless().fromTo(),
     CommonFormats.LESS.builder("less").from(),

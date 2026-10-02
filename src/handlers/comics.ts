@@ -17,7 +17,7 @@ function padNumberString(num: number, digits: number): string {
 }
 
 export class comicsZipPackerHandler implements FormatHandler {
-  public name = "comicsZipPacker";
+  public readonly name = "comicsZipPacker";
   public supportedFormats = [
     CommonFormats.PNG.builder("png").from(),
     CommonFormats.JPEG.builder("jpg").from(),
@@ -88,7 +88,7 @@ export class comicsZipPackerHandler implements FormatHandler {
 }
 
 export class comicsZipUnpackerHandler implements FormatHandler {
-  public name = "comicsZipUnpacker";
+  public readonly name = "comicsZipUnpacker";
   public supportedFormats = [
     CommonFormats.PNG.builder("png").to(),
     CommonFormats.JPEG.builder("jpg").to(),
@@ -154,7 +154,7 @@ export class comicsZipUnpackerHandler implements FormatHandler {
 }
 
 export class comicsTarUnpackerHandler implements FormatHandler {
-  public name = "comicsTarUnpacker";
+  public readonly name = "comicsTarUnpacker";
   public supportedFormats = [
     CommonFormats.PNG.builder("png").to(),
     CommonFormats.JPEG.builder("jpg").to(),

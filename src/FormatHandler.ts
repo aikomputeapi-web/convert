@@ -1,3 +1,5 @@
+import type { HandlerName } from "./handlers/index.js";
+
 /**
  * Definition of file format. Contains format defined constants like mime type and names
  */
@@ -133,14 +135,14 @@ export interface FileData {
 
 export interface HandlerDefinition {
   /** Name of the tool being wrapped (e.g. "FFmpeg"). */
-  name: string;
+  readonly name: HandlerName;
   /** List of supported input/output {@link FileFormat}s. */
   supportedFormats?: FileFormat[];
 
   /** Whether the handler supports input of any type.
    * Conversion using this handler will be performed only if no other direct conversion is found.
    */
-  supportAnyInput?: boolean;
+  readonly supportAnyInput?: boolean;
 
   /** Whether the handler supports running in a Web Worker.
    * Unless you are doing something extraordinary, this should be enabled. If you plan to disable it,
@@ -149,7 +151,7 @@ export interface HandlerDefinition {
    * and avoiding audio APIs.
    * Defaults to `true`.
    */
-  offload?: boolean;
+  readonly offload?: boolean;
 }
 
 /**

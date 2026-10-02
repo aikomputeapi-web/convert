@@ -15,7 +15,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import type { ConvertContext } from "../ui/ProgressStore.js";
 
 class ImageMagickHandler implements FormatHandler {
-  public name = "ImageMagick";
+  public readonly name = "ImageMagick";
   public supportedFormats: FileFormat[] = [];
   public ready = false;
 

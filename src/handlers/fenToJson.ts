@@ -46,7 +46,7 @@ function isPieceSymbol(value: string): value is PieceSymbol {
 }
 
 class fenToJsonHandler implements FormatHandler {
-  public name = "fenToJson";
+  public readonly name = "fenToJson";
   public supportedFormats = [
     CommonFormats.FEN.builder("fen").lossless().fromTo(),
     CommonFormats.JSON.builder("json").lossless().fromTo(),

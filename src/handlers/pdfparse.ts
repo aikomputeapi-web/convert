@@ -4,7 +4,7 @@ import { PDFParse } from "pdf-parse";
 import pdfWorkerUrl from "../../node_modules/pdf-parse/dist/pdf-parse/web/pdf.worker.mjs?url";
 
 class pdfparseHandler implements FormatHandler {
-  public name = "pdfparse";
+  public readonly name = "pdfparse";
   public supportedFormats = [
     CommonFormats.PDF.builder("pdf").from(),
     CommonFormats.TEXT.builder("txt").to(),

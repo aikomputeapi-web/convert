@@ -4,7 +4,7 @@ import { render } from "./bsor/renderer.ts";
 import CommonFormats from "src/CommonFormats.ts";
 
 class bsorHandler implements FormatHandler {
-  public name = "bsor";
+  public readonly name = "bsor";
   public supportedFormats = [
     CommonFormats.BSOR.builder("bsor").from(),
     CommonFormats.PNG.builder("png").to(),

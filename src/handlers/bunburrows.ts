@@ -9,7 +9,7 @@ const COLOR_UNBREAKABLE = [46, 76, 24];
 const COLOR_BUNNY = [255, 255, 255];
 
 class bunburrowsHandler implements FormatHandler {
-  public name = "bunburrows";
+  public readonly name = "bunburrows";
   public supportedFormats = [
     CommonFormats.PNG.builder("png").fromTo(),
     CommonFormats.BUNLEVEL.builder("bunlevel").from(),

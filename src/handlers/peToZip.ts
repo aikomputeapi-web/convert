@@ -9,7 +9,7 @@ if (typeof window !== "undefined") {
 }
 
 class peToZipHandler implements FormatHandler {
-  public name = "peToZip";
+  public readonly name = "peToZip";
   public supportedFormats = [
     CommonFormats.EXE.builder("exe").from(),
     CommonFormats.DLL.builder("dll").from(),

@@ -38,7 +38,7 @@ function safeMax(arr: number[]) {
 }
 
 class pyTurtleHandler implements FormatHandler {
-  public name = "pyTurtle";
+  public readonly name = "pyTurtle";
   public supportedFormats = [
     CommonFormats.PYTHON.builder("py").to(),
     CommonFormats.SVG.builder("svg").from(),

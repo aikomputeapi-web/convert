@@ -3,7 +3,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import { encode, decode } from "@toon-format/toon";
 
 class toonHandler implements FormatHandler {
-  public name = "toon";
+  public readonly name = "toon";
   public supportedFormats = [
     CommonFormats.JSON.builder("json").lossless().fromTo(),
     CommonFormats.TOON.builder("toon").lossless().fromTo(),

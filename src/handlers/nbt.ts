@@ -4,7 +4,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import { gzipSync } from "fflate";
 
 class nbtHandler implements FormatHandler {
-  public name = "nbt";
+  public readonly name = "nbt";
   public supportedFormats = [
     CommonFormats.NBT.builder("nbt").lossless().fromTo(),
     CommonFormats.JSON.builder("json").lossless().fromTo(),

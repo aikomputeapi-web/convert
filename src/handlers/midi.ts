@@ -77,7 +77,7 @@ function loadFluidSynth(): Promise<{ JSSynth: any; sfontBin: ArrayBuffer }> {
 // shortest valid route.
 
 export class midiCodecHandler implements FormatHandler {
-  public name = "midiCodec";
+  public readonly name = "midiCodec";
   public supportedFormats = [
     CommonFormats.MIDI.builder("mid").lossless().fromTo(),
     CommonFormats.RTTTL.builder("rtttl").fromTo(),
@@ -186,7 +186,7 @@ export class midiCodecHandler implements FormatHandler {
 // midiCodecHandler so no direct text->wav edge is created in the routing graph.
 
 export class midiSynthHandler implements FormatHandler {
-  public name = "midiSynth";
+  public readonly name = "midiSynth";
   public supportedFormats = [
     CommonFormats.MIDI.builder("mid").lossless().from(),
     CommonFormats.WAV.builder("wav").lossless().to(),

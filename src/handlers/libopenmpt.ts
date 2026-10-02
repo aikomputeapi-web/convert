@@ -110,7 +110,7 @@ const TRACKER_FORMATS: Array<{ ext: string; name: string; mime?: string }> = [
 const SAMPLE_RATE = 48000;
 
 class libopenmptHandler implements FormatHandler {
-  public name = "libopenmpt";
+  public readonly name = "libopenmpt";
   public supportedFormats: FileFormat[] = [];
   public ready = false;
 

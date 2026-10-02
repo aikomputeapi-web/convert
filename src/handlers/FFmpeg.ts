@@ -26,7 +26,7 @@ class FFmpegHandler implements FormatHandler {
     ["asf", "Windows Media Video (WMV)"],
   ]);
 
-  public name = "FFmpeg";
+  public readonly name = "FFmpeg";
   public supportedFormats: FileFormat[] = [];
   public ready = false;
 

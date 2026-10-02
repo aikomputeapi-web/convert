@@ -8,7 +8,7 @@ import { InitializationError } from "src/errors.ts";
 const SAMPLE_RATE = 34000;
 
 class meydaHandler implements FormatHandler {
-  public name = "meyda";
+  public readonly name = "meyda";
   public supportedFormats = [
     // Lossy reconstruction due to 2 channel encoding
     CommonFormats.PNG.builder("image").fromTo(),

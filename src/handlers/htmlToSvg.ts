@@ -117,7 +117,7 @@ async function htmlContentToSvgString(
 }
 
 class htmlToSvgHandler implements FormatHandler {
-  public name = "htmlToSvg";
+  public readonly name = "htmlToSvg";
   public supportedFormats = [
     CommonFormats.HTML.builder("html").from(),
     CommonFormats.SVG.builder("svg").to(),

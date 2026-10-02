@@ -4,7 +4,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 
 class cybergrindHandler implements FormatHandler {
-  public name = "cybergrind";
+  public readonly name = "cybergrind";
   public supportedFormats = [
     CommonFormats.PNG.builder("png").from(),
     CommonFormats.CGP.builder("cgp").to(),

@@ -14,7 +14,7 @@ const MAX_CANVAS_DIMENSION = 16384;
 type N64Order = "z64" | "n64" | "v64";
 
 class n64romHandler implements FormatHandler {
-  public name = "n64rom";
+  public readonly name = "n64rom";
   public supportedFormats = [
     CommonFormats.Z64.builder("z64").lossless().fromTo(),
     CommonFormats.N64.builder("n64").lossless().fromTo(),

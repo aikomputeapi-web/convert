@@ -12,7 +12,7 @@ largeAssets["scaffolding-min"].src = scaffoldingMinUrl;
 largeAssets.addons.src = addonsUrl;
 
 class turbowarpHandler implements FormatHandler {
-  public name = "turbowarp";
+  public readonly name = "turbowarp";
   public supportedFormats = [
     CommonFormats.SB3.builder("sb3").lossless().fromTo(), // all project data is in the html
     CommonFormats.HTML.builder("html").lossless().fromTo(),

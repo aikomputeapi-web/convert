@@ -96,7 +96,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 
 class dummyHandler implements FormatHandler {
-  public name = "dummy";
+  public readonly name = "dummy";
   public supportedFormats = [
     CommonFormats.PNG.builder("png").lossless().fromTo(),
     // modifiers go before the direction
