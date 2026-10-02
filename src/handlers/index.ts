@@ -150,6 +150,12 @@ export async function getHandler(name: HandlerName) {
 }
 
 export async function ensureDefinitions(cache: HandlerDefinition[]) {
+  for (let i = cache.length - 1; i >= 0; i--) {
+    if (HANDLER_NAMES.includes(cache[i].name)) continue;
+    console.error(`Handler "${cache[i].name}" doesnt exist but is in the format cache?!`);
+    cache.splice(i, 1);
+  }
+
   await Promise.all(HANDLER_NAMES.map(async handlerName => {
     if (cache.some(h => h.name === handlerName)) return;
 
@@ -158,7 +164,7 @@ export async function ensureDefinitions(cache: HandlerDefinition[]) {
     try {
       const handler = await getHandler(handlerName);
       if (handler.name !== handlerName)
-        throw new Error(`Handler ${handlerName} reported ${handler.name} as their name?`);
+        throw new Error(`Handler ${handlerName} reported ${handler.name} as their name?!`);
       await handler.init();
       cache.push(stripHandler(handler));
       console.log(`Updated handler cache for handler "${handlerName}".`);
