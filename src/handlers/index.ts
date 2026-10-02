@@ -108,6 +108,7 @@ const HANDLERS = {
   wavebreak: [],
 } as const;
 
+// handlers can only be named things listed above
 export type HandlerName = keyof typeof HANDLERS;
 
 const HANDLER_NAMES = Object.keys(HANDLERS) as HandlerName[];

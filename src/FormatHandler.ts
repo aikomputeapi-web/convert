@@ -135,7 +135,7 @@ export interface FileData {
 }
 
 export interface HandlerDefinition {
-  /** Name of the tool being wrapped (e.g. "FFmpeg"). */
+  /** Name of the tool being wrapped (e.g. "FFmpeg"). Include it in [src/handlers/index.ts](src/handlers/index.ts) in order to be valid */
   readonly name: HandlerName;
   /** List of supported input/output {@link FileFormat}s. */
   supportedFormats?: FileFormat[];
