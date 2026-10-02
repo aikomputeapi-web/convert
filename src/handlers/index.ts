@@ -142,9 +142,9 @@ export async function getHandler(name: HandlerName) {
   return handler;
 }
 
-export async function initDefinitions(cache: HandlerDefinition[]) {
-  for (const handlerName of Object.keys(HANDLERS) as HandlerName[]) {
-    if (cache.some(h => h.name === handlerName)) continue;
+export async function ensureDefinitions(cache: HandlerDefinition[]) {
+  await Promise.all((Object.keys(HANDLERS) as HandlerName[]).map(async handlerName => {
+    if (cache.some(h => h.name === handlerName)) return;
 
     console.warn(`Cache miss for handler "${handlerName}"`);
 
@@ -157,7 +157,6 @@ export async function initDefinitions(cache: HandlerDefinition[]) {
       console.log(`Updated handler cache for handler "${handlerName}".`);
     } catch (error) {
       console.error(`Error while initializing ${handlerName}:`, error);
-      continue;
     }
-  }
+  }));
 }

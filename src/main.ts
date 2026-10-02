@@ -2,10 +2,9 @@ import {
   type FileFormat,
   type FileData,
   type ConvertPathNode,
-  stripPathNode,
   type HandlerDefinition,
 } from "./FormatHandler.js";
-import { initDefinitions } from "./handlers/index.js";
+import { ensureDefinitions } from "./handlers/index.js";
 import * as comlink from "comlink";
 import type { TraversionGraph } from "./TraversionGraph.js";
 import TraversionGraphWorker from "./TraversionGraph.js?worker";
@@ -48,7 +47,7 @@ window.printSupportedFormatCache = () => {
 async function buildOptionList() {
   ConversionOptions.clear();
 
-  await initDefinitions(window.handlerDefs);
+  await ensureDefinitions(window.handlerDefs);
 
   for (const handler of window.handlerDefs) {
     if (!handler.supportedFormats) {
@@ -196,8 +195,8 @@ window.tryConvertByTraversing = async function (
   abort ??= ProgressStore.controller.signal;
   await window.traversionGraph.clearDeadEndPaths();
   const paths = await window.traversionGraph.searchPathProxied(
-    stripPathNode(from),
-    stripPathNode(to),
+    from,
+    to,
     Mode.value === ModeEnum.Simple,
     comlink.proxy(() => abort.aborted),
   );

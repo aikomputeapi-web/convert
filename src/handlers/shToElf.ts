@@ -1,5 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
+import { Buffer } from "buffer";
 
 import elfUrl from "built/shtoelf/stub.elf?url";
 

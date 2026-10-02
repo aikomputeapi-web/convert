@@ -1,4 +1,5 @@
 import type { HandlerName } from "./handlers/index.js";
+import type { ConvertContext } from "./ui/ProgressStore.js";
 
 /**
  * Definition of file format. Contains format defined constants like mime type and names
@@ -184,7 +185,7 @@ export interface FormatHandler extends HandlerDefinition {
     inputFormat: FileFormat,
     outputFormat: FileFormat,
     args?: string[],
-    ctx?: import("./ui/ProgressStore.js").ConvertContext,
+    ctx?: ConvertContext,
   ) => Promise<FileData[]>;
 }
 
@@ -197,33 +198,11 @@ export class ConvertPathNode {
   }
 }
 
-// i hate these
-export function stripFormat(format: FileFormat): FileFormat {
-  return {
-    name: format.name,
-    format: format.format,
-    extension: format.extension,
-    mime: format.mime,
-    category: format.category,
-    from: format.from,
-    to: format.to,
-    internal: format.internal,
-    lossless: format.lossless,
-  };
-}
-
 export function stripHandler(handler: HandlerDefinition): HandlerDefinition {
   return {
     name: handler.name,
     supportAnyInput: handler.supportAnyInput,
-    supportedFormats: handler.supportedFormats?.map(stripFormat),
+    supportedFormats: handler.supportedFormats,
     offload: handler.offload,
-  };
-}
-
-export function stripPathNode(node: ConvertPathNode): ConvertPathNode {
-  return {
-    handler: stripHandler(node.handler),
-    format: stripFormat(node.format),
   };
 }
