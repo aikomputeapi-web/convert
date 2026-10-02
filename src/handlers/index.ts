@@ -1,5 +1,11 @@
 import { stripHandler, type FormatHandler, type HandlerDefinition } from "../FormatHandler.ts";
 
+// add your handler's name into this object, it will resolve the file and the default export
+// cola: []
+// (imports default from cola.ts)
+// or you might need to help it by something like this
+// pepsiCola: ["./cola.ts", "pepsiColaHandler"]
+// (import pepsiColaHandler named "pepsiCola" from cola.ts)
 const HANDLERS = {
   epub: [],
   pandoc: [],

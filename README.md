@@ -100,7 +100,7 @@ class dummyHandler implements FormatHandler {
   public supportedFormats = [
     CommonFormats.PNG.builder("png").lossless().fromTo(),
     // modifiers go before the direction
-    CommonFormats.GIF.builder("gif").lossless().to(),
+    CommonFormats.GIF.builder("gif").to(),
     // add custom formats to CommonFormats.ts
   ];
   public ready = false;
@@ -121,6 +121,8 @@ class dummyHandler implements FormatHandler {
 
 export default dummyHandler;
 ```
+
+After that, make sure to add add `dummy: []` into the HANDLERS array in [src/handlers/index.ts](src/handlers/index.ts) so it can be used in conversions.
 
 For more details on how all of these components work, refer to the doc comments in [src/FormatHandler.ts](src/FormatHandler.ts). You can also take a look at existing handlers to get a more practical example.
 
