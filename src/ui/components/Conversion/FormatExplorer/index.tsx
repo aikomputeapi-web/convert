@@ -35,6 +35,7 @@ import { Category, type CategoryType } from "src/CommonFormats";
 
 interface FormatExplorerProps {
   conversionOptions: ConversionOptionsMap;
+  matchingFrom?: Set<FileFormat>;
   onSelect?: (format: ConversionOption | null) => void;
   debounceWaitMs?: number;
   direction?: "from" | "to";
@@ -44,6 +45,8 @@ interface FormatExplorerProps {
   toCount?: number;
   onClickFrom?: () => void;
   onClickTo?: () => void;
+  showAll?: boolean;
+  onShowAll?: () => void;
 }
 
 type SearchIndex = Map<string, ConversionOption>;
@@ -93,6 +96,8 @@ const CATEGORY_CHIPS = {
 
 function generateSearchIndex(
   optionsMap: ConversionOptionsMap,
+  matchingFrom: Set<FileFormat> | undefined,
+  showAll: boolean,
   advancedMode: boolean,
   direction: "from" | "to",
 ): SearchIndex {
@@ -102,6 +107,7 @@ function generateSearchIndex(
   for (const [file, handler] of optionsMap) {
     if (direction === "from" && !file.from) continue;
     if (direction === "to" && !file.to) continue;
+    if (direction === "from" && !showAll && matchingFrom && !matchingFrom.has(file)) continue;
 
     const dedupeKey = `${file.mime}|${file.format}`;
     const id = formatExplorerRowKey(file, handler.name);
@@ -115,7 +121,15 @@ function generateSearchIndex(
       }
     }
   }
-  return index;
+
+  if (direction === "from" && matchingFrom) {
+    return new Map([
+      ...[...index].filter(([, [format]]) => matchingFrom.has(format)),
+      ...[...index].filter(([, [format]]) => !matchingFrom.has(format)),
+    ]);
+  } else {
+    return index;
+  }
 }
 
 function filterByCategories(options: SearchIndex, categories: Set<CategoryType>): SearchIndex {
@@ -150,6 +164,7 @@ function filterByTerm(options: SearchIndex, term: string): SearchIndex {
 
 export default function FormatExplorer({
   conversionOptions,
+  matchingFrom,
   onSelect,
   debounceWaitMs = 200,
   direction = "to",
@@ -159,12 +174,14 @@ export default function FormatExplorer({
   toCount,
   onClickFrom,
   onClickTo,
+  showAll = false,
+  onShowAll,
 }: FormatExplorerProps) {
   const isAdvanced = Mode.value === ModeEnum.Advanced;
 
   const originalIndex = useMemo(
-    () => generateSearchIndex(conversionOptions, isAdvanced, direction),
-    [conversionOptions, isAdvanced, direction],
+    () => generateSearchIndex(conversionOptions, matchingFrom, showAll, isAdvanced, direction),
+    [conversionOptions, matchingFrom, showAll, isAdvanced, direction],
   );
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -215,7 +232,10 @@ export default function FormatExplorer({
             fromCount={fromCount ?? 0}
             toCount={toCount ?? 0}
             direction={direction}
-            onClickFrom={() => onClickFrom?.()}
+            onClickFrom={() => {
+              onClickFrom?.();
+              requestAnimationFrame(() => searchInputRef.current?.focus());
+            }}
             onClickTo={() => {
               onClickTo?.();
               requestAnimationFrame(() => searchInputRef.current?.focus());
@@ -268,11 +288,16 @@ export default function FormatExplorer({
           </div>
 
           {noResults ? (
-            <div className="no-results">
-              <p>No formats found</p>
+            <div className="explorer-dialog">
+              <p>No matching formats found</p>
               {filtersActive && (
-                <button className="clear-filters-btn" onClick={handleClearFilters}>
+                <button className="explorer-dialog-btn" onClick={handleClearFilters}>
                   Clear filters
+                </button>
+              )}
+              {direction === "from" && !showAll && (
+                <button className="explorer-dialog-btn" onClick={() => onShowAll?.()}>
+                  Show all
                 </button>
               )}
             </div>
@@ -288,6 +313,14 @@ export default function FormatExplorer({
                   advanced={isAdvanced}
                 />
               ))}
+            </div>
+          )}
+          {!noResults && direction === "from" && !showAll && (
+            <div className="explorer-dialog">
+              <p>Didn't find what you were looking for?</p>
+              <button className="explorer-dialog-btn" onClick={() => onShowAll?.()}>
+                Show all
+              </button>
             </div>
           )}
         </div>

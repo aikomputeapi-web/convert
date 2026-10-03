@@ -102,7 +102,7 @@ function getMatchingFromFormats(
   options: ConversionOptionsMap,
   files: File[],
 ): ConversionOptionsMap {
-  if (files.length === 0) return options;
+  if (files.length === 0) return new Map();
 
   const file = files[0];
   const mimeCandidates = getMimeCandidatesForFile(file);
@@ -116,7 +116,7 @@ function getMatchingFromFormats(
     }
   }
 
-  return matched.size > 0 ? matched : options;
+  return matched;
 }
 
 function downloadFile(bytes: Uint8Array, name: string, type: string) {
@@ -157,7 +157,7 @@ function addFiles(fileList: FileList | null | undefined) {
 
 export default function Conversion() {
   const allOptions = getConversionOptions();
-  const files = Object.values(SelectedFiles.value);
+  const files = useMemo(() => Object.values(SelectedFiles.value), [SelectedFiles.value]);
   const firstFile = files[0];
   const isAdvanced = Mode.value === ModeEnum.Advanced;
 
@@ -165,6 +165,8 @@ export default function Conversion() {
     () => getMatchingFromFormats(allOptions, files),
     [allOptions, files],
   );
+
+  const matchingFromSet = useMemo(() => new Set([...matchingFrom].map(([f]) => f)), [matchingFrom]);
 
   const autoSelectOption = useMemo<ConversionOption | null>(() => {
     if (!matchingFrom.size) return null;
@@ -197,6 +199,7 @@ export default function Conversion() {
   });
 
   const [fromOption, setFromOption] = useState<ConversionOption | null>(autoSelectOption);
+  const [showAll, setShowAll] = useState(false);
 
   const [toOption, setToOption] = useState<ConversionOption | null>(null);
   const [isConverting, setIsConverting] = useState(false);
@@ -213,6 +216,7 @@ export default function Conversion() {
     }
 
     setToOption(null);
+    setShowAll(false);
   }, [firstFile]);
 
   const handleFromSelect = useCallback((option: ConversionOption | null) => {
@@ -355,15 +359,22 @@ export default function Conversion() {
           />
         ) : (
           <FormatExplorer
-            conversionOptions={step === "select-from" ? matchingFrom : allOptions}
+            conversionOptions={allOptions}
+            matchingFrom={matchingFromSet}
             onSelect={step === "select-from" ? handleFromSelect : handleToSelect}
             direction={step === "select-from" ? "from" : "to"}
             fromOption={fromOption}
             toOption={toOption}
-            fromCount={countAvailableFormats(matchingFrom, "from", isAdvanced)}
+            fromCount={countAvailableFormats(
+              showAll ? allOptions : matchingFrom,
+              "from",
+              isAdvanced,
+            )}
             toCount={countAvailableFormats(allOptions, "to", isAdvanced)}
             onClickFrom={handleFromToClickFrom}
             onClickTo={handleFromToClickTo}
+            showAll={showAll}
+            onShowAll={() => setShowAll(true)}
           />
         )}
       </main>

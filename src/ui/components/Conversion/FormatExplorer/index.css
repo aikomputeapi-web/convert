@@ -120,7 +120,7 @@
   }
 }
 
-.no-results {
+.explorer-dialog {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -134,7 +134,7 @@
     font-weight: 500;
   }
 
-  .clear-filters-btn {
+  .explorer-dialog-btn {
     appearance: none;
     border: 1px solid var(--border-primary);
     border-radius: 8px;
