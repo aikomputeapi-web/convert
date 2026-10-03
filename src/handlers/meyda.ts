@@ -4,6 +4,7 @@ import Meyda from "meyda";
 import CommonFormats from "src/CommonFormats.ts";
 import { WaveFile } from "wavefile";
 import { InitializationError } from "src/errors.ts";
+import type { TypedWaveFile } from "src/common/wav.ts";
 
 const SAMPLE_RATE = 34000;
 
@@ -142,7 +143,7 @@ class meydaHandler implements FormatHandler {
           audioData[i] /= max;
         }
 
-        const wav = new WaveFile();
+        const wav = new WaveFile() as TypedWaveFile;
         wav.fromScratch(1, SAMPLE_RATE, "32f", audioData);
 
         const bytes = wav.toBuffer();
@@ -152,16 +153,14 @@ class meydaHandler implements FormatHandler {
       }
     } else {
       for (const inputFile of inputFiles) {
-        const wav = new WaveFile(inputFile.bytes);
+        const wav = new WaveFile(inputFile.bytes) as TypedWaveFile;
         wav.toBitDepth("32f");
         wav.toSampleRate(SAMPLE_RATE);
-        const wavFmt = wav.fmt as { sampleRate: number };
 
         Meyda.bufferSize = bufferSize;
-        Meyda.sampleRate = wavFmt.sampleRate;
-        const maybeChannels = wav.getSamples(false, Float32Array) as unknown as
-          | Float32Array
-          | Float32Array[];
+        Meyda.sampleRate = wav.fmt.sampleRate;
+
+        const maybeChannels = wav.getSamples(false, Float32Array);
         const samples = Array.isArray(maybeChannels) ? maybeChannels[0] : maybeChannels;
 
         const imageWidth = Math.max(1, Math.ceil((samples.length - bufferSize) / hopSize) + 1);

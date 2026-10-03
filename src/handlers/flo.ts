@@ -3,6 +3,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import initReflo, { decode, encode, get_flo_file_info } from "@flo-audio/reflo";
 import { WaveFile } from "wavefile";
 import refloWasmUrl from "@flo-audio/reflo/reflo_bg.wasm?url";
+import type { TypedWaveFile } from "src/common/wav.ts";
 
 class floHandler implements FormatHandler {
   public readonly name = "flo";
@@ -39,12 +40,11 @@ class floHandler implements FormatHandler {
         channels = info.channels;
         info.free();
       } else if (inputFormat.internal === "wav") {
-        const wav = new WaveFile(file.bytes);
+        const wav = new WaveFile(file.bytes) as TypedWaveFile;
         wav.toBitDepth("32f");
-        samples = new Float32Array(wav.getSamples(true, Float32Array));
-        const fmt = wav.fmt as { sampleRate: number; numChannels: number };
-        sampleRate = fmt.sampleRate;
-        channels = fmt.numChannels;
+        samples = wav.getSamples(true, Float32Array);
+        sampleRate = wav.fmt.sampleRate;
+        channels = wav.fmt.numChannels;
       } else if (inputFormat.internal === "f32le") {
         if (file.bytes.length % 4 !== 0) {
           throw new RangeError("Raw Float32LE PCM must contain whole 4-byte samples.");
@@ -63,7 +63,7 @@ class floHandler implements FormatHandler {
       if (outputFormat.internal === "flo") {
         return { bytes: encode(samples, sampleRate, channels, 32, null), name: baseName + ".flo" };
       } else if (outputFormat.internal === "wav") {
-        const wav = new WaveFile();
+        const wav = new WaveFile() as TypedWaveFile;
         wav.fromScratch(channels, sampleRate, "32f", samples);
         wav.toBitDepth("16");
         return { bytes: wav.toBuffer(), name: baseName + ".wav" };

@@ -2,6 +2,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import { QOAEncoder, QOADecoder, QOABase } from "qoa-fu";
 import { WaveFile } from "wavefile";
+import type { TypedWaveFile } from "src/common/wav.ts";
 
 class uint8ArrayQOADecoder extends QOADecoder {
   private data: Uint8Array;
@@ -86,7 +87,7 @@ class qoaFuHandler implements FormatHandler {
             ) * decoder.getChannels();
         }
 
-        const wav = new WaveFile();
+        const wav = new WaveFile() as TypedWaveFile;
         wav.fromScratch(decoder.getChannels(), decoder.getSampleRate(), "16", audioData);
 
         const wavBytes = wav.toBuffer();
@@ -96,30 +97,26 @@ class qoaFuHandler implements FormatHandler {
     } else if (inputFormat.internal === "wav" && outputFormat.internal === "qoa") {
       // WAV => QOA
       for (const inputFile of inputFiles) {
-        const wav = new WaveFile(inputFile.bytes);
+        const wav = new WaveFile(inputFile.bytes) as TypedWaveFile;
         wav.toBitDepth("32f");
-        const wavData = wav.data as { samples: Uint8Array }; // idiot library
-        const wavFmt = wav.fmt as { sampleRate: number; numChannels: number; blockAlign: number };
-        const length = wavData.samples.length / wavFmt.blockAlign;
+        const length = wav.data.samples.length / wav.fmt.blockAlign;
 
-        const encoder = new uint8ArrayQOAEncoder((length * wavFmt.numChannels * 4) / 8 + 4096);
-        if (!encoder.writeHeader(length, wavFmt.numChannels, wavFmt.sampleRate)) {
+        const encoder = new uint8ArrayQOAEncoder((length * wav.fmt.numChannels * 4) / 8 + 4096);
+        if (!encoder.writeHeader(length, wav.fmt.numChannels, wav.fmt.sampleRate)) {
           throw new Error("Failed to write QOA header.");
         }
 
-        const maybeChannels = wav.getSamples(false, Float32Array) as unknown as
-          | Float32Array
-          | Float32Array[];
+        const maybeChannels = wav.getSamples(false, Float32Array);
         const channelData = Array.isArray(maybeChannels) ? maybeChannels : [maybeChannels];
 
         let offset = 0;
         while (offset < length) {
           const frameSamples = Math.min(QOABase.MAX_FRAME_SAMPLES, length - offset);
-          const frameBuffer = new Int16Array(frameSamples * wavFmt.numChannels);
+          const frameBuffer = new Int16Array(frameSamples * wav.fmt.numChannels);
 
           let index = 0;
           for (let i = 0; i < frameSamples; i++) {
-            for (let c = 0; c < wavFmt.numChannels; c++) {
+            for (let c = 0; c < wav.fmt.numChannels; c++) {
               let sample = channelData[c][offset + i];
               sample = sample < -1 ? -1 : sample > 1 ? 1 : sample;
               frameBuffer[index++] = sample < 0 ? sample * 32768 : sample * 32767;
