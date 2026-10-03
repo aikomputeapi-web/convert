@@ -162,6 +162,7 @@ If you intend to use an LLM, agent-enabled IDE, or other AI-driven tool for your
 - Clearly state that you've used an LLM, ideally in your pull request's description. Do not attempt to pass off an AI's work as your own. I'm far more likely to accept a pull request that openly admits to using AI than one that does but pretends it doesn't. Transparency helps the maintainer (me) know what to keep an eye out for (e.g. hallucinations), and helps you keep yourself in check.
 - Do not overindulge. If your contribution is trivial or simple enough to be written by hand, please opt to write it by hand. This is especially true if it's your first contribution. You're much more likely to retain knowledge and understanding about architectural details if you've familiarized yourself with the process hands-on first.
 - Keep the scope to things you _could_ do by hand. LLMs are tools, and this is a community-driven project. Orchestrating an AI to write logic that you don't fully comprehend is not only reckless for a community project, it's also disrespectful towards human contributors who took the time to research their additions. In other words, there should _never_ be a scenario where you _need_ an LLM.
+- Do not write any of the pull request/issue text with an LLM, except for translation. I only want to talk with a real person.
 - Explain what you (and the LLM) are doing, in a way that makes it clear that you understand the changes you're making.
 
 Not adhering to these rules will likely get your pull request closed.
