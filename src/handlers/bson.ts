@@ -1,6 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import { BSON } from "bson";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 class bsonHandler implements FormatHandler {
   public readonly name = "bson";
@@ -26,7 +27,7 @@ class bsonHandler implements FormatHandler {
         }
 
         return inputFiles.map((file) => {
-          const text = new TextDecoder().decode(file.bytes);
+          const text = decode(file.bytes);
           let jsonData = JSON.parse(text);
 
           // BSON required the root to be an object.
@@ -35,7 +36,7 @@ class bsonHandler implements FormatHandler {
           }
 
           const bsonResult = BSON.serialize(jsonData);
-          const name = file.name.split(".").slice(0, -1).join(".") + ".bson";
+          const name = changeExt(file.name, "bson");
 
           return {
             name,
@@ -52,11 +53,11 @@ class bsonHandler implements FormatHandler {
           const bsonData = BSON.deserialize(file.bytes);
           const text = JSON.stringify(bsonData);
 
-          const name = file.name.split(".").slice(0, -1).join(".") + ".json";
+          const name = changeExt(file.name, "json");
 
           return {
             name,
-            bytes: new TextEncoder().encode(text),
+            bytes: encode(text),
           };
         });
 

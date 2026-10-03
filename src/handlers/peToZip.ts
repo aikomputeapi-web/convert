@@ -4,6 +4,7 @@ import JSZip from "jszip";
 
 import { Buffer } from "buffer";
 import CommonFormats from "src/CommonFormats.ts";
+import { changeExt } from "src/common/index.ts";
 if (typeof window !== "undefined") {
   (window as any).Buffer = Buffer;
 }
@@ -88,8 +89,7 @@ class peToZipHandler implements FormatHandler {
           compressionOptions: { level: 9 },
         });
 
-        const baseName = inputFile.name.split(".").slice(0, -1).join(".");
-        const newName = `${baseName}_pe_data.zip`;
+        const newName = changeExt(inputFile.name, "zip", "_pe_data");
 
         outputFiles.push({
           bytes: outputBytes,

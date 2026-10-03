@@ -12,6 +12,7 @@ import {
   postprocessTypstFromPandoc,
   preprocessHtmlForTypst,
 } from "./typst.ts";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 class pandocHandler implements FormatHandler {
   static formatNames: Map<string, string> = new Map([
@@ -274,9 +275,7 @@ class pandocHandler implements FormatHandler {
         inputFormat.internal === "html" &&
         (outputFormat.internal === "pdf" || outputFormat.internal === "typst");
       const sourceBytes = shouldNormalizeHtmlForTypst
-        ? new TextEncoder().encode(
-            preprocessHtmlForTypst(new TextDecoder().decode(inputFile.bytes)),
-          )
+        ? encode(preprocessHtmlForTypst(decode(inputFile.bytes)))
         : inputFile.bytes;
       const files: Record<string, any> = {
         [vfsInputName]: new Blob([sourceBytes as BlobPart]),
@@ -328,13 +327,13 @@ class pandocHandler implements FormatHandler {
       let bytes = new Uint8Array(arrayBuffer);
       if (outputFormat.internal === "typst") {
         const normalizedTypst = normalizeTypstAssetPaths(
-          postprocessTypstFromPandoc(new TextDecoder().decode(bytes)),
+          postprocessTypstFromPandoc(decode(bytes)),
           await collectTypstAssetFiles(files, [vfsInputName]),
         );
         const bundledTypst = await bundleTypstAssets(normalizedTypst, files, [vfsInputName]);
-        bytes = new TextEncoder().encode(bundledTypst);
+        bytes = encode(bundledTypst);
       }
-      const name = inputFile.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension;
+      const name = changeExt(inputFile.name, outputFormat.extension);
 
       outputFiles.push({ bytes, name });
       i++;

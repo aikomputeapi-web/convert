@@ -1,5 +1,6 @@
 import CommonFormats from "src/CommonFormats.ts";
 import type { FormatHandler, FileData, FileFormat } from "../FormatHandler.ts";
+import { decode, encode } from "src/common/index.ts";
 
 function hasPrefix(bytes: Uint8Array, prefix: number[]) {
   if (bytes.length < prefix.length) return false;
@@ -86,8 +87,7 @@ function decodeUsingTextDecoder(bytes: Uint8Array, label: string) {
     return dec.decode(bytes);
   } catch {
     // fallback
-    const dec = new TextDecoder("utf-8");
-    return dec.decode(bytes);
+    return decode(bytes);
   }
 }
 
@@ -150,7 +150,7 @@ export default class textEncodingHandler implements FormatHandler {
       const outf = (outputFormat && outputFormat.internal) || "utf8NB";
       let outBytes: Uint8Array;
       if (outf === "utf8NB") {
-        const utf8Bytes = new TextEncoder().encode(text);
+        const utf8Bytes = encode(text);
         if (utf8Bytes.length >= 3 && hasPrefix(utf8Bytes, [0xef, 0xbb, 0xbf])) {
           // has BOM, remove it
           outBytes = utf8Bytes.subarray(3);
@@ -159,7 +159,7 @@ export default class textEncodingHandler implements FormatHandler {
           outBytes = utf8Bytes;
         }
       } else if (outf === "utf8WB") {
-        const utf8Bytes = new TextEncoder().encode(text);
+        const utf8Bytes = encode(text);
         if (utf8Bytes.length >= 3 && hasPrefix(utf8Bytes, [0xef, 0xbb, 0xbf])) {
           // already has BOM, don't add another
           outBytes = utf8Bytes;
@@ -178,7 +178,7 @@ export default class textEncodingHandler implements FormatHandler {
       } else if (outf === "utf32be") {
         outBytes = encodeUTF32(text, false, true);
       } else {
-        outBytes = new TextEncoder().encode(text);
+        outBytes = encode(text);
       }
 
       results.push({ name: file.name, bytes: outBytes });

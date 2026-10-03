@@ -1,5 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
+import { changeExt } from "src/common/index.ts";
 
 function read_lendian(x: number, y: number): number {
   return x + y * 16 * 16;
@@ -175,7 +176,7 @@ class curaniHandler implements FormatHandler {
       }
 
       outputFiles.push({
-        name: file.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension,
+        name: changeExt(file.name, outputFormat.extension),
         bytes: new_file_bytes,
       });
     }

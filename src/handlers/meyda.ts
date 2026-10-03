@@ -5,6 +5,8 @@ import CommonFormats from "src/CommonFormats.ts";
 import { WaveFile } from "wavefile";
 import { InitializationError } from "src/errors.ts";
 import type { TypedWaveFile } from "src/common/wav.ts";
+import { changeExt } from "src/common/index.ts";
+import { canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas.ts";
 
 const SAMPLE_RATE = 34000;
 
@@ -19,14 +21,10 @@ class meydaHandler implements FormatHandler {
   ];
   public ready = false;
 
-  #canvas?: OffscreenCanvas;
-  #ctx?: OffscreenCanvasRenderingContext2D;
+  #bundle?: CanvasBundle;
 
   async init() {
-    this.#canvas = new OffscreenCanvas(1, 1);
-    const ctx = this.#canvas.getContext("2d");
-    if (!ctx) throw new Error("Failed to create 2D rendering context.");
-    this.#ctx = ctx;
+    this.#bundle = createCanvas();
 
     this.ready = true;
   }
@@ -36,9 +34,10 @@ class meydaHandler implements FormatHandler {
     inputFormat: FileFormat,
     outputFormat: FileFormat,
   ): Promise<FileData[]> {
-    if (!this.ready || !this.#canvas || !this.#ctx) {
+    if (!this.ready || !this.#bundle) {
       throw new InitializationError("Handler not initialized.");
     }
+    const { canvas, ctx } = this.#bundle;
     const outputFiles: FileData[] = [];
 
     const inputIsImage = inputFormat.internal === "image";
@@ -55,8 +54,6 @@ class meydaHandler implements FormatHandler {
 
     if (inputIsImage) {
       for (const inputFile of inputFiles) {
-        this.#ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.width);
-
         const blob = new Blob([inputFile.bytes as BlobPart], { type: inputFormat.mime });
 
         const image = await createImageBitmap(blob);
@@ -70,11 +67,11 @@ class meydaHandler implements FormatHandler {
         const imageHeight = image.height;
         const imageWidth = Math.round(image.width * (hopSize / imageHeight));
 
-        this.#canvas.width = imageWidth;
-        this.#canvas.height = imageHeight;
-        this.#ctx.drawImage(image, 0, 0, imageWidth, imageHeight);
+        canvas.width = imageWidth;
+        canvas.height = imageHeight;
+        ctx.drawImage(image, 0, 0, imageWidth, imageHeight);
 
-        const imageData = this.#ctx.getImageData(0, 0, imageWidth, imageHeight);
+        const imageData = ctx.getImageData(0, 0, imageWidth, imageHeight);
         const pixelBuffer = imageData.data as Uint8ClampedArray;
 
         const audioData = new Float32Array(imageWidth * hopSize + bufferSize);
@@ -147,8 +144,7 @@ class meydaHandler implements FormatHandler {
         wav.fromScratch(1, SAMPLE_RATE, "32f", audioData);
 
         const bytes = wav.toBuffer();
-        const name =
-          inputFile.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension;
+        const name = changeExt(inputFile.name, outputFormat.extension);
         outputFiles.push({ bytes, name });
       }
     } else {
@@ -166,8 +162,8 @@ class meydaHandler implements FormatHandler {
         const imageWidth = Math.max(1, Math.ceil((samples.length - bufferSize) / hopSize) + 1);
         const imageHeight = Meyda.bufferSize / 2;
 
-        this.#canvas.width = imageWidth;
-        this.#canvas.height = imageHeight;
+        canvas.width = imageWidth;
+        canvas.height = imageHeight;
 
         const frameBuffer = new Float32Array(bufferSize);
 
@@ -199,15 +195,11 @@ class meydaHandler implements FormatHandler {
             pixels[pixelIndex + 3] = 0xff;
           }
           const imageData = new ImageData(pixels as ImageDataArray, 1, imageHeight);
-          this.#ctx.putImageData(imageData, i, 0);
+          ctx.putImageData(imageData, i, 0);
         }
 
-        const blob = await this.#canvas.convertToBlob({
-          type: outputFormat.mime,
-        });
-        const bytes = new Uint8Array(await blob.arrayBuffer());
-        const name =
-          inputFile.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension;
+        const bytes = await canvasToBlob(this.#bundle, outputFormat.mime);
+        const name = changeExt(inputFile.name, outputFormat.extension);
         outputFiles.push({ bytes, name });
       }
     }

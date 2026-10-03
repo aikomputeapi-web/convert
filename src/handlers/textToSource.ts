@@ -1,5 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 function python(text: string): string {
   return `print(${JSON.stringify(text)})`;
@@ -98,12 +99,12 @@ class textToSourceHandler implements FormatHandler {
     const [, converter] = converterEntry;
 
     for (const inputFile of inputFiles) {
-      const text = new TextDecoder().decode(inputFile.bytes).replaceAll(/\r?\n/g, "\n");
+      const text = decode(inputFile.bytes).replaceAll(/\r?\n/g, "\n");
 
       const converted = converter(text);
 
-      const bytes = new TextEncoder().encode(converted);
-      const name = inputFile.name.replace(/\.txt$/i, `.${outputFormat.extension}`);
+      const bytes = encode(converted);
+      const name = changeExt(inputFile.name, outputFormat.extension);
       outputFiles.push({ bytes, name });
     }
     return outputFiles;

@@ -2,6 +2,8 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import JSZip from "jszip";
 import { InitializationError } from "src/errors.ts";
+import { changeExt, decode } from "src/common/index.ts";
+import { canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas.ts";
 
 class piskelHandler implements FormatHandler {
   public readonly name = "piskel";
@@ -12,16 +14,10 @@ class piskelHandler implements FormatHandler {
   ];
   public ready = false;
 
-  #canvas?: OffscreenCanvas;
-  #ctx?: OffscreenCanvasRenderingContext2D;
+  #bundle?: CanvasBundle;
 
   async init() {
-    this.#canvas = new OffscreenCanvas(1, 1);
-    const ctx = this.#canvas.getContext("2d");
-    if (!ctx) {
-      throw new InitializationError("Failed to create 2D rendering context.");
-    }
-    this.#ctx = ctx;
+    this.#bundle = createCanvas();
 
     this.ready = true;
   }
@@ -31,9 +27,10 @@ class piskelHandler implements FormatHandler {
     inputFormat: FileFormat,
     outputFormat: FileFormat,
   ): Promise<FileData[]> {
-    if (!this.ready || !this.#canvas || !this.#ctx) {
+    if (!this.ready || !this.#bundle) {
       throw new InitializationError("Handler not initialized.");
     }
+    const { canvas, ctx } = this.#bundle;
 
     if (!(inputFormat.internal === "piskel" && ["png", "zip"].includes(outputFormat.internal))) {
       throw new TypeError(
@@ -44,7 +41,7 @@ class piskelHandler implements FormatHandler {
     const outputFiles: FileData[] = [];
 
     for (const inputFile of inputFiles) {
-      const fileRaw = new TextDecoder().decode(inputFile.bytes);
+      const fileRaw = decode(inputFile.bytes);
       const contents = JSON.parse(fileRaw);
 
       const version: number = contents.modelVersion;
@@ -67,12 +64,12 @@ class piskelHandler implements FormatHandler {
       const temp = JSON.parse(layers[0]);
       const frameCount: number = temp.frameCount;
 
-      this.#canvas.width = spriteWidth * frameCount;
-      this.#canvas.height = spriteHeight;
+      canvas.width = spriteWidth * frameCount;
+      canvas.height = spriteHeight;
 
       // We're clearing here because each layer needs to
       // superimpose itself onto the previous.
-      this.#ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       for (const layerRaw of layers) {
         const layer = JSON.parse(layerRaw);
@@ -85,45 +82,31 @@ class piskelHandler implements FormatHandler {
         const blob = await (await fetch(layerB64)).blob(); // funny decoding
         const image = await createImageBitmap(blob);
 
-        this.#ctx.globalAlpha = opacity;
-        this.#ctx.drawImage(image, 0, 0);
+        ctx.globalAlpha = opacity;
+        ctx.drawImage(image, 0, 0);
       }
 
       if (outputFormat.internal === "png") {
-        const blob = await this.#canvas.convertToBlob({
-          type: outputFormat.mime,
-        });
-        const bytes = new Uint8Array(await blob.arrayBuffer());
+        const bytes = await canvasToBlob(this.#bundle, outputFormat.mime);
 
-        const name =
-          inputFile.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension;
+        const name = changeExt(inputFile.name, outputFormat.extension);
         outputFiles.push({ bytes, name });
       } else if (outputFormat.internal === "zip") {
         const zip = new JSZip();
 
-        const blob = await this.#canvas.convertToBlob({
-          type: "image/png",
-        });
-        const image = await createImageBitmap(blob);
+        // Slice the sprite sheet into frames directly from the main canvas
+        const frame = createCanvas(spriteWidth, spriteHeight);
+        for (let i = 0; i < frameCount; i++) {
+          frame.ctx.clearRect(0, 0, spriteWidth, spriteHeight);
+          frame.ctx.drawImage(canvas, -i * spriteWidth, 0);
 
-        this.#canvas.width = spriteWidth;
-        this.#canvas.height = spriteHeight;
-
-        const baseName = inputFile.name.split(".").slice(0, -1).join(".");
-        for (let x = 0; x > -spriteWidth * frameCount; x -= spriteWidth) {
-          this.#ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
-          this.#ctx.drawImage(image, x, 0);
-
-          const blob = await this.#canvas.convertToBlob({
-            type: "image/png",
-          });
-          const bytes = new Uint8Array(await blob.arrayBuffer());
-          const name = `${baseName}_Frame${-Number(x / spriteWidth)}.png`;
+          const bytes = await canvasToBlob(frame, "image/png");
+          const name = changeExt(inputFile.name, "png", `_Frame${i}`);
           zip.file(name, bytes);
         }
 
         const bytes = await zip.generateAsync({ type: "uint8array" });
-        const name = baseName + "." + outputFormat.extension;
+        const name = changeExt(inputFile.name, outputFormat.extension);
         outputFiles.push({ bytes, name });
       }
     }

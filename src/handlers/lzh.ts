@@ -4,6 +4,7 @@ import { LZHEncoder, type LHAFileInput } from "./lzh/encoder.ts";
 import JSZip from "jszip";
 import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
+import { changeExt, encode } from "src/common/index.ts";
 
 // Convert bytes to base64 string
 function bytesToBase64(bytes: Uint8Array): string {
@@ -81,12 +82,10 @@ export class lzhHandler implements FormatHandler {
         };
 
         const jsonStr = JSON.stringify(archiveInfo, null, 2);
-        const encoder = new TextEncoder();
-        const baseName = inputFile.name.replace(/\.(lzh|lha)$/i, "");
 
         outputFiles.push({
-          name: baseName + ".json",
-          bytes: encoder.encode(jsonStr),
+          name: changeExt(inputFile.name, "json"),
+          bytes: encode(jsonStr),
         });
       }
     } else if (inputFormat.internal === "lzh" && outputFormat.internal === "zip") {
@@ -114,9 +113,8 @@ export class lzhHandler implements FormatHandler {
           compressionOptions: { level: 9 },
         });
 
-        const baseName = inputFile.name.replace(/\.(lzh|lha)$/i, "");
         outputFiles.push({
-          name: baseName + ".zip",
+          name: changeExt(inputFile.name, "zip"),
           bytes: zipData,
         });
       }
@@ -165,9 +163,8 @@ export class lzhHandler implements FormatHandler {
         const encoder = new LZHEncoder();
         const lzhData = encoder.create(filesToArchive);
 
-        const baseName = inputFile.name.replace(/\.zip$/i, "");
         outputFiles.push({
-          name: baseName + "." + outputFormat.extension,
+          name: changeExt(inputFile.name, outputFormat.extension),
           bytes: lzhData,
         });
       }

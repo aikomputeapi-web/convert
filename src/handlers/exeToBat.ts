@@ -1,6 +1,7 @@
 import type { FileFormat, FileData, FormatHandler } from "../FormatHandler.js";
 import CommonFormats from "src/CommonFormats.js";
 import { Buffer } from "buffer";
+import { encode, stripExt } from "src/common/index.ts";
 
 // Toggle logging for debugging EXE to BAT conversion
 const DEBUG_EXE_TO_BAT = false;
@@ -56,7 +57,7 @@ export default class exeToBatHandler implements FormatHandler {
   }
 
   private async convertExeToBat(file: FileData): Promise<FileData> {
-    const exeName = file.name.replace(/\.[^.]*$/, "");
+    const exeName = stripExt(file.name);
     const batName = `${exeName}.bat`;
 
     if (DEBUG_EXE_TO_BAT) {
@@ -84,7 +85,7 @@ export default class exeToBatHandler implements FormatHandler {
     // Create buffer safely with error handling
     let batBytes: Uint8Array;
     try {
-      batBytes = new TextEncoder().encode(batContent);
+      batBytes = encode(batContent);
       if (DEBUG_EXE_TO_BAT) {
         console.log("[exe2bat] Successfully encoded batch content");
       }

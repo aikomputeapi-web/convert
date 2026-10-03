@@ -1,6 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import JSZip from "jszip";
+import { decode, encode } from "src/common/index.ts";
 
 class harHandler implements FormatHandler {
   public readonly name = "har";
@@ -28,10 +29,8 @@ class harHandler implements FormatHandler {
 
   private async convertHarToZip(inputFile: FileData): Promise<FileData> {
     const zip = new JSZip();
-    const textEncoder = new TextEncoder();
-    const textDecoder = new TextDecoder();
 
-    const text = textDecoder.decode(inputFile.bytes);
+    const text = decode(inputFile.bytes);
     const json = JSON.parse(text);
     const entries = json.log.entries;
     for (const entry of entries) {
@@ -51,7 +50,7 @@ class harHandler implements FormatHandler {
       if (content.encoding === "base64") {
         contentData = this.base64ToUint8Array(content.text);
       } else {
-        contentData = textEncoder.encode(entry.response.content.text);
+        contentData = encode(entry.response.content.text);
       }
       zip.file(pathName, contentData);
     }

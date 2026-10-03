@@ -1,3 +1,5 @@
+import { decode } from "src/common/index.ts";
+
 /**
  * LZH/LHA Archive Decoder
  * Implements LHA archive format parsing and LZH decompression
@@ -65,8 +67,7 @@ export class LZHDecoder {
     }
     // Only decode up to the null terminator
     const validBytes = bytes.slice(0, actualLength);
-    const decoder = new TextDecoder("utf-8", { fatal: false });
-    let str = decoder.decode(validBytes);
+    let str = decode(validBytes);
     // Remove any remaining null bytes and control characters
     // oxlint-disable-next-line eslint/no-control-regex
     str = str.replace(/[\x00-\x1F\x7F]/g, "");

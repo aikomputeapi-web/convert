@@ -1,6 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import JSZip from "jszip";
+import { changeExt } from "src/common/index.ts";
 
 class krzHandler implements FormatHandler {
   public readonly name = "krz";
@@ -32,7 +33,7 @@ class krzHandler implements FormatHandler {
 
         const imageData = await imageFile.async("uint8array");
         outputFiles.push({
-          name: inputFile.name.replace(/\.krz$/, ".png"),
+          name: changeExt(inputFile.name, "png"),
           bytes: imageData,
         });
       }

@@ -2,6 +2,7 @@ import type { FileData, FileFormat, FormatHandler } from "src/FormatHandler";
 import * as NBT from "nbtify";
 import { gunzipSync, gzipSync } from "fflate";
 import CommonFormats from "src/CommonFormats.ts";
+import { changeExt } from "src/common/index.ts";
 
 class mcSchematicHandler implements FormatHandler {
   public readonly name = "mcSchematic";
@@ -65,13 +66,13 @@ class mcSchematicHandler implements FormatHandler {
       ) {
         outBytes = gzipSync(outBytes);
         outputFiles.push({
-          name: file.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension,
+          name: changeExt(file.name, outputFormat.extension),
           bytes: outBytes,
         });
       } else {
         // Not a native out-format (e.g., routing to JSON). Fallback to NBT extension for graph bridges.
         outputFiles.push({
-          name: file.name.split(".").slice(0, -1).join(".") + ".nbt",
+          name: changeExt(file.name, "nbt"),
           bytes: outBytes,
         });
       }

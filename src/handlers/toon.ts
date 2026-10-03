@@ -1,6 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
-import { encode, decode } from "@toon-format/toon";
+import { encode as encodeToon, decode as decodeToon } from "@toon-format/toon";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 class toonHandler implements FormatHandler {
   public readonly name = "toon";
@@ -26,15 +27,15 @@ class toonHandler implements FormatHandler {
         }
 
         return inputFiles.map((file) => {
-          const text = new TextDecoder().decode(file.bytes);
+          const text = decode(file.bytes);
           let jsonData = JSON.parse(text);
 
-          const toonData = encode(jsonData);
-          const name = file.name.split(".").slice(0, -1).join(".") + ".toon";
+          const toonData = encodeToon(jsonData);
+          const name = changeExt(file.name, "toon");
 
           return {
             name,
-            bytes: new TextEncoder().encode(toonData),
+            bytes: encode(toonData),
           };
         });
 
@@ -44,14 +45,14 @@ class toonHandler implements FormatHandler {
         }
 
         return inputFiles.map((file) => {
-          const toonData = new TextDecoder().decode(file.bytes);
-          const jsonData = JSON.stringify(decode(toonData));
+          const toonData = decode(file.bytes);
+          const jsonData = JSON.stringify(decodeToon(toonData));
 
-          const name = file.name.split(".").slice(0, -1).join(".") + ".json";
+          const name = changeExt(file.name, "json");
 
           return {
             name,
-            bytes: new TextEncoder().encode(jsonData),
+            bytes: encode(jsonData),
           };
         });
 

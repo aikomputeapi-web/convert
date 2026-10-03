@@ -1,6 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import { Decrypter } from "built/rpgmvp-decrypter/scripts/Decrypter.js";
+import { changeExt } from "src/common/index.ts";
 
 class rpgmvpHandler implements FormatHandler {
   public readonly name = "rpgmvp";
@@ -40,7 +41,7 @@ class rpgmvpHandler implements FormatHandler {
       }
 
       const bytes = new Uint8Array(decrypter.decrypt(as_buffer));
-      const name = inputFile.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension;
+      const name = changeExt(inputFile.name, outputFormat.extension);
 
       outputFiles.push({ bytes, name });
     }

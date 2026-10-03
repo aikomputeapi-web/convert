@@ -1,5 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 class alsHandler implements FormatHandler {
   public readonly name = "als";
@@ -24,9 +25,6 @@ class alsHandler implements FormatHandler {
       );
     }
 
-    const decoder = new TextDecoder("utf-8", { fatal: true });
-    const encoder = new TextEncoder();
-
     return Promise.all(
       inputFiles.map(async (inputFile) => {
         if (
@@ -46,7 +44,7 @@ class alsHandler implements FormatHandler {
 
         let xml: string;
         try {
-          xml = decoder.decode(decompressedBytes);
+          xml = decode(decompressedBytes);
         } catch {
           throw new Error("Invalid ALS file: decompressed data is not UTF-8 XML.");
         }
@@ -54,13 +52,9 @@ class alsHandler implements FormatHandler {
           throw new Error("Invalid ALS file: decompressed data is not XML.");
         }
 
-        const baseNameParts = inputFile.name.split(".");
-        const baseName =
-          baseNameParts.length > 1 ? baseNameParts.slice(0, -1).join(".") : inputFile.name;
-
         return {
-          name: `${baseName}.xml`,
-          bytes: encoder.encode(xml),
+          name: changeExt(inputFile.name, "xml"),
+          bytes: encode(xml),
         };
       }),
     );

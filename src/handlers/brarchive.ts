@@ -1,6 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import JSZip from "jszip";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 function read_lendian_4(a: number, b: number, c: number, d: number): number {
   return a + b * Math.pow(16, 2) + c * Math.pow(16, 4) + d * Math.pow(16, 6);
@@ -61,7 +62,6 @@ class brarchiveHandler implements FormatHandler {
       const file_entry_size = 1 + 247 + 4 + 4; // the size of a single FileEntry
 
       for (const file of inputFiles) {
-        const decoder = new TextDecoder();
         const numEntries: number = read_lendian_4(
           file.bytes[0x08],
           file.bytes[0x09],
@@ -75,7 +75,7 @@ class brarchiveHandler implements FormatHandler {
         for (let i = 0; i < numEntries; i++) {
           const file_name_length = file.bytes[byte_cursor];
           byte_cursor++;
-          const file_name: string = decoder.decode(
+          const file_name: string = decode(
             file.bytes.subarray(byte_cursor, byte_cursor + file_name_length),
           );
           byte_cursor += 247; // Names are stored as padded 247-length strings?? Weird but seems to be true.
@@ -133,7 +133,7 @@ class brarchiveHandler implements FormatHandler {
           const output = await zip.generateAsync({ type: "uint8array" });
           outputFiles.push({
             bytes: output,
-            name: file.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension,
+            name: changeExt(file.name, outputFormat.extension),
           });
         } else if (outputFormat.internal === "json") {
           // First, validate that everything in the archive is in fact a .json file.
@@ -208,15 +208,14 @@ class brarchiveHandler implements FormatHandler {
         working_bytes.push(0x01, 0x00, 0x00, 0x00);
 
         // Start writing FileEntry's
-        const encoder = new TextEncoder();
         for (let i = 0; i < working_files[key].length; i++) {
           // Shorten name if need be
           let name = working_files[key][i].name;
-          while (encoder.encode(name).length > 247) {
+          while (encode(name).length > 247) {
             name = name.substring(0, name.length - 1);
           }
 
-          const name_bytes: Uint8Array = encoder.encode(name);
+          const name_bytes: Uint8Array = encode(name);
           working_bytes.push(name_bytes.length);
 
           // Push name and padding
@@ -244,7 +243,7 @@ class brarchiveHandler implements FormatHandler {
         // Finally, push our file.
         outputFiles.push({
           bytes: new Uint8Array(working_bytes),
-          name: key.split(".").slice(0, -1).join(".") + "." + outputFormat.extension,
+          name: changeExt(key, outputFormat.extension),
         });
       }
     } else {

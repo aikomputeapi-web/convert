@@ -1,6 +1,7 @@
 import { type FileData, type FileFormat, type FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "../CommonFormats.ts";
 import PDFDocument from "pdfkit/js/pdfkit.standalone";
+import { changeExt, decode } from "src/common/index.ts";
 
 class textToPdfHandler implements FormatHandler {
   public readonly name = "textToPdf";
@@ -22,7 +23,7 @@ class textToPdfHandler implements FormatHandler {
     const outputFiles: FileData[] = [];
 
     for (const file of inputFiles) {
-      const text = new TextDecoder().decode(file.bytes).replace(/\p{Extended_Pictographic}/gu, ""); // Remove emojis
+      const text = decode(file.bytes).replace(/\p{Extended_Pictographic}/gu, ""); // Remove emojis
 
       const doc = new PDFDocument({
         size: "A4",
@@ -55,9 +56,8 @@ class textToPdfHandler implements FormatHandler {
         doc.end();
       });
 
-      const basename = file.name.split(".").slice(0, -1).join(".") || "document";
       outputFiles.push({
-        name: `${basename}.${outputFormat.extension}`,
+        name: changeExt(file.name, outputFormat.extension),
         bytes: pdfBytes,
       });
     }

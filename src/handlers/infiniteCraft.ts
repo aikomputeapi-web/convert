@@ -1,5 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 class txtToInfiniteCraftHandler implements FormatHandler {
   public readonly name = "txtToInfiniteCraft";
@@ -19,7 +20,7 @@ class txtToInfiniteCraftHandler implements FormatHandler {
     outputFormat: FileFormat,
   ): Promise<FileData[]> {
     const inputFile = inputFiles[0];
-    const text = new TextDecoder().decode(inputFile.bytes);
+    const text = decode(inputFile.bytes);
     const words = text.split(/[^a-zA-Z0-9']+/).filter(Boolean);
 
     const emojis = ["💧", "🔥", "🌬️", "🌍", "⚡", "❄️", "🌟", "🌈", "🌊", "🍃"];
@@ -41,7 +42,7 @@ class txtToInfiniteCraftHandler implements FormatHandler {
       })),
     };
 
-    const outputBytes = new TextEncoder().encode(JSON.stringify(jsonData, null, 2));
+    const outputBytes = encode(JSON.stringify(jsonData, null, 2));
 
     const cs = new CompressionStream("gzip");
 
@@ -53,7 +54,7 @@ class txtToInfiniteCraftHandler implements FormatHandler {
 
     const inputFileName = inputFile.name;
 
-    const outputFileName = inputFileName.replace(/\.txt$/i, ".ic");
+    const outputFileName = changeExt(inputFileName, "ic");
 
     const outputFiles: FileData[] = [
       {
@@ -89,9 +90,6 @@ class infiniteCraftToJsonHandler implements FormatHandler {
       );
     }
 
-    const decoder = new TextDecoder("utf-8", { fatal: true });
-    const encoder = new TextEncoder();
-
     return Promise.all(
       inputFiles.map(async (inputFile) => {
         if (
@@ -111,7 +109,7 @@ class infiniteCraftToJsonHandler implements FormatHandler {
 
         let json: string;
         try {
-          json = decoder.decode(decompressedBytes);
+          json = decode(decompressedBytes);
         } catch {
           throw new Error("Invalid IC file: decompressed data is not UTF-8 JSON.");
         }
@@ -121,13 +119,9 @@ class infiniteCraftToJsonHandler implements FormatHandler {
           throw new Error("Invalid IC file: decompressed data is not JSON.");
         }
 
-        const baseNameParts = inputFile.name.split(".");
-        const baseName =
-          baseNameParts.length > 1 ? baseNameParts.slice(0, -1).join(".") : inputFile.name;
-
         return {
-          name: `${baseName}.json`,
-          bytes: encoder.encode(json),
+          name: changeExt(inputFile.name, "json"),
+          bytes: encode(json),
         };
       }),
     );

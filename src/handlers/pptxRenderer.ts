@@ -2,6 +2,7 @@ import { buildPresentation, parseZip, renderSlide } from "@aiden0z/pptx-renderer
 import { jsPDF } from "jspdf";
 import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
+import { changeExt } from "src/common/index.ts";
 
 async function waitForSlideToSettle(element: HTMLElement): Promise<void> {
   const imagePromises = Array.from(element.querySelectorAll("img"))
@@ -145,9 +146,8 @@ export default class pptxRendererHandler implements FormatHandler {
         }
 
         const pdfBytes = new Uint8Array(pdf.output("arraybuffer"));
-        const baseName = inputFile.name.replace(/\.[^.]+$/u, "");
         outputFiles.push({
-          name: `${baseName}.pdf`,
+          name: changeExt(inputFile.name, "pdf"),
           bytes: pdfBytes,
         });
       }

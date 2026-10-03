@@ -2,6 +2,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
+import { canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas.ts";
 
 class xcursorHandler implements FormatHandler {
   public readonly name = "xcursor";
@@ -12,14 +13,10 @@ class xcursorHandler implements FormatHandler {
   ];
   public ready = false;
 
-  #canvas?: OffscreenCanvas;
-  #ctx?: OffscreenCanvasRenderingContext2D;
+  #bundle?: CanvasBundle;
 
   async init() {
-    this.#canvas = new OffscreenCanvas(1, 1);
-    const ctx = this.#canvas.getContext("2d");
-    if (!ctx) throw new InitializationError("Failed to create 2D rendering context.");
-    this.#ctx = ctx;
+    this.#bundle = createCanvas();
 
     this.ready = true;
   }
@@ -29,9 +26,10 @@ class xcursorHandler implements FormatHandler {
     inputFormat: FileFormat,
     outputFormat: FileFormat,
   ): Promise<FileData[]> {
-    if (!this.ready || !this.#canvas || !this.#ctx) {
+    if (!this.ready || !this.#bundle) {
       throw new InitializationError("Handler not initialized.");
     }
+    const { canvas, ctx } = this.#bundle;
     if (
       inputFormat.internal !== "xcur" ||
       outputFormat.internal === "xcur" ||
@@ -75,15 +73,13 @@ class xcursorHandler implements FormatHandler {
           inputFile.bytes.slice(offset + 36, offset + 36 + width * height * 4),
         );
 
-        this.#ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.width);
-        this.#canvas.width = width;
-        this.#canvas.height = height;
+        canvas.width = width;
+        canvas.height = height;
 
         const imageData = new ImageData(pixels as ImageDataArray, width, height);
-        this.#ctx.putImageData(imageData, 0, 0);
+        ctx.putImageData(imageData, 0, 0);
 
-        const blob = await this.#canvas.convertToBlob({ type: outputFormat.mime });
-        const bytes = new Uint8Array(await blob.arrayBuffer());
+        const bytes = await canvasToBlob(this.#bundle, outputFormat.mime);
         const name = `${inputFile.name}_${i}.${outputFormat.extension}`;
         outputFiles.push({ bytes, name });
       }

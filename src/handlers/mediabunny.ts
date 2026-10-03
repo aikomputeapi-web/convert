@@ -3,6 +3,7 @@ import { Category } from "src/CommonFormats.ts";
 import type { ConvertContext } from "src/ui/ProgressStore.ts";
 import normalizeMimeType from "src/normalizeMimeType.ts";
 import * as mb from "mediabunny";
+import { changeExt } from "src/common/index.ts";
 
 const FORMATS = new Map<string, [name: string, input: mb.InputFormat, output: mb.OutputFormat]>([
   ["mp4", ["MPEG-4 Part 14", mb.MP4, new mb.Mp4OutputFormat()]],
@@ -125,7 +126,7 @@ class mediabunnyHandler implements FormatHandler {
       if (conversion.state !== "done" || !output.target.buffer)
         throw new Error("conversion isnt done after completing");
 
-      const name = inputFile.name.replace(/\.[^.]+$/, "") + `.${outputFormat.extension}`;
+      const name = changeExt(inputFile.name, outputFormat.extension);
 
       outputFiles.push({ name, bytes: new Uint8Array(output.target.buffer) });
     }

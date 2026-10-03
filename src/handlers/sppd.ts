@@ -8,6 +8,7 @@ import { Vector } from "built/sppd/sppd/Vector.ts";
 
 import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
+import { changeExt, encode } from "src/common/index.ts";
 
 function toThreeVector(vec: Vector) {
   return new THREE.Vector3(vec.y, vec.z, vec.x);
@@ -544,10 +545,9 @@ class sppdHandler implements FormatHandler {
       });
 
       if (outputFormat.format === "json") {
-        const encoder = new TextEncoder();
         const string = JSON.stringify(demo, getJsonReplacer(), 2);
-        const bytes = encoder.encode(string);
-        const name = inputFile.name.split(".").slice(0, -1).join(".") + ".json";
+        const bytes = encode(string);
+        const name = changeExt(inputFile.name, "json");
         outputFiles.push({ bytes, name });
         continue;
       }
@@ -567,12 +567,7 @@ class sppdHandler implements FormatHandler {
 
             const rendered = await canvas.convertToBlob({ type: outputFormat.mime });
             const bytes = new Uint8Array(await rendered.arrayBuffer());
-            const name =
-              inputFile.name.split(".").slice(0, -1).join(".") +
-              "_" +
-              frameIndex +
-              "." +
-              outputFormat.extension;
+            const name = changeExt(inputFile.name, outputFormat.extension, `_${frameIndex}`);
             outputFiles.push({ bytes, name });
 
             frameIndex++;

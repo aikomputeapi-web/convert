@@ -2,6 +2,8 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
+import { changeExt, encode } from "src/common/index.ts";
+import { createCanvas, type CanvasBundle } from "src/common/canvas.ts";
 
 class cybergrindHandler implements FormatHandler {
   public readonly name = "cybergrind";
@@ -11,12 +13,10 @@ class cybergrindHandler implements FormatHandler {
   ];
   public ready = false;
 
-  #canvas?: OffscreenCanvas;
-  #ctx?: OffscreenCanvasRenderingContext2D;
+  #bundle?: CanvasBundle;
 
   async init() {
-    this.#canvas = new OffscreenCanvas(16, 16);
-    this.#ctx = this.#canvas.getContext("2d") || undefined;
+    this.#bundle = createCanvas(16, 16);
 
     this.ready = true;
   }
@@ -26,15 +26,15 @@ class cybergrindHandler implements FormatHandler {
     inputFormat: FileFormat,
     outputFormat: FileFormat,
   ): Promise<FileData[]> {
-    const encoder = new TextEncoder();
     const outputFiles: FileData[] = [];
 
     if (inputFormat.internal !== "png" || outputFormat.internal !== "cgp") {
       throw new TypeError(`Unsupported output format: ${outputFormat.internal}`);
     }
-    if (!this.#canvas || !this.#ctx) {
+    if (!this.#bundle) {
       throw new InitializationError("Handler not initialized.");
     }
+    const { canvas, ctx } = this.#bundle;
 
     for (const file of inputFiles) {
       // take img and load
@@ -42,10 +42,10 @@ class cybergrindHandler implements FormatHandler {
       const image = await createImageBitmap(blob);
 
       // make canvas with 16x16
-      this.#canvas.width = 16;
-      this.#canvas.height = 16;
-      this.#ctx.drawImage(image, 0, 0, 16, 16);
-      const pixels = this.#ctx.getImageData(0, 0, 16, 16);
+      canvas.width = 16;
+      canvas.height = 16;
+      ctx.drawImage(image, 0, 0, 16, 16);
+      const pixels = ctx.getImageData(0, 0, 16, 16);
 
       // mcmap's canvas logic used as a base!
 
@@ -101,8 +101,8 @@ class cybergrindHandler implements FormatHandler {
               : "0";
       }
 
-      const outputBytes = encoder.encode(cyberHeights + "\n\n" + enemyThing);
-      const newName = file.name.replace(/\.[^/.]+$/, "") + ".cgp"; // name renaming stolen from textToPy.ts
+      const outputBytes = encode(cyberHeights + "\n\n" + enemyThing);
+      const newName = changeExt(file.name, "cgp");
 
       outputFiles.push({ bytes: outputBytes, name: newName });
     }

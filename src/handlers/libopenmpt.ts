@@ -4,6 +4,7 @@ import CommonFormats, { Category } from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 import wasmUrl from "built/libopenmpt/libopenmpt.wasm?url";
 import runtimeUrl from "built/libopenmpt/libopenmpt.js?url";
+import { changeExt } from "src/common/index.ts";
 
 // the parts of the emscripten module we use, see libopenmpt.h for the C API
 interface LibOpenMPTModule {
@@ -156,7 +157,7 @@ class libopenmptHandler implements FormatHandler {
       const bytes = new Uint8Array(inputFile.bytes);
       const pcmData = render(mod, bytes, SAMPLE_RATE);
       const wavBytes = buildWav(pcmData, SAMPLE_RATE, 2, 16);
-      const name = inputFile.name.replace(/\.[^.]+$/, "") + ".wav";
+      const name = changeExt(inputFile.name, "wav");
       outputFiles.push({ bytes: wavBytes, name });
     }
 

@@ -10,6 +10,7 @@ import type { FlatVector3, Vector3 } from "celaria-formats/types/data.mts";
 import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { Buffer } from "buffer";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 (globalThis as any).Buffer = Buffer;
 
@@ -71,7 +72,6 @@ class celariaMapHandler implements FormatHandler {
     outputFormat: FileFormat,
   ): Promise<FileData[]> {
     return inputFiles.map((file) => {
-      const baseName = file.name.replace(/\.[^.]+$/u, ""); // lifted from json5 handler.
       if (inputFormat.internal === "ecmap") {
         const editableCelariaMap = EditableCelariaMap.parse(Buffer.from(file.bytes));
         if (outputFormat.internal === "json") {
@@ -123,22 +123,22 @@ class celariaMapHandler implements FormatHandler {
             }
           });
           return {
-            name: `${baseName}.${outputFormat.extension}`,
-            bytes: new TextEncoder().encode(JSON.stringify(object)),
+            name: changeExt(file.name, outputFormat.extension),
+            bytes: encode(JSON.stringify(object)),
           };
         }
         if (outputFormat.internal === "obj") {
           const modelBuilder = new ModelBuilder(editableCelariaMap.instances);
           modelBuilder.do();
           return {
-            name: `${baseName}.${outputFormat.extension}`,
-            bytes: new TextEncoder().encode(modelBuilder.toString()),
+            name: changeExt(file.name, outputFormat.extension),
+            bytes: encode(modelBuilder.toString()),
           };
         }
       }
       if (inputFormat.internal === "json") {
         const typedParsedObject = celariaMapHandler.determinePlainOldSerializedFormat(
-          JSON.parse(new TextDecoder().decode(file.bytes)),
+          JSON.parse(decode(file.bytes)),
         );
         if (!typedParsedObject) throw new Error("Can't handle unknown parsed object.");
         if (outputFormat.internal === "ecmap") {
@@ -161,7 +161,7 @@ class celariaMapHandler implements FormatHandler {
           ) as Block | undefined;
           if (goal) editableCelariaMap.checkpointOrder.add(goal);
           return {
-            name: `${baseName}.${outputFormat.extension}`,
+            name: changeExt(file.name, outputFormat.extension),
             bytes: Uint8Array.from(editableCelariaMap.serialize(suitableVersion)),
           };
         }
@@ -180,7 +180,7 @@ class celariaMapHandler implements FormatHandler {
           editableCelariaMap.instances,
         );
         return {
-          name: `${baseName}.${outputFormat.extension}`,
+          name: changeExt(file.name, outputFormat.extension),
           bytes: Uint8Array.from(editableCelariaMap.serialize(suitableVersion)),
         };
       }

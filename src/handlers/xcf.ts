@@ -2,6 +2,8 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import XCF from "built/gimper/src/main.js";
 import { InitializationError } from "src/errors.ts";
+import { changeExt } from "src/common/index.ts";
+import { canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas.ts";
 
 class xcfHandler implements FormatHandler {
   public readonly name = "xcf";
@@ -11,16 +13,10 @@ class xcfHandler implements FormatHandler {
   ];
   public ready = false;
 
-  #canvas?: OffscreenCanvas;
-  #ctx?: OffscreenCanvasRenderingContext2D;
+  #bundle?: CanvasBundle;
 
   async init() {
-    this.#canvas = new OffscreenCanvas(1, 1);
-    const ctx = this.#canvas.getContext("2d");
-    if (!ctx) {
-      throw new InitializationError("Failed to create 2D rendering context.");
-    }
-    this.#ctx = ctx;
+    this.#bundle = createCanvas();
 
     this.ready = true;
   }
@@ -30,9 +26,10 @@ class xcfHandler implements FormatHandler {
     inputFormat: FileFormat,
     outputFormat: FileFormat,
   ): Promise<FileData[]> {
-    if (!this.ready || !this.#canvas || !this.#ctx) {
+    if (!this.ready || !this.#bundle) {
       throw new InitializationError("Handler not initialized.");
     }
+    const { canvas, ctx } = this.#bundle;
 
     const outputFiles: FileData[] = [];
 
@@ -57,13 +54,13 @@ class xcfHandler implements FormatHandler {
           throw new RangeError("Only RGB and RGBA in 8-bit precision is supported.");
         }
 
-        this.#canvas.width = layer.width;
-        this.#canvas.height = layer.height;
-        this.#ctx.clearRect(0, 0, layer.width, layer.height);
+        canvas.width = layer.width;
+        canvas.height = layer.height;
+        ctx.clearRect(0, 0, layer.width, layer.height);
 
         const pixel_data = xcf.getLayerPixels(i);
 
-        const image_data = this.#ctx.createImageData(layer.width, layer.height);
+        const image_data = ctx.createImageData(layer.width, layer.height);
 
         for (let y = 0; y < layer.height; y++) {
           for (let x = 0; x < layer.width; x++) {
@@ -83,16 +80,11 @@ class xcfHandler implements FormatHandler {
           }
         }
 
-        this.#ctx.putImageData(image_data, 0, 0);
+        ctx.putImageData(image_data, 0, 0);
 
-        const blob = await this.#canvas.convertToBlob({ type: "image/png" });
-        const bytes = new Uint8Array(await blob.arrayBuffer());
+        const bytes = await canvasToBlob(this.#bundle, "image/png");
 
-        const name =
-          inputFile.name.split(".").slice(0, -1).join(".") +
-          `_${layer.name}` +
-          "." +
-          outputFormat.extension;
+        const name = changeExt(inputFile.name, outputFormat.extension, `_${layer.name}`);
         outputFiles.push({ bytes, name });
       }
     }

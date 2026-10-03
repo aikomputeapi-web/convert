@@ -2,6 +2,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { JsonType } from "./jsonToC/JsonType.ts";
 import JsonTypeFactory from "./jsonToC/JsonTypeFactory.ts";
 import CommonFormats from "src/CommonFormats.ts";
+import { changeExt, encode } from "src/common/index.ts";
 
 export default class jsonToCHandler implements FormatHandler {
   /**************************************************/
@@ -44,7 +45,7 @@ export default class jsonToCHandler implements FormatHandler {
       }
 
       if (bytes.length > 0) {
-        let name = file.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension;
+        let name = changeExt(file.name, outputFormat.extension);
         outputFiles.push({ name: name, bytes: bytes });
       }
     }
@@ -85,8 +86,7 @@ export default class jsonToCHandler implements FormatHandler {
     outputText += "\n";
 
     outputText += "\treturn 0;\n}";
-    let encoder = new TextEncoder();
-    bytes = new Uint8Array(encoder.encode(outputText));
+    bytes = encode(outputText);
 
     return bytes;
   }
@@ -207,8 +207,7 @@ export default class jsonToCHandler implements FormatHandler {
     }
 
     let resultStr = JSON.stringify(resultObj, undefined, 4);
-    let encoder = new TextEncoder();
-    result = new Uint8Array(encoder.encode(resultStr));
+    result = encode(resultStr);
 
     return result;
   }

@@ -4,6 +4,7 @@ import { InitializationError } from "src/errors.ts";
 
 import headUrl from "./batToExe/exe65824head.bin?url";
 import footUrl from "./batToExe/exe65824foot.bin?url";
+import { changeExt } from "src/common/index.ts";
 
 class batToExeHandler implements FormatHandler {
   public readonly name = "batToExe";
@@ -70,7 +71,7 @@ class batToExeHandler implements FormatHandler {
       offset += CONTENT_SIZE;
       out.set(footer, offset);
 
-      const outputName = file.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension;
+      const outputName = changeExt(file.name, outputFormat.extension);
 
       outputFiles.push({
         name: outputName,

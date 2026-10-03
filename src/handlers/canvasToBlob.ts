@@ -3,7 +3,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { imageToText, rgbaToGrayscale } from "built/image-to-txt/src/convert.ts";
 import { InitializationError } from "src/errors.ts";
 import { blobToCanvas, canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas.ts";
-import { changeExt } from "src/common/index.ts";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 class canvasToBlobHandler implements FormatHandler {
   public readonly name = "canvasToBlob";
@@ -39,7 +39,7 @@ class canvasToBlobHandler implements FormatHandler {
         const font = "48px sans-serif";
         const fontSize = parseInt(font);
         const footerPadding = fontSize * 0.5;
-        const string = new TextDecoder().decode(inputFile.bytes);
+        const string = decode(inputFile.bytes);
         const lines = string.split("\n");
 
         ctx.font = font;
@@ -73,7 +73,7 @@ class canvasToBlobHandler implements FormatHandler {
       let bytes: Uint8Array;
       if (outputFormat.mime === "text/plain") {
         const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        bytes = new TextEncoder().encode(
+        bytes = encode(
           imageToText({
             width() {
               return pixels.width;

@@ -3,6 +3,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import { Buffer } from "buffer";
 
 import elfUrl from "built/shtoelf/stub.elf?url";
+import { changeExt } from "src/common/index.ts";
 
 function replaceUint32LE(file: Buffer, from: number, to: number) {
   const fromBytes = Buffer.alloc(4);
@@ -44,7 +45,7 @@ class shToElfHandler implements FormatHandler {
       let file = Buffer.concat([binary, inputFile.bytes]);
 
       outputFiles.push({
-        name: inputFile.name.replace(/\.[^.]+$/, "") + ".elf",
+        name: changeExt(inputFile.name, "elf"),
         bytes: file,
       });
     }

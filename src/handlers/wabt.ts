@@ -1,6 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "../CommonFormats.ts";
 import wabt from "wabt";
+import { changeExt, encode } from "src/common/index.ts";
 
 // WabtModule is not exported
 type WabtModule = Awaited<ReturnType<typeof wabt>>;
@@ -18,8 +19,7 @@ export default class wabtHandler implements FormatHandler {
   wasm2wat(bytes: Uint8Array): Uint8Array {
     const wasmModule = this.wabtModule!.readWasm(bytes, {});
     const str = wasmModule.toText({});
-    const encoder = new TextEncoder();
-    const encoded = encoder.encode(str);
+    const encoded = encode(str);
     wasmModule.destroy();
     return encoded;
   }
@@ -48,7 +48,7 @@ export default class wabtHandler implements FormatHandler {
     if (inputFormat.internal == "wasm" && outputFormat.internal == "wat") {
       for (const file of inputFiles) {
         outputFiles.push({
-          name: file.name.split(".").slice(0, -1).join(".") + `.${outputFormat.extension}`,
+          name: changeExt(file.name, outputFormat.extension),
           bytes: this.wasm2wat(file.bytes),
         });
       }
@@ -58,7 +58,7 @@ export default class wabtHandler implements FormatHandler {
     if (inputFormat.internal == "wat" && outputFormat.internal == "wasm") {
       for (const file of inputFiles) {
         outputFiles.push({
-          name: file.name.split(".").slice(0, -1).join(".") + `.${outputFormat.extension}`,
+          name: changeExt(file.name, outputFormat.extension),
           bytes: this.wat2wasm(file.name, file.bytes),
         });
       }

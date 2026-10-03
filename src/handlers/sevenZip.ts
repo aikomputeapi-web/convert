@@ -5,6 +5,7 @@ import sevenZipWasmUrl from "7z-wasm/7zz.wasm?url";
 import mime from "mime";
 import normalizeMimeType from "src/normalizeMimeType.ts";
 import type { ConvertContext } from "src/ui/ProgressStore.js";
+import { changeExt, decode, stripExt } from "src/common/index.ts";
 
 const defaultSevenZipOptions = {
   locateFile: () => sevenZipWasmUrl,
@@ -47,7 +48,7 @@ class sevenZipHandler implements FormatHandler {
 
     sevenZip.callMain(["i"]);
 
-    const text = new TextDecoder().decode(new Uint8Array(stdout));
+    const text = decode(new Uint8Array(stdout));
 
     // no codecs for now
     const formatsText = text.match(/\n\n\nFormats:\n(.*?)\n\n/s);
@@ -172,7 +173,7 @@ class sevenZipHandler implements FormatHandler {
           sevenZip.FS.writeFile(inputFile.name, inputFile.bytes);
           sevenZip.callMain(["x", inputFile.name]);
 
-          const name = inputFile.name.replace(/\.[^.]+$/, "");
+          const name = stripExt(inputFile.name);
           const bytes = sevenZip.FS.readFile(name);
           outputFiles.push({ bytes, name });
           i++;
@@ -214,7 +215,7 @@ class sevenZipHandler implements FormatHandler {
         ctx?.log(`Extracting ${inputFile.name} to temporary directory...`, "debug");
         sevenZip.callMain(["x", inputFile.name, `-odata`]);
 
-        let name = inputFile.name.replace(/\.[^.]+$/, "") + `.${outputFormat.extension}`;
+        let name = changeExt(inputFile.name, outputFormat.extension);
         sevenZip.FS.chdir("data"); // we need to preserve the structure of the input archive
 
         // Correct the file extension so the converter recognizes it.
@@ -291,11 +292,9 @@ class sevenZipHandler implements FormatHandler {
         }
       }
 
-      const baseName = inputFiles[0].name
-        .replace("_0." + inputFormat.extension, "." + inputFormat.extension)
-        .split(".")
-        .slice(0, -1)
-        .join(".");
+      const baseName = stripExt(
+        inputFiles[0].name.replace("_0." + inputFormat.extension, "." + inputFormat.extension),
+      );
       let name =
         inputFiles.length === 1 || outputFormat.mime.includes("comicbook")
           ? baseName + `.${outputFormat.extension}`

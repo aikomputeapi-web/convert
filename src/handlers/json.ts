@@ -3,6 +3,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import parseXML from "built/envelope/parseXML.js";
 import * as yaml from "yaml";
 import { parse, unparse } from "papaparse";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 /// Converts things to JSON
 export class toJsonHandler implements FormatHandler {
@@ -26,8 +27,8 @@ export class toJsonHandler implements FormatHandler {
     outputFormat: FileFormat,
   ): Promise<FileData[]> {
     return inputFiles.map((file) => {
-      const name = file.name.split(".").slice(0, -1).join(".") + ".json";
-      const text = new TextDecoder().decode(file.bytes).trim();
+      const name = changeExt(file.name, "json");
+      const text = decode(file.bytes).trim();
       let object: any;
       switch (inputFormat.mime) {
         case "text/csv":
@@ -53,7 +54,7 @@ export class toJsonHandler implements FormatHandler {
       }
       return {
         name: name,
-        bytes: new TextEncoder().encode(JSON.stringify(object)),
+        bytes: encode(JSON.stringify(object)),
       };
     });
   }
@@ -90,8 +91,8 @@ export class fromJsonHandler {
     outputFormat: FileFormat,
   ): Promise<FileData[]> {
     return inputFiles.map((file) => {
-      const name = file.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension;
-      let object = JSON.parse(new TextDecoder().decode(file.bytes));
+      const name = changeExt(file.name, outputFormat.extension);
+      let object = JSON.parse(decode(file.bytes));
       let text = "";
       switch (outputFormat.mime) {
         case "text/csv": {
@@ -169,7 +170,7 @@ export class fromJsonHandler {
       }
       return {
         name: name,
-        bytes: new TextEncoder().encode(text),
+        bytes: encode(text),
       };
     });
   }

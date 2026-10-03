@@ -6,6 +6,8 @@ import { InitializationError } from "src/errors.ts";
 import pako from "pako";
 import * as NBT from "nbtify";
 import JSZip from "jszip";
+import { changeExt, stripExt } from "src/common/index.ts";
+import { canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas.ts";
 
 const DEFAULT_WIDTH = 128;
 const DEFAULT_HEIGHT = 128;
@@ -86,12 +88,10 @@ class mcMapHandler implements FormatHandler {
   ];
   public ready = false;
 
-  #canvas?: OffscreenCanvas;
-  #ctx?: OffscreenCanvasRenderingContext2D;
+  #bundle?: CanvasBundle;
 
   async init() {
-    this.#canvas = new OffscreenCanvas(128, 128);
-    this.#ctx = this.#canvas.getContext("2d") || undefined;
+    this.#bundle = createCanvas(128, 128);
 
     this.ready = true;
   }
@@ -103,13 +103,14 @@ class mcMapHandler implements FormatHandler {
   ): Promise<FileData[]> {
     const outputFiles: FileData[] = [];
 
-    if (!this.#canvas || !this.#ctx) {
+    if (!this.#bundle) {
       throw new InitializationError("Handler not initialized.");
     }
+    const { canvas, ctx } = this.#bundle;
 
     if (inputFormat.mime === CommonFormats.PNG.mime) {
       for (const file of inputFiles) {
-        const fileName = file.name.split(".").slice(0, -1).join(".");
+        const fileName = stripExt(file.name);
 
         let startDigit = 0;
 
@@ -130,11 +131,11 @@ class mcMapHandler implements FormatHandler {
         if (outputFormat.internal === "mcmap_grid") {
           const zip = new JSZip();
 
-          this.#canvas.width = Math.ceil(image.width / 128) * 128;
-          this.#canvas.height = Math.ceil(image.height / 128) * 128;
-          this.#ctx.drawImage(image, 0, 0, this.#canvas.width, this.#canvas.height);
+          canvas.width = Math.ceil(image.width / 128) * 128;
+          canvas.height = Math.ceil(image.height / 128) * 128;
+          ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-          const pixels = this.#ctx.getImageData(0, 0, this.#canvas.width, this.#canvas.height);
+          const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
           const columns = Math.ceil(image.width / 128);
           const rows = Math.ceil(image.height / 128);
@@ -146,8 +147,8 @@ class mcMapHandler implements FormatHandler {
               const tile = new Uint8Array(128 * 128);
 
               for (let t = 0; t < 128; t++) {
-                const tileOffset = 128 * (this.#canvas.width * column + row);
-                const start = this.#canvas.width * t + tileOffset;
+                const tileOffset = 128 * (canvas.width * column + row);
+                const start = canvas.width * t + tileOffset;
                 const end = start + 128;
 
                 tile.set(colours.subarray(start, end), 128 * t);
@@ -165,11 +166,11 @@ class mcMapHandler implements FormatHandler {
 
           outputFiles.push({ bytes: output, name: "output.zip" });
         } else if (outputFormat.internal === "mcmap") {
-          this.#canvas.width = 128;
-          this.#canvas.height = 128;
-          this.#ctx.drawImage(image, 0, 0, this.#canvas.width, this.#canvas.height);
+          canvas.width = 128;
+          canvas.height = 128;
+          ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-          const pixels = this.#ctx.getImageData(0, 0, this.#canvas.width, this.#canvas.height);
+          const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
           let colours = mapRGBA2ColourIDs(pixels.data);
 
@@ -200,20 +201,17 @@ class mcMapHandler implements FormatHandler {
               : new Uint8Array([]);
             const rgba = map2rgba(colors, width, height);
 
-            this.#canvas.width = 128;
-            this.#canvas.height = 128;
+            canvas.width = 128;
+            canvas.height = 128;
 
             const image_data = new ImageData(new Uint8ClampedArray(rgba), 128, 128);
 
-            this.#ctx.putImageData(image_data, 0, 0);
+            ctx.putImageData(image_data, 0, 0);
 
-            const blob = await this.#canvas.convertToBlob({
-              type: outputFormat.mime,
-            });
-            const bytes = new Uint8Array(await blob.arrayBuffer());
+            const bytes = await canvasToBlob(this.#bundle, outputFormat.mime);
 
             outputFiles.push({
-              name: file.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension,
+              name: changeExt(file.name, outputFormat.extension),
               bytes: bytes,
             });
           }
@@ -239,7 +237,7 @@ class mcMapHandler implements FormatHandler {
                 : new Uint8Array([]);
               const bytes = map2rgb(colors, width, height);
               outputFiles.push({
-                name: file.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension,
+                name: changeExt(file.name, outputFormat.extension),
                 bytes: new Uint8Array(bytes),
               });
             }

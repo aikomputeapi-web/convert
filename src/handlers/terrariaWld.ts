@@ -1,6 +1,8 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import { FileReader } from "built/terraria-wld-parser/src/";
+import { changeExt } from "src/common/index.ts";
+import { canvasToBlob, createCanvas } from "src/common/canvas.ts";
 
 // CODE BELOW IS WRITTEN BY PIXELKAT5 IN PR #244
 const TILE_COLORS: Record<number, [number, number, number]> = {
@@ -918,8 +920,8 @@ class terrariaWldHandler implements FormatHandler {
       const hellLayer = height - 200;
 
       // CODE BELOW IS WRITTEN BY PIXELKAT5 IN PR #244
-      const canvas = new OffscreenCanvas(width, height);
-      const ctx = canvas.getContext("2d")!;
+      const bundle = createCanvas(width, height);
+      const { ctx } = bundle;
       const img = ctx.createImageData(width, height);
 
       for (let x = 0; x < width; x++) {
@@ -954,11 +956,10 @@ class terrariaWldHandler implements FormatHandler {
 
       ctx.putImageData(img, 0, 0);
 
-      const blob = await canvas.convertToBlob({ type: "image/png" });
+      const bytes = await canvasToBlob(bundle, "image/png");
       // CODE ABOVE IS WRITTEN BY PIXELKAT5 IN PR #244
 
-      const bytes = new Uint8Array(await blob.arrayBuffer());
-      const name = inputFile.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension;
+      const name = changeExt(inputFile.name, outputFormat.extension);
 
       outputFiles.push({ bytes, name });
     }

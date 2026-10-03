@@ -1,5 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
+import { changeExt, decode, encode, stripExt } from "src/common/index.ts";
+import { createCanvas, type CanvasBundle } from "src/common/canvas.ts";
 
 interface OM_Molecule {
   primes: OM_Primes[];
@@ -262,7 +264,6 @@ function renderMolecule(molecule: OM_Molecule, format: string): Uint8Array {
     return new Uint8Array(working_bytes);
   } else if (format === "svg") {
     // Begin building our SVG
-    const encoder = new TextEncoder();
     let svg = "";
 
     let iterations = 0;
@@ -496,7 +497,7 @@ function renderMolecule(molecule: OM_Molecule, format: string): Uint8Array {
       break;
     }
 
-    return encoder.encode(svg);
+    return encode(svg);
   } else {
     throw new Error("Opus Magnum molecule renderer given invalid output format: " + format);
   }
@@ -537,8 +538,7 @@ export class opusMagnumMainHandler implements FormatHandler {
         byte_cusror += 4;
         const name_rl = file.bytes[byte_cusror];
         byte_cusror += 1;
-        const decoder = new TextDecoder();
-        const puzzle_name = decoder.decode(file.bytes.subarray(byte_cusror, byte_cusror + name_rl));
+        const puzzle_name = decode(file.bytes.subarray(byte_cusror, byte_cusror + name_rl));
         console.log(puzzle_name);
 
         // Parse reagents data
@@ -746,7 +746,7 @@ export class opusMagnumMainHandler implements FormatHandler {
         // Push molecule
         outputFiles.push({
           bytes: renderMolecule(working_molecule, outputFormat.internal),
-          name: file.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension,
+          name: changeExt(file.name, outputFormat.extension),
         });
       }
     } else if (inputFormat.internal === "molecule" && outputFormat.internal === "puzzle") {
@@ -801,7 +801,7 @@ export class opusMagnumMainHandler implements FormatHandler {
       let puzzle_name = inputFiles[0].name.substring(0, 1);
 
       if (inputFiles.length === 1) {
-        puzzle_name = inputFiles[0].name.split(".").slice(0, -1).join(".");
+        puzzle_name = stripExt(inputFiles[0].name);
       } else {
         while (true) {
           let break_flag = false;
@@ -832,8 +832,7 @@ export class opusMagnumMainHandler implements FormatHandler {
       }
 
       // Make sure name can be run-length encoded.
-      const encoder = new TextEncoder();
-      while (encoder.encode(puzzle_name).length > 0xff) {
+      while (encode(puzzle_name).length > 0xff) {
         puzzle_name = puzzle_name.substring(0, puzzle_name.length - 1);
       }
 
@@ -844,8 +843,8 @@ export class opusMagnumMainHandler implements FormatHandler {
 
       working_bytes.push(0x02, 0x00, 0x00, 0x00);
 
-      working_bytes.push(encoder.encode(puzzle_name).length);
-      working_bytes.push(...encoder.encode(puzzle_name));
+      working_bytes.push(encode(puzzle_name).length);
+      working_bytes.push(...encode(puzzle_name));
 
       working_bytes.push(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
       working_bytes.push(0x0f, 0x17, 0xc0, 0x07, 0x00, 0x00, 0x00, 0x00);
@@ -890,12 +889,10 @@ export class opusMagnumITMHandler implements FormatHandler {
   ];
   public ready = false;
 
-  #canvas?: OffscreenCanvas;
-  #ctx?: OffscreenCanvasRenderingContext2D;
+  #bundle?: CanvasBundle;
 
   async init() {
-    this.#canvas = new OffscreenCanvas(1, 1);
-    this.#ctx = this.#canvas.getContext("2d") || undefined;
+    this.#bundle = createCanvas();
 
     this.ready = true;
   }
@@ -907,9 +904,10 @@ export class opusMagnumITMHandler implements FormatHandler {
   ): Promise<FileData[]> {
     const outputFiles: FileData[] = [];
 
-    if (!this.#canvas || !this.#ctx) {
+    if (!this.#bundle) {
       throw "Handler not initialized.";
     }
+    const { canvas, ctx } = this.#bundle;
 
     if (inputFormat.internal === "png" && outputFormat.internal === "molecule") {
       console.log("Beginning image to molecule conversion file iteration...");
@@ -929,31 +927,31 @@ export class opusMagnumITMHandler implements FormatHandler {
 
         if (image.width > max_canvas || image.height > max_canvas) {
           if (image.width > image.height) {
-            this.#canvas.width = max_canvas;
-            this.#canvas.height = Math.floor(image.height * (max_canvas / image.width));
+            canvas.width = max_canvas;
+            canvas.height = Math.floor(image.height * (max_canvas / image.width));
           } else {
-            this.#canvas.width = Math.floor(image.width * (max_canvas / image.height));
-            this.#canvas.height = max_canvas;
+            canvas.width = Math.floor(image.width * (max_canvas / image.height));
+            canvas.height = max_canvas;
           }
 
           // Safety for extreme proportions (t.w.s.s.)
-          if (this.#canvas.width < 1) {
-            this.#canvas.width = 1;
+          if (canvas.width < 1) {
+            canvas.width = 1;
           }
-          if (this.#canvas.height < 1) {
-            this.#canvas.height = 1;
+          if (canvas.height < 1) {
+            canvas.height = 1;
           }
 
-          console.log("Image resized to " + this.#canvas.width + " " + this.#canvas.height);
+          console.log("Image resized to " + canvas.width + " " + canvas.height);
         } else {
-          this.#canvas.width = image.width;
-          this.#canvas.height = image.height;
+          canvas.width = image.width;
+          canvas.height = image.height;
         }
         console.log("Drawing image for " + file.name + "...");
-        this.#ctx.drawImage(image, 0, 0, this.#canvas.width, this.#canvas.height);
+        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
         console.log("Image drawn for " + file.name);
 
-        const pixels = this.#ctx.getImageData(0, 0, this.#canvas.width, this.#canvas.height);
+        const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
         console.log("Pixels data:");
         console.log(pixels.data);
         console.log("Pixels length: " + pixels.data.length);
@@ -1021,12 +1019,12 @@ export class opusMagnumITMHandler implements FormatHandler {
           // With our best color found, we now need to translate from top-left picture coordinates to centered y+=up coordinates
           const this_pixel_index = Math.floor(i / 4);
 
-          const this_pixel_x = this_pixel_index % this.#canvas.width;
-          const this_pixel_y = Math.floor(this_pixel_index / this.#canvas.width);
+          const this_pixel_x = this_pixel_index % canvas.width;
+          const this_pixel_y = Math.floor(this_pixel_index / canvas.width);
 
           // Push molecule at coordinates
-          let molecule_x = this_pixel_x - this.#canvas.width / 2;
-          let molecule_y = -(this_pixel_y - this.#canvas.height / 2);
+          let molecule_x = this_pixel_x - canvas.width / 2;
+          let molecule_y = -(this_pixel_y - canvas.height / 2);
 
           molecule_x -= molecule_y / 2;
 
@@ -1056,7 +1054,7 @@ export class opusMagnumITMHandler implements FormatHandler {
         console.log(working_molecule);
         outputFiles.push({
           bytes: renderMolecule(working_molecule, outputFormat.internal),
-          name: file.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension,
+          name: changeExt(file.name, outputFormat.extension),
         });
       }
     } else {
@@ -1112,9 +1110,7 @@ export class opusMagnumTTMHandler implements FormatHandler {
     if (inputFormat.internal === "txt" && outputFormat.internal === "molecule") {
       for (const file of inputFiles) {
         // Get file as String
-        const decoder = new TextDecoder();
-        const base_name = file.name.split(".")[0];
-        let file_as_string = decoder.decode(file.bytes);
+        let file_as_string = decode(file.bytes);
 
         // Iterate through each character and push the correct molecule.
         for (let i = 0; i < file_as_string.length; i++) {
@@ -1126,7 +1122,7 @@ export class opusMagnumTTMHandler implements FormatHandler {
             for (let i2 = 0; i2 < text_replace_multi[file_as_string[i]].length; i2++) {
               outputFiles.push({
                 bytes: new Uint8Array(molecule_dict[text_replace_multi[file_as_string[i]][i2]]),
-                name: base_name + "_character_" + i + "_" + i2 + "." + outputFormat.extension,
+                name: changeExt(file.name, outputFormat.extension, `_character_${i}_${i2}`),
               });
             }
           }
@@ -1138,14 +1134,14 @@ export class opusMagnumTTMHandler implements FormatHandler {
           ) {
             outputFiles.push({
               bytes: new Uint8Array(molecule_dict["'"]),
-              name: base_name + "_character_" + i + "." + outputFormat.extension,
+              name: changeExt(file.name, outputFormat.extension, `_character_${i}`),
             });
           }
           // Standard fetching
           else if (file_as_string[i] in molecule_dict) {
             outputFiles.push({
               bytes: new Uint8Array(molecule_dict[file_as_string[i]]),
-              name: base_name + "_character_" + i + "." + outputFormat.extension,
+              name: changeExt(file.name, outputFormat.extension, `_character_${i}`),
             });
           }
           // Unknown symbol
@@ -1153,7 +1149,7 @@ export class opusMagnumTTMHandler implements FormatHandler {
             console.warn("OpusMagnumTTM found an unrecognized character: " + file_as_string[i]);
             outputFiles.push({
               bytes: new Uint8Array(molecule_dict["unknown"]),
-              name: base_name + "_character_" + i + "." + outputFormat.extension,
+              name: changeExt(file.name, outputFormat.extension, `_character_${i}`),
             });
           }
         }

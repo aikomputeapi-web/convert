@@ -2,6 +2,8 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
+import { changeExt, decode } from "src/common/index.ts";
+import { canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas.ts";
 
 const COLOR_WALKABLE = [0, 0, 0];
 const COLOR_BREAKABLE = [98, 135, 64];
@@ -16,12 +18,10 @@ class bunburrowsHandler implements FormatHandler {
   ];
   public ready = false;
 
-  #canvas?: OffscreenCanvas;
-  #ctx?: OffscreenCanvasRenderingContext2D;
+  #bundle?: CanvasBundle;
 
   async init() {
-    this.#canvas = new OffscreenCanvas(1, 1);
-    this.#ctx = this.#canvas.getContext("2d") || undefined;
+    this.#bundle = createCanvas();
 
     this.ready = true;
   }
@@ -33,9 +33,10 @@ class bunburrowsHandler implements FormatHandler {
   ): Promise<FileData[]> {
     const outputFiles: FileData[] = [];
 
-    if (!this.#canvas || !this.#ctx) {
+    if (!this.#bundle) {
       throw new InitializationError("Handler not initialized.");
     }
+    const { canvas, ctx } = this.#bundle;
 
     for (const file of inputFiles) {
       let new_file_bytes = new Uint8Array(file.bytes);
@@ -43,7 +44,7 @@ class bunburrowsHandler implements FormatHandler {
       // Code here based on mcmap.ts
       if (inputFormat.internal === "bunlevel" && outputFormat.mime === CommonFormats.PNG.mime) {
         // Read .level as text
-        let level_string = new TextDecoder().decode(new_file_bytes);
+        let level_string = decode(new_file_bytes);
         let level_data_array = level_string.split(/[\s,;:]+/);
         console.log(String(level_data_array));
 
@@ -53,8 +54,8 @@ class bunburrowsHandler implements FormatHandler {
         const tiles_wide = 15;
         const tiles_high = 9;
 
-        this.#canvas.width = tiles_wide * scale;
-        this.#canvas.height = tiles_high * scale;
+        canvas.width = tiles_wide * scale;
+        canvas.height = tiles_high * scale;
 
         // Safety check
         if (level_data_array.length < tiles_wide * tiles_high) {
@@ -65,10 +66,10 @@ class bunburrowsHandler implements FormatHandler {
 
         // Determine color per-pixel
         const rgba: number[] = [];
-        for (let i = 0; i < this.#canvas.width * this.#canvas.height; i++) {
+        for (let i = 0; i < canvas.width * canvas.height; i++) {
           // What pixel are we on?
-          const i_x = i % this.#canvas.width;
-          const i_y = Math.floor(i / this.#canvas.width);
+          const i_x = i % canvas.width;
+          const i_y = Math.floor(i / canvas.width);
 
           // What tile are we on?
           const current_tile_x = Math.floor(i_x / scale);
@@ -303,18 +304,11 @@ class bunburrowsHandler implements FormatHandler {
         }
 
         // Writes our results to the canvas
-        const image_data = new ImageData(
-          new Uint8ClampedArray(rgba),
-          this.#canvas.width,
-          this.#canvas.height,
-        );
+        const image_data = new ImageData(new Uint8ClampedArray(rgba), canvas.width, canvas.height);
 
-        this.#ctx.putImageData(image_data, 0, 0);
+        ctx.putImageData(image_data, 0, 0);
 
-        const blob = await this.#canvas.convertToBlob({
-          type: outputFormat.mime,
-        });
-        new_file_bytes = new Uint8Array(await blob.arrayBuffer());
+        new_file_bytes = await canvasToBlob(this.#bundle, outputFormat.mime);
       } else {
         throw new TypeError(
           `Unsupported conversion path: ${inputFormat.internal} -> ${outputFormat.internal}`,
@@ -322,7 +316,7 @@ class bunburrowsHandler implements FormatHandler {
       }
 
       outputFiles.push({
-        name: file.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension,
+        name: changeExt(file.name, outputFormat.extension),
         bytes: new_file_bytes,
       });
     }

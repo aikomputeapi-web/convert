@@ -1,5 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 class minecraftLangHandler implements FormatHandler {
   public readonly name = "minecraftLang";
@@ -21,7 +22,7 @@ class minecraftLangHandler implements FormatHandler {
     const outputFiles: FileData[] = [];
 
     for (const file of inputFiles) {
-      const text = new TextDecoder().decode(file.bytes);
+      const text = decode(file.bytes);
 
       let resultText: string;
 
@@ -70,8 +71,8 @@ class minecraftLangHandler implements FormatHandler {
       }
 
       outputFiles.push({
-        name: file.name.split(".").slice(0, -1).join("."),
-        bytes: new TextEncoder().encode(resultText),
+        name: changeExt(file.name, outputFormat.extension),
+        bytes: encode(resultText),
       });
     }
 

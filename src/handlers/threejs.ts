@@ -6,6 +6,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
+import { changeExt } from "src/common/index.ts";
 
 class threejsHandler implements FormatHandler {
   public readonly name = "threejs";
@@ -78,7 +79,7 @@ class threejsHandler implements FormatHandler {
 
       const rendered = await this.canvas.convertToBlob({ type: outputFormat.mime });
       const bytes = new Uint8Array(await rendered.arrayBuffer());
-      const name = inputFile.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension;
+      const name = changeExt(inputFile.name, outputFormat.extension);
       outputFiles.push({ bytes, name });
     }
 

@@ -1,6 +1,8 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import { BadMagicError, InitializationError } from "src/errors.ts";
+import { changeExt, decode, encode } from "src/common/index.ts";
+import { createCanvas, type CanvasBundle } from "src/common/canvas.ts";
 
 class aperturePictureHandler implements FormatHandler {
   public readonly name = "aperturePicture";
@@ -10,12 +12,10 @@ class aperturePictureHandler implements FormatHandler {
   ];
   public ready = false;
 
-  #canvas?: OffscreenCanvas;
-  #ctx?: OffscreenCanvasRenderingContext2D;
+  #bundle?: CanvasBundle;
 
   async init() {
-    this.#canvas = new OffscreenCanvas(320, 200);
-    this.#ctx = this.#canvas.getContext("2d") || undefined;
+    this.#bundle = createCanvas(320, 200);
     this.ready = true;
   }
 
@@ -25,11 +25,10 @@ class aperturePictureHandler implements FormatHandler {
     outputFormat: FileFormat,
   ): Promise<FileData[]> {
     const outputFiles: FileData[] = [];
-    const decoder = new TextDecoder();
 
     if (inputFormat.internal === "apf") {
       for (const file of inputFiles) {
-        const text = decoder.decode(file.bytes);
+        const text = decode(file.bytes);
         const lines = text.split(/\r?\n/);
         if (lines[0] !== "APERTURE IMAGE FORMAT (c) 1985")
           throw new BadMagicError(
@@ -43,25 +42,26 @@ class aperturePictureHandler implements FormatHandler {
 
         outputFiles.push({
           bytes: bmp,
-          name: file.name.replace(/\.[^/.]+$/, "") + ".bmp",
+          name: changeExt(file.name, "bmp"),
         });
       }
     } else if (inputFormat.internal === "bmp") {
-      if (!this.#canvas || !this.#ctx) {
+      if (!this.#bundle) {
         throw new InitializationError("Handler not initialized.");
       }
+      const { canvas, ctx } = this.#bundle;
       for (const inputFile of inputFiles) {
         const blob = new Blob([inputFile.bytes as BlobPart], { type: inputFormat.mime });
         const image = await createImageBitmap(blob);
         try {
-          this.#ctx.fillStyle = "white";
-          this.#ctx.fillRect(0, 0, this.#canvas.width, this.#canvas.height);
-          this.#ctx.drawImage(image, 0, 0, this.#canvas.width, this.#canvas.height);
+          ctx.fillStyle = "white";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
         } finally {
           image.close();
         }
 
-        const pixels = this.#ctx.getImageData(0, 0, this.#canvas.width, this.#canvas.height);
+        const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const data = new Uint8Array(pixels.width * pixels.height);
         for (let i = 0; i < data.length; i++) {
           const brightness = rgbaToGrayscale(
@@ -73,8 +73,8 @@ class aperturePictureHandler implements FormatHandler {
           data[i] = brightness < 128 ? 0 : 255;
         }
         outputFiles.push({
-          bytes: new TextEncoder().encode(encodeAPF(data)),
-          name: inputFile.name.replace(/\.[^/.]+$/, "") + ".apf",
+          bytes: encode(encodeAPF(data)),
+          name: changeExt(inputFile.name, "apf"),
         });
       }
     } else {

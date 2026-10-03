@@ -1,13 +1,16 @@
-export function changeExt(name: string, newExt: string): string {
+export function stripExt(name: string): string {
   const idx = name.lastIndexOf(".");
-  const baseName = idx > 0 ? name.slice(0, idx) : name;
-  return `${baseName}.${newExt}`;
+  return idx > 0 ? name.slice(0, idx) : name;
+}
+
+export function changeExt(name: string, newExt: string, suffix: string = ""): string {
+  return `${stripExt(name)}${suffix}.${newExt}`;
 }
 
 export function decode(bytes: Uint8Array): string {
   return new TextDecoder().decode(bytes);
 }
 
-export function encode(text: string): Uint8Array {
+export function encode(text: string): Uint8Array<ArrayBuffer> {
   return new TextEncoder().encode(text);
 }

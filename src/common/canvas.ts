@@ -1,13 +1,20 @@
 export type CanvasBundle = { canvas: OffscreenCanvas; ctx: OffscreenCanvasRenderingContext2D };
 
-export function createCanvas(cpu: boolean = true): CanvasBundle {
-  const canvas = new OffscreenCanvas(0, 0);
+export function createCanvas(
+  width: number = 0,
+  height: number = 0,
+  cpu: boolean = true,
+): CanvasBundle {
+  const canvas = new OffscreenCanvas(width, height);
   const ctx = canvas.getContext("2d", { willReadFrequently: cpu });
   if (!ctx) throw new Error("Could not create canvas context.");
   return { canvas, ctx };
 }
 
-export async function canvasToBlob(bundle: CanvasBundle, mime: string): Promise<Uint8Array> {
+export async function canvasToBlob(
+  bundle: CanvasBundle,
+  mime: string,
+): Promise<Uint8Array<ArrayBuffer>> {
   const blob = await bundle.canvas.convertToBlob({
     type: mime,
   });

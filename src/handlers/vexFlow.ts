@@ -6,6 +6,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import { buildMidi, addNote } from "./midi/midifilelib.js";
 import bravuraUrl from "@vexflow-fonts/bravura/bravura.woff2?url";
 import academicoUrl from "@vexflow-fonts/academico/academico.woff2?url";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 const DOMParser = WorkerDOMParser as unknown as typeof globalThis.DOMParser;
 
@@ -352,7 +353,7 @@ class vexFlowHandler implements FormatHandler {
           console.log("XML starts with:", xmlString.substring(0, 200));
         } else {
           // Uncompressed MusicXML format
-          xmlString = new TextDecoder().decode(inputFile.bytes);
+          xmlString = decode(inputFile.bytes);
         }
 
         // Handle MIDI output
@@ -378,7 +379,7 @@ class vexFlowHandler implements FormatHandler {
             throw new Error("Failed to generate valid MIDI file");
           }
 
-          const name = inputFile.name.replace(/\.(musicxml|mxl|xml)$/i, ".mid");
+          const name = changeExt(inputFile.name, "mid");
           outputFiles.push({ bytes: midiBytes, name });
           continue;
         }
@@ -454,8 +455,8 @@ class vexFlowHandler implements FormatHandler {
 </html>`;
 
         // Convert HTML to Uint8Array
-        const bytes = new TextEncoder().encode(html);
-        const name = inputFile.name.replace(/\.(musicxml|mxl|xml)$/i, ".html");
+        const bytes = encode(html);
+        const name = changeExt(inputFile.name, "html");
 
         outputFiles.push({ bytes, name });
       } catch (error) {

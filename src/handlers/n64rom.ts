@@ -2,6 +2,8 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
+import { changeExt } from "src/common/index.ts";
+import { blobToCanvas, canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas.ts";
 
 const ROM_MAGIC = {
   z64: [0x80, 0x37, 0x12, 0x40],
@@ -23,12 +25,10 @@ class n64romHandler implements FormatHandler {
   ];
   public ready = false;
 
-  #canvas?: OffscreenCanvas;
-  #ctx?: OffscreenCanvasRenderingContext2D;
+  #bundle?: CanvasBundle;
 
   async init() {
-    this.#canvas = new OffscreenCanvas(1, 1);
-    this.#ctx = this.#canvas.getContext("2d") || undefined;
+    this.#bundle = createCanvas();
     this.ready = true;
   }
 
@@ -165,35 +165,29 @@ class n64romHandler implements FormatHandler {
   }
 
   async #pngWrapToZ64(bytes: Uint8Array): Promise<Uint8Array> {
-    if (!this.#canvas || !this.#ctx) throw new InitializationError("Handler not initialized.");
+    if (!this.#bundle) throw new InitializationError("Handler not initialized.");
+    const { canvas, ctx } = this.#bundle;
 
-    const blob = new Blob([bytes as BlobPart], { type: "image/png" });
-    const image = await createImageBitmap(blob);
+    await blobToCanvas(this.#bundle, bytes, "image/png");
 
-    this.#canvas.width = image.width;
-    this.#canvas.height = image.height;
-    this.#ctx.drawImage(image, 0, 0);
-
-    const rgba = this.#ctx.getImageData(0, 0, this.#canvas.width, this.#canvas.height).data;
+    const rgba = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
     return this.#unpackOpaqueRgbaToZ64(rgba);
   }
 
   async #z64ToPngWrap(z64Bytes: Uint8Array): Promise<Uint8Array> {
-    if (!this.#canvas || !this.#ctx) throw new InitializationError("Handler not initialized.");
+    if (!this.#bundle) throw new InitializationError("Handler not initialized.");
+    const { canvas, ctx } = this.#bundle;
     const rgba = this.#packZ64ToOpaqueRgba(z64Bytes);
     const pixels = rgba.length / 4;
     const { width, height } = this.#choosePackedDimensions(pixels);
     const imageDataBytes = new Uint8ClampedArray(rgba.length);
     imageDataBytes.set(rgba);
 
-    this.#canvas.width = width;
-    this.#canvas.height = height;
-    this.#ctx.putImageData(new ImageData(imageDataBytes, width, height), 0, 0);
+    canvas.width = width;
+    canvas.height = height;
+    ctx.putImageData(new ImageData(imageDataBytes, width, height), 0, 0);
 
-    const blob = await this.#canvas.convertToBlob({
-      type: "image/png",
-    });
-    const bytes = new Uint8Array(await blob.arrayBuffer());
+    const bytes = await canvasToBlob(this.#bundle, "image/png");
     return bytes;
   }
 
@@ -202,7 +196,7 @@ class n64romHandler implements FormatHandler {
     inputFormat: FileFormat,
     outputFormat: FileFormat,
   ): Promise<FileData[]> {
-    if (!this.#canvas || !this.#ctx) {
+    if (!this.#bundle) {
       throw new InitializationError("Handler not initialized.");
     }
 
@@ -228,8 +222,7 @@ class n64romHandler implements FormatHandler {
         bytes = this.#fromZ64(z64Bytes, outputOrder);
       }
 
-      const baseName = inputFile.name.split(".").slice(0, -1).join(".");
-      const name = baseName + "." + outputFormat.extension;
+      const name = changeExt(inputFile.name, outputFormat.extension);
       outputFiles.push({ bytes, name });
     }
 

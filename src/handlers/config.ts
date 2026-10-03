@@ -14,6 +14,7 @@ import {
 } from "confbox";
 import CommonFormats from "src/CommonFormats.ts";
 import { type FileData, type FileFormat, type FormatHandler } from "../FormatHandler.ts";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 class configHandler implements FormatHandler {
   public readonly name = "config";
@@ -39,8 +40,7 @@ class configHandler implements FormatHandler {
     outputFormat: FileFormat,
   ): Promise<FileData[]> {
     return inputFiles.map((file) => {
-      const baseName = file.name.split(".").slice(0, -1).join(".");
-      const text = new TextDecoder().decode(file.bytes);
+      const text = decode(file.bytes);
 
       let object: any;
       switch (inputFormat.internal) {
@@ -91,8 +91,8 @@ class configHandler implements FormatHandler {
       }
 
       return {
-        name: `${baseName}.${outputFormat.extension}`,
-        bytes: new TextEncoder().encode(outText),
+        name: changeExt(file.name, outputFormat.extension),
+        bytes: encode(outText),
       };
     });
   }

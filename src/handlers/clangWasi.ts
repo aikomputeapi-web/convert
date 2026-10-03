@@ -1,6 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import { commands } from "@yowasp/clang";
+import { changeExt, encode } from "src/common/index.ts";
 
 class clangWasiHandler implements FormatHandler {
   public readonly name = "clangWasi";
@@ -38,13 +39,13 @@ class clangWasiHandler implements FormatHandler {
         // js wtf is this ??
         bytes = data;
       } else if (typeof data === "string") {
-        bytes = new TextEncoder().encode(data);
+        bytes = encode(data);
       } else {
         throw new Error("clang output was not a file");
       }
 
       outputFiles.push({
-        name: inputFile.name.replace(/\.[^.]+$/, "") + `.wasm`,
+        name: changeExt(inputFile.name, "wasm"),
         bytes,
       });
     }

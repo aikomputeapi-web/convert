@@ -4,6 +4,7 @@ import { SVGPathData } from "svg-pathdata";
 import { compress, decompress } from "woff2-encoder";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 function escapeHtml(str: string) {
   const map = new Map<string, string>();
@@ -16,7 +17,7 @@ function escapeHtml(str: string) {
   return str.replace(/[&<>"'\n]/g, (match) => map.get(match)!);
 }
 
-function sfntToSvg(inputFile: FileData, encoder: TextEncoder) {
+function sfntToSvg(inputFile: FileData) {
   const font = parse(inputFile.bytes.buffer);
   const unitsPerEm = font.unitsPerEm;
   const family = escapeHtml(font.names.fontFamily?.en || "ConvertedFont");
@@ -87,8 +88,8 @@ function sfntToSvg(inputFile: FileData, encoder: TextEncoder) {
   </text>
 </svg>`;
 
-  const name = inputFile.name.split(".").slice(0, -1).join(".") + ".svg";
-  const bytes = encoder.encode(svgFont);
+  const name = changeExt(inputFile.name, "svg");
+  const bytes = encode(svgFont);
 
   return { bytes, name };
 }
@@ -125,9 +126,9 @@ function svgPathToOpenTypePath(d: string): Path {
   return path;
 }
 
-function svgToOtf(inputFile: FileData, decoder: TextDecoder) {
+function svgToOtf(inputFile: FileData) {
   const parser = new DOMParser();
-  const doc = parser.parseFromString(decoder.decode(inputFile.bytes), "image/svg+xml");
+  const doc = parser.parseFromString(decode(inputFile.bytes), "image/svg+xml");
 
   const fontFace = doc.getElementsByTagName("font-face")[0];
   const fontEl = doc.getElementsByTagName("font")[0];
@@ -185,7 +186,7 @@ function svgToOtf(inputFile: FileData, decoder: TextDecoder) {
   });
 
   const bytes = new Uint8Array(font.toArrayBuffer());
-  const name = inputFile.name.split(".").slice(0, -1).join(".") + ".otf";
+  const name = changeExt(inputFile.name, "otf");
 
   return { bytes, name };
 }
@@ -196,7 +197,7 @@ function svgToOtf(inputFile: FileData, decoder: TextDecoder) {
 function sfntToOtf(inputFile: FileData) {
   const font = parse(inputFile.bytes.buffer);
   const bytes = new Uint8Array(font.toArrayBuffer());
-  const name = inputFile.name.split(".").slice(0, -1).join(".") + ".otf";
+  const name = changeExt(inputFile.name, "otf");
 
   return { bytes, name };
 }
@@ -207,18 +208,14 @@ async function sfntToWoff2(inputFile: FileData): Promise<FileData> {
 
   const bytes = await compress(sfnt);
 
-  const name = inputFile.name.split(".").slice(0, -1).join(".") + ".woff2";
+  const name = changeExt(inputFile.name, "woff2");
 
   return { bytes, name };
 }
 
-async function normalizeToSfnt(
-  inputFile: FileData,
-  inputFormat: FileFormat,
-  decoder: TextDecoder,
-): Promise<Uint8Array> {
+async function normalizeToSfnt(inputFile: FileData, inputFormat: FileFormat): Promise<Uint8Array> {
   if (inputFormat.internal === "woff2") return await decompress(inputFile.bytes);
-  else if (inputFormat.internal === "svg") return svgToOtf(inputFile, decoder).bytes;
+  else if (inputFormat.internal === "svg") return svgToOtf(inputFile).bytes;
 
   return inputFile.bytes;
 }
@@ -251,13 +248,11 @@ class fontHandler implements FormatHandler {
       throw new TypeError(`Unsupported output format: ${outputFormat.internal}`);
 
     const outputFiles: FileData[] = [];
-    const encoder = new TextEncoder();
-    const decoder = new TextDecoder();
 
     for (const inputFile of inputFiles) {
-      const nFile = { ...inputFile, bytes: await normalizeToSfnt(inputFile, inputFormat, decoder) };
+      const nFile = { ...inputFile, bytes: await normalizeToSfnt(inputFile, inputFormat) };
 
-      if (outputFormat.internal === "svg") outputFiles.push(sfntToSvg(nFile, encoder));
+      if (outputFormat.internal === "svg") outputFiles.push(sfntToSvg(nFile));
       else if (outputFormat.internal === "otf") outputFiles.push(sfntToOtf(nFile));
       else if (outputFormat.internal === "woff2") outputFiles.push(await sfntToWoff2(nFile));
     }

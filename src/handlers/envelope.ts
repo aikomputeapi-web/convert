@@ -5,6 +5,7 @@ import parseDOCX from "built/envelope/parseDOCX.js";
 import parsePPTX from "built/envelope/parsePPTX.js";
 import parseXLSX from "built/envelope/parseXLSX.js";
 import CommonFormats from "src/CommonFormats.ts";
+import { changeExt, encode } from "src/common/index.ts";
 
 class envelopeHandler implements FormatHandler {
   public readonly name = "envelope";
@@ -59,15 +60,12 @@ class envelopeHandler implements FormatHandler {
 
     const outputFiles: FileData[] = [];
 
-    const encoder = new TextEncoder();
-
     for (const inputFile of inputFiles) {
       const html = `<div style="background: #fff">
         ${await parser(inputFile.bytes)}
       </div>`;
-      const bytes = encoder.encode(html);
-      const baseName = inputFile.name.split(".").slice(0, -1).join(".");
-      const name = baseName + "." + outputFormat.extension;
+      const bytes = encode(html);
+      const name = changeExt(inputFile.name, outputFormat.extension);
       outputFiles.push({ bytes, name });
     }
 

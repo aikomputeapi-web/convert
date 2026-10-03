@@ -3,6 +3,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import { QOAEncoder, QOADecoder, QOABase } from "qoa-fu";
 import { WaveFile } from "wavefile";
 import type { TypedWaveFile } from "src/common/wav.ts";
+import { changeExt } from "src/common/index.ts";
 
 class uint8ArrayQOADecoder extends QOADecoder {
   private data: Uint8Array;
@@ -91,7 +92,7 @@ class qoaFuHandler implements FormatHandler {
         wav.fromScratch(decoder.getChannels(), decoder.getSampleRate(), "16", audioData);
 
         const wavBytes = wav.toBuffer();
-        const name = inputFile.name.split(".").slice(0, -1).join(".") + ".wav";
+        const name = changeExt(inputFile.name, "wav");
         outputFiles.push({ bytes: wavBytes, name });
       }
     } else if (inputFormat.internal === "wav" && outputFormat.internal === "qoa") {
@@ -131,7 +132,7 @@ class qoaFuHandler implements FormatHandler {
         }
 
         const qoaBytes = encoder.getData();
-        const name = inputFile.name.split(".").slice(0, -1).join(".") + ".qoa";
+        const name = changeExt(inputFile.name, "qoa");
         outputFiles.push({ bytes: qoaBytes, name });
       }
     } else {

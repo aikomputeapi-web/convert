@@ -4,6 +4,7 @@ import initReflo, { decode, encode, get_flo_file_info } from "@flo-audio/reflo";
 import { WaveFile } from "wavefile";
 import refloWasmUrl from "@flo-audio/reflo/reflo_bg.wasm?url";
 import type { TypedWaveFile } from "src/common/wav.ts";
+import { changeExt } from "src/common/index.ts";
 
 class floHandler implements FormatHandler {
   public readonly name = "flo";
@@ -27,8 +28,6 @@ class floHandler implements FormatHandler {
     if (!inputFiles.length) throw new RangeError("No input files.");
 
     return inputFiles.map((file) => {
-      const idx = file.name.lastIndexOf(".");
-      const baseName = idx > 0 ? file.name.slice(0, idx) : file.name;
       let samples: Float32Array;
       let sampleRate: number;
       let channels: number;
@@ -61,17 +60,20 @@ class floHandler implements FormatHandler {
       }
 
       if (outputFormat.internal === "flo") {
-        return { bytes: encode(samples, sampleRate, channels, 32, null), name: baseName + ".flo" };
+        return {
+          bytes: encode(samples, sampleRate, channels, 32, null),
+          name: changeExt(file.name, "flo"),
+        };
       } else if (outputFormat.internal === "wav") {
         const wav = new WaveFile() as TypedWaveFile;
         wav.fromScratch(channels, sampleRate, "32f", samples);
         wav.toBitDepth("16");
-        return { bytes: wav.toBuffer(), name: baseName + ".wav" };
+        return { bytes: wav.toBuffer(), name: changeExt(file.name, "wav") };
       } else if (outputFormat.internal === "f32le") {
         const bytes = new Uint8Array(samples.length * 4);
         const view = new DataView(bytes.buffer);
         for (let i = 0; i < samples.length; i++) view.setFloat32(i * 4, samples[i], true);
-        return { bytes, name: baseName + ".pcm" };
+        return { bytes, name: changeExt(file.name, "pcm") };
       } else {
         throw new TypeError(
           `floHandler: unsupported conversion ${inputFormat.format} -> ${outputFormat.format}`,

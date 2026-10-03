@@ -3,6 +3,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 import * as THREE from "three";
 import { OBJExporter } from "three/addons/exporters/OBJExporter.js";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 type OutlinerEntry = string | BBModelGroup;
 type BBModelCubeFace = "north" | "south" | "east" | "west" | "up" | "down";
@@ -318,11 +319,10 @@ class bbmodelHandler implements FormatHandler {
     }
 
     return inputFiles.map((file) => {
-      const baseName = file.name.replace(/\.[^.]+$/u, "");
-      const text = new TextDecoder().decode(file.bytes);
-      const bytes = new TextEncoder().encode(bbmodelToObj(text));
+      const text = decode(file.bytes);
+      const bytes = encode(bbmodelToObj(text));
       return {
-        name: `${baseName}.${outputFormat.extension}`,
+        name: changeExt(file.name, outputFormat.extension),
         bytes,
       };
     });

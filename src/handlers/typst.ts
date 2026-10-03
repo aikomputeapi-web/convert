@@ -4,6 +4,7 @@ import type { TypstSnippet } from "@myriaddreamin/typst.ts/dist/esm/contrib/snip
 import typstCompilerWasmUrl from "@myriaddreamin/typst-ts-web-compiler/wasm?url";
 import typstRendererWasmUrl from "@myriaddreamin/typst-ts-renderer/wasm?url";
 import { InitializationError } from "src/errors.ts";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 export const TYPST_PAGEBREAK_MARKER = "CONVERTTYPSTPAGEBREAKTOKEN";
 export const TYPST_ASSET_MANIFEST_START = "// convert-assets-start";
@@ -311,7 +312,7 @@ export function unpackTypstAssets(mainContent: string): {
 }
 
 function parseSvgPageDimensions(svgBytes: Uint8Array): { widthPt: number; heightPt: number } {
-  const head = new TextDecoder().decode(svgBytes.slice(0, 16384));
+  const head = decode(svgBytes.slice(0, 16384));
   const wAttr = head.match(/\bwidth="([\d.]+)\s*(?:px|pt)?"/i);
   const hAttr = head.match(/\bheight="([\d.]+)\s*(?:px|pt)?"/i);
   const vb = head.match(/viewBox="\s*[\d.]+\s+[\d.]+\s+([\d.]+)\s+([\d.]+)\s*"/i);
@@ -391,10 +392,9 @@ class typstHandler implements FormatHandler {
     try {
       const pdfData = await $typst.pdf({ mainContent });
       if (!pdfData) throw new Error("Typst compilation to PDF failed.");
-      const baseName = inputFiles[0].name.replace(/\.[^.]+$/u, "");
       return [
         {
-          name: `${baseName}.pdf`,
+          name: changeExt(inputFiles[0].name, "pdf"),
           bytes: new Uint8Array(pdfData),
         },
       ];
@@ -427,8 +427,7 @@ class typstHandler implements FormatHandler {
     const outputFiles: FileData[] = [];
 
     for (const file of inputFiles) {
-      const { mainContent, shadowFiles } = unpackTypstAssets(new TextDecoder().decode(file.bytes));
-      const baseName = file.name.replace(/\.[^.]+$/u, "");
+      const { mainContent, shadowFiles } = unpackTypstAssets(decode(file.bytes));
       await this.$typst.resetShadow();
 
       for (const [path, bytes] of Object.entries(shadowFiles)) {
@@ -436,7 +435,7 @@ class typstHandler implements FormatHandler {
         await this.$typst.mapShadow(`/${cleanPath}`, bytes);
       }
 
-      await this.$typst.mapShadow("/main.typ", new TextEncoder().encode(mainContent));
+      await this.$typst.mapShadow("/main.typ", encode(mainContent));
 
       if (outputFormat.internal === "pdf") {
         const pdfData = await this.$typst.pdf({
@@ -445,7 +444,7 @@ class typstHandler implements FormatHandler {
         });
         if (!pdfData) throw new Error("Typst compilation to PDF failed.");
         outputFiles.push({
-          name: `${baseName}.pdf`,
+          name: changeExt(file.name, "pdf"),
           bytes: new Uint8Array(pdfData),
         });
       } else if (outputFormat.internal === "svg") {
@@ -454,8 +453,8 @@ class typstHandler implements FormatHandler {
           root: "/",
         });
         outputFiles.push({
-          name: `${baseName}.svg`,
-          bytes: new TextEncoder().encode(svgString),
+          name: changeExt(file.name, "svg"),
+          bytes: encode(svgString),
         });
       }
     }

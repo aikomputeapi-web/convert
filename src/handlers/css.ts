@@ -1,5 +1,6 @@
 import { type FileData, type FileFormat, type FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 class cssHandler implements FormatHandler {
   public readonly name = "css";
@@ -21,8 +22,7 @@ class cssHandler implements FormatHandler {
   ): Promise<FileData[]> {
     const outputFiles: FileData[] = [];
     for (const file of inputFiles) {
-      const source = new TextDecoder().decode(file.bytes);
-      const basename = file.name.split(".").slice(0, -1).join(".");
+      const source = decode(file.bytes);
       let css: string;
       if (inputFormat.internal === "less") {
         const [{ default: createLess }, { default: createFileManager }, { default: PluginLoader }] =
@@ -49,8 +49,8 @@ class cssHandler implements FormatHandler {
       }
 
       outputFiles.push({
-        name: `${basename}.${outputFormat.internal}`,
-        bytes: new TextEncoder().encode(css),
+        name: changeExt(file.name, outputFormat.internal),
+        bytes: encode(css),
       });
     }
     return outputFiles;

@@ -1,6 +1,7 @@
 import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import type { HandlerName } from "./index.ts";
+import { changeExt } from "src/common/index.ts";
 
 function createRenameHandler(name: HandlerName, formats: FileFormat[]) {
   return class implements FormatHandler {
@@ -19,7 +20,7 @@ function createRenameHandler(name: HandlerName, formats: FileFormat[]) {
     ): Promise<FileData[]> {
       return inputFiles.map((file) => ({
         ...file,
-        name: file.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension,
+        name: changeExt(file.name, outputFormat.extension),
       }));
     }
   };

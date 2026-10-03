@@ -1,6 +1,8 @@
 import CommonFormats from "src/CommonFormats.ts";
 import { type FileData, type FileFormat, type FormatHandler } from "../FormatHandler.ts";
 import { BadMagicError, InitializationError } from "src/errors.ts";
+import { changeExt } from "src/common/index.ts";
+import { canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas.ts";
 
 const PNG_SIGNATURE = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
 const ICNS_MAGIC = "icns";
@@ -125,28 +127,23 @@ class icnsHandler implements FormatHandler {
   ];
   public ready = false;
 
-  #canvas?: OffscreenCanvas;
-  #ctx?: OffscreenCanvasRenderingContext2D;
+  #bundle?: CanvasBundle;
 
   async init() {
-    this.#canvas = new OffscreenCanvas(1, 1);
-    this.#ctx = this.#canvas.getContext("2d") || undefined;
-    if (!this.#ctx) throw new InitializationError("Failed to initialize canvas context.");
+    this.#bundle = createCanvas();
     this.ready = true;
   }
 
   async #canvasToPngBytes(size: number, bitmap: ImageBitmap): Promise<Uint8Array> {
-    if (!this.#canvas || !this.#ctx) throw new InitializationError("Handler not initialized.");
+    if (!this.#bundle) throw new InitializationError("Handler not initialized.");
+    const { canvas, ctx } = this.#bundle;
 
-    this.#canvas.width = size;
-    this.#canvas.height = size;
-    this.#ctx.clearRect(0, 0, size, size);
-    this.#ctx.drawImage(bitmap, 0, 0, size, size);
+    canvas.width = size;
+    canvas.height = size;
+    ctx.clearRect(0, 0, size, size);
+    ctx.drawImage(bitmap, 0, 0, size, size);
 
-    const blob = await this.#canvas.convertToBlob({
-      type: "image/png",
-    });
-    const bytes = new Uint8Array(await blob.arrayBuffer());
+    const bytes = await canvasToBlob(this.#bundle, "image/png");
 
     return bytes;
   }
@@ -198,7 +195,6 @@ class icnsHandler implements FormatHandler {
     const outputFiles: FileData[] = [];
 
     for (const inputFile of inputFiles) {
-      const baseName = inputFile.name.split(".").slice(0, -1).join(".");
       let bytes: Uint8Array;
 
       if (inputFormat.internal === "icns" && outputFormat.internal === "png") {
@@ -213,7 +209,7 @@ class icnsHandler implements FormatHandler {
 
       outputFiles.push({
         bytes,
-        name: `${baseName}.${outputFormat.extension}`,
+        name: changeExt(inputFile.name, outputFormat.extension),
       });
     }
 

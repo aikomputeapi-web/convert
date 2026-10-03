@@ -1,6 +1,8 @@
 import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { InitializationError } from "src/errors.ts";
+import { changeExt } from "src/common/index.ts";
+import { canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas.ts";
 
 class svgToBlobHandler implements FormatHandler {
   public readonly name = "svgToBlob";
@@ -13,13 +15,11 @@ class svgToBlobHandler implements FormatHandler {
   public ready = false;
   public offload = false; // svg does not like createImageBitmap
 
-  #canvas?: OffscreenCanvas;
-  #ctx?: OffscreenCanvasRenderingContext2D;
+  #bundle?: CanvasBundle;
 
   async init() {
     this.ready = true;
-    this.#canvas = new OffscreenCanvas(1, 1);
-    this.#ctx = this.#canvas.getContext("2d") || undefined;
+    this.#bundle = createCanvas();
   }
 
   async doConvert(
@@ -27,9 +27,10 @@ class svgToBlobHandler implements FormatHandler {
     inputFormat: FileFormat,
     outputFormat: FileFormat,
   ): Promise<FileData[]> {
-    if (!this.#canvas || !this.#ctx) {
+    if (!this.#bundle) {
       throw new InitializationError("Handler not initialized.");
     }
+    const { canvas, ctx } = this.#bundle;
 
     const outputFiles: FileData[] = [];
     for (const inputFile of inputFiles) {
@@ -43,15 +44,12 @@ class svgToBlobHandler implements FormatHandler {
         image.src = url;
       });
 
-      this.#canvas.width = image.naturalWidth;
-      this.#canvas.height = image.naturalHeight;
-      this.#ctx.drawImage(image, 0, 0);
+      canvas.width = image.naturalWidth;
+      canvas.height = image.naturalHeight;
+      ctx.drawImage(image, 0, 0);
 
-      const blob = await this.#canvas.convertToBlob({
-        type: outputFormat.mime,
-      });
-      const bytes = new Uint8Array(await blob.arrayBuffer());
-      const name = inputFile.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension;
+      const bytes = await canvasToBlob(this.#bundle, outputFormat.mime);
+      const name = changeExt(inputFile.name, outputFormat.extension);
 
       outputFiles.push({ bytes, name });
     }

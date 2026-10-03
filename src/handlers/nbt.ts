@@ -2,6 +2,7 @@ import type { FileData, FileFormat, FormatHandler } from "src/FormatHandler.ts";
 import * as NBT from "nbtify";
 import CommonFormats from "src/CommonFormats.ts";
 import { gzipSync } from "fflate";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 class nbtHandler implements FormatHandler {
   public readonly name = "nbt";
@@ -24,8 +25,6 @@ class nbtHandler implements FormatHandler {
     outputFormat: FileFormat,
   ): Promise<FileData[]> {
     const outputFiles: FileData[] = [];
-    const decoder = new TextDecoder();
-    const encoder = new TextEncoder();
 
     // nbt -> json
     if (inputFormat.internal === "nbt" && outputFormat.internal === "json") {
@@ -37,8 +36,8 @@ class nbtHandler implements FormatHandler {
           this.indent,
         );
         outputFiles.push({
-          name: file.name.split(".").slice(0, -1).join(".") + ".json",
-          bytes: encoder.encode(j),
+          name: changeExt(file.name, "json"),
+          bytes: encode(j),
         });
       }
     }
@@ -46,11 +45,11 @@ class nbtHandler implements FormatHandler {
     // json -> nbt
     if (inputFormat.internal === "json" && outputFormat.internal === "nbt") {
       for (const file of inputFiles) {
-        const text = decoder.decode(file.bytes);
+        const text = decode(file.bytes);
         const obj = JSON.parse(text);
         const bd = await NBT.write(obj);
         outputFiles.push({
-          name: file.name.split(".").slice(0, -1).join(".") + `.${outputFormat.extension}`,
+          name: changeExt(file.name, outputFormat.extension),
           bytes: bd,
         });
       }
@@ -59,11 +58,11 @@ class nbtHandler implements FormatHandler {
     // snbt -> nbt
     if (inputFormat.internal === "snbt" && outputFormat.internal === "nbt") {
       for (const file of inputFiles) {
-        const text = decoder.decode(file.bytes);
+        const text = decode(file.bytes);
         const nbt = NBT.parse(text);
         const bd = await NBT.write(nbt);
         outputFiles.push({
-          name: file.name.split(".").slice(0, -1).join(".") + `.${outputFormat.extension}`,
+          name: changeExt(file.name, outputFormat.extension),
           bytes: bd,
         });
       }
@@ -76,8 +75,8 @@ class nbtHandler implements FormatHandler {
           space: this.indent,
         });
         outputFiles.push({
-          name: file.name.split(".").slice(0, -1).join(".") + ".snbt",
-          bytes: encoder.encode(text),
+          name: changeExt(file.name, "snbt"),
+          bytes: encode(text),
         });
       }
     }
@@ -89,7 +88,7 @@ class nbtHandler implements FormatHandler {
     ) {
       for (const file of inputFiles) {
         outputFiles.push({
-          name: file.name.split(".").slice(0, -1).join(".") + `.${outputFormat.extension}`,
+          name: changeExt(file.name, outputFormat.extension),
           bytes: gzipSync(file.bytes),
         });
       }

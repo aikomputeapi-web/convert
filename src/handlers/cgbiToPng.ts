@@ -1,6 +1,7 @@
 import pako from "pako";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
+import { changeExt } from "src/common/index.ts";
 
 async function revertCgBIBuffer(input: Uint8Array | ArrayBuffer): Promise<Uint8Array> {
   const buffer = input instanceof Uint8Array ? input : new Uint8Array(input);
@@ -175,9 +176,7 @@ class cgbiToPngHandler implements FormatHandler {
       try {
         const standardPng = await revertCgBIBuffer(inputFile.bytes);
 
-        const dotIndex = inputFile.name.lastIndexOf(".");
-        const baseName = dotIndex !== -1 ? inputFile.name.substring(0, dotIndex) : inputFile.name;
-        const outputName = `${baseName}.${outputFormat.extension}`;
+        const outputName = changeExt(inputFile.name, outputFormat.extension);
 
         outputFiles.push({
           bytes: standardPng,

@@ -2,6 +2,8 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
+import { changeExt } from "src/common/index.ts";
+import { canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas.ts";
 
 class otaHandler implements FormatHandler {
   public readonly name = "ota";
@@ -11,12 +13,10 @@ class otaHandler implements FormatHandler {
   ];
   public ready = false;
 
-  #canvas?: OffscreenCanvas;
-  #ctx?: OffscreenCanvasRenderingContext2D;
+  #bundle?: CanvasBundle;
 
   async init() {
-    this.#canvas = new OffscreenCanvas(1, 1);
-    this.#ctx = this.#canvas.getContext("2d") || undefined;
+    this.#bundle = createCanvas();
 
     this.ready = true;
   }
@@ -28,17 +28,18 @@ class otaHandler implements FormatHandler {
   ): Promise<FileData[]> {
     const outputFiles: FileData[] = [];
 
-    if (!this.#canvas || !this.#ctx) {
+    if (!this.#bundle) {
       throw new InitializationError("Handler not initialized.");
     }
+    const { canvas, ctx } = this.#bundle;
 
     if (inputFormat.internal === "ota" && outputFormat.mime === CommonFormats.PNG.mime) {
       for (const file of inputFiles) {
         let new_file_bytes = new Uint8Array(file.bytes);
 
         // Read header to get image size
-        this.#canvas.width = new_file_bytes[1];
-        this.#canvas.height = new_file_bytes[2];
+        canvas.width = new_file_bytes[1];
+        canvas.height = new_file_bytes[2];
 
         // Read each byte and write 8 pixels to screen per
         const rgba: number[] = [];
@@ -51,32 +52,25 @@ class otaHandler implements FormatHandler {
               rgba.push(255, 255, 255, 255);
             }
 
-            if (rgba.length >= this.#canvas.width * this.#canvas.height * 4) {
+            if (rgba.length >= canvas.width * canvas.height * 4) {
               break;
             }
           }
 
-          if (rgba.length >= this.#canvas.width * this.#canvas.height * 4) {
+          if (rgba.length >= canvas.width * canvas.height * 4) {
             break;
           }
         }
 
         // Writes our results to the canvas
-        const image_data = new ImageData(
-          new Uint8ClampedArray(rgba),
-          this.#canvas.width,
-          this.#canvas.height,
-        );
+        const image_data = new ImageData(new Uint8ClampedArray(rgba), canvas.width, canvas.height);
 
-        this.#ctx.putImageData(image_data, 0, 0);
+        ctx.putImageData(image_data, 0, 0);
 
-        const blob = await this.#canvas.convertToBlob({
-          type: outputFormat.mime,
-        });
-        new_file_bytes = new Uint8Array(await blob.arrayBuffer());
+        new_file_bytes = await canvasToBlob(this.#bundle, outputFormat.mime);
 
         outputFiles.push({
-          name: file.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension,
+          name: changeExt(file.name, outputFormat.extension),
           bytes: new_file_bytes,
         });
       }
@@ -90,22 +84,22 @@ class otaHandler implements FormatHandler {
         const image = await createImageBitmap(blob);
 
         if (image.width > 255) {
-          this.#canvas.width = 255;
+          canvas.width = 255;
         } else {
-          this.#canvas.width = image.width;
+          canvas.width = image.width;
         }
         if (image.height > 255) {
-          this.#canvas.height = 255;
+          canvas.height = 255;
         } else {
-          this.#canvas.height = image.height;
+          canvas.height = image.height;
         }
-        this.#ctx.drawImage(image, 0, 0, this.#canvas.width, this.#canvas.height);
+        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-        const pixels = this.#ctx.getImageData(0, 0, this.#canvas.width, this.#canvas.height);
+        const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
         console.log(pixels.data);
 
         // Start writing our .otb file, first with the header
-        writer_array.push(0, this.#canvas.width, this.#canvas.height, 1);
+        writer_array.push(0, canvas.width, canvas.height, 1);
         let bits = [];
 
         // Then iterate through image data
@@ -143,7 +137,7 @@ class otaHandler implements FormatHandler {
         }
 
         outputFiles.push({
-          name: file.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension,
+          name: changeExt(file.name, outputFormat.extension),
           bytes: new Uint8Array(writer_array),
         });
       }

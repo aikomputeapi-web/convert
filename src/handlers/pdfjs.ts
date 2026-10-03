@@ -3,6 +3,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 import { getDocument, GlobalWorkerOptions } from "pdfjs-dist";
 import pdfWorkerUrl from "pdfjs-dist/build/pdf.worker.mjs?url";
+import { changeExt } from "src/common/index.ts";
 
 type CanvasAndContext = {
   canvas: OffscreenCanvas;
@@ -66,7 +67,6 @@ class pdfjsHandler implements FormatHandler {
       });
       try {
         const pdf = await loadingTask.promise;
-        const baseName = inputFile.name.split(".").slice(0, -1).join(".");
         const factory = new WorkerCanvasFactory();
 
         for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
@@ -86,7 +86,7 @@ class pdfjsHandler implements FormatHandler {
             });
             outputFiles.push({
               bytes: new Uint8Array(await blob.arrayBuffer()),
-              name: `${baseName}_${pageNumber - 1}.${outputFormat.extension}`,
+              name: changeExt(inputFile.name, outputFormat.extension, `_${pageNumber - 1}`),
             });
           } finally {
             factory.destroy(target);

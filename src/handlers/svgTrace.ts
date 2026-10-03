@@ -2,6 +2,8 @@ import { imageTracer } from "imagetracer";
 
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
+import { changeExt, encode } from "src/common/index.ts";
+import { blobToCanvas, createCanvas } from "src/common/canvas.ts";
 
 class svgTraceHandler implements FormatHandler {
   public readonly name = "svgTrace";
@@ -27,20 +29,15 @@ class svgTraceHandler implements FormatHandler {
       throw new TypeError(`Unsupported output format: ${outputFormat.internal}`);
 
     const outputFiles: FileData[] = [];
-    const encoder = new TextEncoder();
 
     for (const inputFile of inputFiles) {
-      const blob = new Blob([inputFile.bytes as BlobPart], { type: inputFormat.mime });
-      const image = await createImageBitmap(blob);
-      const canvas = new OffscreenCanvas(image.width, image.height);
-      const ctx = canvas.getContext("2d");
-      if (!ctx) throw new Error("Failed to create 2D rendering context.");
-      ctx.drawImage(image, 0, 0);
-      image.close();
+      const bundle = createCanvas();
+      await blobToCanvas(bundle, inputFile.bytes, inputFormat.mime);
+      const { canvas, ctx } = bundle;
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       const traced = imageTracer.imageDataToSVG(imageData); // return the full svg string
-      const name = inputFile.name.split(".").slice(0, -1).join(".") + ".svg";
-      const bytes = encoder.encode(traced);
+      const name = changeExt(inputFile.name, "svg");
+      const bytes = encode(traced);
 
       outputFiles.push({ bytes, name });
     }

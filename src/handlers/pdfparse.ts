@@ -2,6 +2,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import { PDFParse } from "pdf-parse";
 import pdfWorkerUrl from "../../node_modules/pdf-parse/dist/pdf-parse/web/pdf.worker.mjs?url";
+import { changeExt, encode } from "src/common/index.ts";
 
 class pdfparseHandler implements FormatHandler {
   public readonly name = "pdfparse";
@@ -29,8 +30,8 @@ class pdfparseHandler implements FormatHandler {
       await parser.destroy();
 
       outputFiles.push({
-        bytes: new TextEncoder().encode(text.text),
-        name: inputFile.name.replace(/\.pdf$/i, ".txt"),
+        bytes: encode(text.text),
+        name: changeExt(inputFile.name, "txt"),
       });
     }
 

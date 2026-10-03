@@ -1,4 +1,5 @@
 import { Vector3, Quaternion } from "three";
+import { decode } from "src/common/index.ts";
 
 // See BSOR specification for more info:
 // https://github.com/BeatLeader/BS-Open-Replay
@@ -234,7 +235,7 @@ export class Replay {
     function string(): string {
       const length = int();
       pos += length;
-      return new TextDecoder().decode(new Uint8Array(data.buffer, pos - length, length));
+      return decode(new Uint8Array(data.buffer, pos - length, length));
     }
     function vector(): Vector3 {
       return new Vector3(float(), float(), float());

@@ -4,6 +4,7 @@ import type { ConvertContext } from "../ui/ProgressStore.ts";
 import ePub from "epubjs";
 import { DOMParser as WorkerDOMParser } from "linkedom/worker";
 import { XMLSerializer } from "@xmldom/xmldom";
+import { encode, stripExt } from "src/common/index.ts";
 
 const DOMParser = WorkerDOMParser as unknown as typeof globalThis.DOMParser;
 
@@ -136,7 +137,7 @@ export default class epubHandler implements FormatHandler {
     const blobUrlCache = new Map<string, Promise<string>>();
 
     for (const file of inputFiles) {
-      const baseName = file.name.replace(/\.[^.]+$/u, "");
+      const baseName = stripExt(file.name);
 
       if (outputFormat.internal === "html") {
         // Extract buffer
@@ -303,7 +304,7 @@ export default class epubHandler implements FormatHandler {
 
         outputFiles.push({
           name: `${baseName}.html`,
-          bytes: new TextEncoder().encode(finalHtml),
+          bytes: encode(finalHtml),
         });
       }
     }

@@ -10,6 +10,7 @@ import {
   type PieceSymbol,
   type Square,
 } from "chess.js";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 // same as .board() on chess.js
 type BoardSquare = {
@@ -64,8 +65,8 @@ class fenToJsonHandler implements FormatHandler {
   ): Promise<FileData[]> {
     const outputFiles: FileData[] = [];
     for (const inputFile of inputFiles) {
-      const input = new TextDecoder().decode(inputFile.bytes).trim();
-      let output;
+      const input = decode(inputFile.bytes).trim();
+      let output = "";
       if (inputFormat.internal === "fen") {
         const [boardFen, turn, castling, epSquare, halfMoves, moveNumber] = input.split(" ");
 
@@ -153,8 +154,8 @@ class fenToJsonHandler implements FormatHandler {
 
         output = fen.join(" ");
       }
-      const bytes = new TextEncoder().encode(output);
-      const name = inputFile.name.replace(/\.[^.]+$/, "") + `.${outputFormat.extension}`;
+      const bytes = encode(output);
+      const name = changeExt(inputFile.name, outputFormat.extension);
       outputFiles.push({ name, bytes });
     }
     return outputFiles;

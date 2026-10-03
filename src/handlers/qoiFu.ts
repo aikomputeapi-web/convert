@@ -4,6 +4,8 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { QOIDecoder, QOIEncoder } from "qoi-fu";
 
 import { InitializationError } from "src/errors.ts";
+import { changeExt } from "src/common/index.ts";
+import { blobToCanvas, canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas.ts";
 
 class qoiFuHandler implements FormatHandler {
   public readonly name = "qoiFu";
@@ -16,14 +18,10 @@ class qoiFuHandler implements FormatHandler {
   ];
   public ready = false;
 
-  #canvas?: OffscreenCanvas;
-  #ctx?: OffscreenCanvasRenderingContext2D;
+  #bundle?: CanvasBundle;
 
   async init() {
-    this.#canvas = new OffscreenCanvas(1, 1);
-    const ctx = this.#canvas.getContext("2d");
-    if (!ctx) throw new InitializationError("Failed to create 2D rendering context.");
-    this.#ctx = ctx;
+    this.#bundle = createCanvas();
     this.ready = true;
   }
 
@@ -64,9 +62,10 @@ class qoiFuHandler implements FormatHandler {
     inputFormat: FileFormat,
     outputFormat: FileFormat,
   ): Promise<FileData[]> {
-    if (!this.#canvas || !this.#ctx) {
+    if (!this.#bundle) {
       throw new InitializationError("Handler not initialized.");
     }
+    const { canvas, ctx } = this.#bundle;
 
     const outputFiles: FileData[] = [];
 
@@ -81,19 +80,12 @@ class qoiFuHandler implements FormatHandler {
 
     if (outputIsQOI) {
       for (const inputFile of inputFiles) {
-        this.#ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.width);
+        await blobToCanvas(this.#bundle, inputFile.bytes, inputFormat.mime);
 
-        const blob = new Blob([inputFile.bytes as BlobPart], { type: inputFormat.mime });
-        const image = await createImageBitmap(blob);
+        const width = canvas.width;
+        const height = canvas.height;
 
-        const width = image.width;
-        const height = image.height;
-
-        this.#canvas.width = width;
-        this.#canvas.height = height;
-        this.#ctx.drawImage(image, 0, 0);
-
-        const imageData = this.#ctx.getImageData(0, 0, width, height);
+        const imageData = ctx.getImageData(0, 0, width, height);
         const pixelBuffer = qoiFuHandler.rgbaToArgb(imageData.data);
 
         const qoiEncoder = new QOIEncoder();
@@ -103,8 +95,7 @@ class qoiFuHandler implements FormatHandler {
         const bytesSize = qoiEncoder.getEncodedSize();
         const bytes = new Uint8Array(qoiEncoder.getEncoded().slice(0, bytesSize));
 
-        const name =
-          inputFile.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension;
+        const name = changeExt(inputFile.name, outputFormat.extension);
         outputFiles.push({ bytes, name });
       }
     } else {
@@ -122,16 +113,12 @@ class qoiFuHandler implements FormatHandler {
           colorSpace: colorSpace,
         });
 
-        this.#canvas.width = width;
-        this.#canvas.height = height;
-        this.#ctx.putImageData(imageData, 0, 0);
+        canvas.width = width;
+        canvas.height = height;
+        ctx.putImageData(imageData, 0, 0);
 
-        const blob = await this.#canvas.convertToBlob({
-          type: outputFormat.mime,
-        });
-        const bytes = new Uint8Array(await blob.arrayBuffer());
-        const name =
-          inputFile.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension;
+        const bytes = await canvasToBlob(this.#bundle, outputFormat.mime);
+        const name = changeExt(inputFile.name, outputFormat.extension);
         outputFiles.push({ bytes, name });
       }
     }

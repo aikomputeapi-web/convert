@@ -1,6 +1,7 @@
 import { elementToSVG, inlineResources } from "dom-to-svg";
 import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
+import { decode, encode } from "src/common/index.ts";
 
 function nextPaint(): Promise<void> {
   return new Promise((resolve) => {
@@ -139,17 +140,14 @@ class htmlToSvgHandler implements FormatHandler {
 
     const outputFiles: FileData[] = [];
 
-    const encoder = new TextEncoder();
-    const decoder = new TextDecoder();
-
     for (const inputFile of inputFiles) {
       const { name, bytes } = inputFile;
-      const htmlStr = decoder.decode(bytes);
+      const htmlStr = decode(bytes);
       const svgStr = await htmlContentToSvgString(htmlStr);
       const newName = (name.endsWith(".html") ? name.slice(0, -5) : name) + ".svg";
       outputFiles.push({
         name: newName,
-        bytes: encoder.encode(svgStr),
+        bytes: encode(svgStr),
       });
     }
 

@@ -1,6 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import { WASI, File, OpenFile, ConsoleStdout } from "@bjorn3/browser_wasi_shim";
+import { changeExt } from "src/common/index.ts";
 
 class wasiRunnerHandler implements FormatHandler {
   public readonly name = "wasiRunner";
@@ -36,7 +37,7 @@ class wasiRunnerHandler implements FormatHandler {
       wasi.start(inst);
 
       outputFiles.push({
-        name: inputFile.name.replace(/\.[^.]+$/, "") + `.txt`,
+        name: changeExt(inputFile.name, "txt"),
         bytes: new Uint8Array(output),
       });
     }

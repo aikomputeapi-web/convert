@@ -16,6 +16,8 @@ import CommonFormats from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 import sfontUrl from "built/timgm6mb/TimGM6mb.sf2?url";
 import fluidsynthUrl from "js-synthesizer/externals/libfluidsynth-2.4.6.js?url";
+import { changeExt, decode, encode, stripExt } from "src/common/index.ts";
+import { blobToCanvas, canvasToBlob, createCanvas } from "src/common/canvas.ts";
 
 const SAMPLE_RATE = 44100;
 const BUFFER_FRAMES = 4096;
@@ -103,7 +105,7 @@ export class midiCodecHandler implements FormatHandler {
     const outputFiles: FileData[] = [];
 
     for (const inputFile of inputFiles) {
-      const baseName = inputFile.name.replace(/\.[^.]+$/, "");
+      const baseName = stripExt(inputFile.name);
 
       // Step 1: input -> event table
 
@@ -111,11 +113,9 @@ export class midiCodecHandler implements FormatHandler {
 
       if (inputFormat.internal === "png") {
         // PNG spectrogram: decode pixels then extract notes
-        const blob = new Blob([inputFile.bytes as BlobPart], { type: inputFormat.mime });
-        const img = await createImageBitmap(blob);
-        const canvas = new OffscreenCanvas(img.width, img.height);
-        const ctx = canvas.getContext("2d")!;
-        ctx.drawImage(img, 0, 0);
+        const bundle = createCanvas();
+        await blobToCanvas(bundle, inputFile.bytes, inputFormat.mime);
+        const { canvas, ctx } = bundle;
         const { data, width, height } = ctx.getImageData(0, 0, canvas.width, canvas.height);
         table = pngToMidi(data, width, height);
       } else if (inputFormat.internal === "mid") {
@@ -126,7 +126,7 @@ export class midiCodecHandler implements FormatHandler {
         inputFormat.internal === "grub"
       ) {
         // Text input: MIDI-text, RTTTL, or GRUB tune
-        const text = new TextDecoder().decode(inputFile.bytes);
+        const text = decode(inputFile.bytes);
         const trimmed = text.trimStart();
         table = trimmed.startsWith("# MIDI File")
           ? stringToTable(text)
@@ -142,35 +142,31 @@ export class midiCodecHandler implements FormatHandler {
       if (outputFormat.internal === "txt") {
         const text = tableToString(table);
         outputFiles.push({
-          bytes: new TextEncoder().encode(text),
-          name: baseName + "." + outputFormat.extension,
+          bytes: encode(text),
+          name: changeExt(inputFile.name, outputFormat.extension),
         });
       } else if (outputFormat.internal === "rtttl") {
         const text = tableToRtttl(table, baseName);
         outputFiles.push({
-          bytes: new TextEncoder().encode(text),
-          name: baseName + "." + outputFormat.extension,
+          bytes: encode(text),
+          name: changeExt(inputFile.name, outputFormat.extension),
         });
       } else if (outputFormat.internal === "grub") {
         const text = tableToGrubTune(table);
         outputFiles.push({
-          bytes: new TextEncoder().encode(text),
-          name: baseName + "." + outputFormat.extension,
+          bytes: encode(text),
+          name: changeExt(inputFile.name, outputFormat.extension),
         });
       } else if (outputFormat.internal === "mid") {
         const bytes = buildMidi(table);
-        outputFiles.push({ bytes, name: baseName + "." + outputFormat.extension });
+        outputFiles.push({ bytes, name: changeExt(inputFile.name, outputFormat.extension) });
       } else if (outputFormat.internal === "png") {
         // Render piano roll onto a PNG using the same frequency->row mapping as pngToMidi
         const { pixels, width, height } = midiToPng(table);
-        const canvas = new OffscreenCanvas(width, height);
-        const ctx = canvas.getContext("2d")!;
-        ctx.putImageData(new ImageData(pixels as ImageDataArray, width, height), 0, 0);
-        const blob = await canvas.convertToBlob({
-          type: outputFormat.mime,
-        });
-        const bytes = new Uint8Array(await blob.arrayBuffer());
-        outputFiles.push({ bytes, name: baseName + "." + outputFormat.extension });
+        const bundle = createCanvas(width, height);
+        bundle.ctx.putImageData(new ImageData(pixels as ImageDataArray, width, height), 0, 0);
+        const bytes = await canvasToBlob(bundle, outputFormat.mime);
+        outputFiles.push({ bytes, name: changeExt(inputFile.name, outputFormat.extension) });
       } else {
         throw new TypeError(`Unsupported output format: ${outputFormat.internal}`);
       }
@@ -259,7 +255,7 @@ export class midiSynthHandler implements FormatHandler {
       }
 
       const wavBytes = buildWav(pcm, SAMPLE_RATE, 2, 16);
-      outputFiles.push({ bytes: wavBytes, name: inputFile.name.replace(/\.[^.]+$/, "") + ".wav" });
+      outputFiles.push({ bytes: wavBytes, name: changeExt(inputFile.name, "wav") });
     }
 
     return outputFiles;

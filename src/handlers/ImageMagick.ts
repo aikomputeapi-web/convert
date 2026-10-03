@@ -13,6 +13,7 @@ import normalizeMimeType from "../normalizeMimeType.ts";
 import CommonFormats, { Category, isCategory } from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import type { ConvertContext } from "../ui/ProgressStore.js";
+import { changeExt } from "src/common/index.ts";
 
 class ImageMagickHandler implements FormatHandler {
   public readonly name = "ImageMagick";
@@ -155,8 +156,7 @@ class ImageMagickHandler implements FormatHandler {
       });
     });
 
-    const baseName = inputFiles[0].name.split(".").slice(0, -1).join(".");
-    const name = baseName + "." + outputFormat.extension;
+    const name = changeExt(inputFiles[0].name, outputFormat.extension);
 
     ctx?.progress("Conversion complete!", 1);
     ctx?.log(

@@ -3,6 +3,7 @@ import { EllipseCurve } from "three";
 import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader.js";
 import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 // hardcoded limits to prevent big SVG crash
 const MAX_ELEMENTS = 750;
@@ -55,16 +56,13 @@ class pyTurtleHandler implements FormatHandler {
   ): Promise<FileData[]> {
     const outputFiles: FileData[] = [];
 
-    const encoder = new TextEncoder();
-    const decoder = new TextDecoder();
-
     for (const inputFile of inputFiles) {
       const { name, bytes } = inputFile;
-      const svg_text = decoder.decode(bytes);
+      const svg_text = decode(bytes);
       const python_code = pyTurtleHandler.convert_program(svg_text);
 
-      const outputBytes = encoder.encode(python_code);
-      const newName = name.split(".").slice(0, -1).join(".") + ".py";
+      const outputBytes = encode(python_code);
+      const newName = changeExt(name, "py");
       outputFiles.push({ name: newName, bytes: outputBytes });
     }
 

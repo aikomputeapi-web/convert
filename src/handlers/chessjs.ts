@@ -1,6 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import { Chess } from "chess.js";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 class chessjsHandler implements FormatHandler {
   public readonly name = "chessjs";
@@ -24,7 +25,7 @@ class chessjsHandler implements FormatHandler {
     for (const inputFile of inputFiles) {
       const chess = new Chess();
 
-      const input = new TextDecoder().decode(inputFile.bytes).trim();
+      const input = decode(inputFile.bytes).trim();
       if (inputFormat.internal === "fen") {
         chess.load(input, { skipValidation: true });
       } else if (inputFormat.internal === "pgn") {
@@ -44,8 +45,8 @@ class chessjsHandler implements FormatHandler {
         throw new TypeError(`chessjsHandler cannot convert to ${outputFormat.mime}`);
       }
 
-      const bytes = new TextEncoder().encode(output);
-      const name = inputFile.name.replace(/\.[^.]+$/, "") + `.${outputFormat.extension}`;
+      const bytes = encode(output);
+      const name = changeExt(inputFile.name, outputFormat.extension);
       outputFiles.push({ name, bytes });
     }
     return outputFiles;

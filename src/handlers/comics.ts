@@ -3,6 +3,7 @@ import CommonFormats from "src/CommonFormats.ts";
 
 import { parseTar } from "nanotar";
 import JSZip from "jszip";
+import { stripExt } from "src/common/index.ts";
 
 const image_list = ["png", "jpg", "webp", "bmp", "tiff", "gif"];
 
@@ -52,11 +53,9 @@ export class comicsZipPackerHandler implements FormatHandler {
       }
 
       // Base name for imgs -> archive
-      const baseName = inputFiles[0].name
-        .replace("_0." + inputFormat.extension, "." + inputFormat.extension)
-        .split(".")
-        .slice(0, -1)
-        .join(".");
+      const baseName = stripExt(
+        inputFiles[0].name.replace("_0." + inputFormat.extension, "." + inputFormat.extension),
+      );
 
       const zip = new JSZip();
 

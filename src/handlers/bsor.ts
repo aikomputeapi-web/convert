@@ -2,6 +2,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { Replay } from "./bsor/replay.ts";
 import { render } from "./bsor/renderer.ts";
 import CommonFormats from "src/CommonFormats.ts";
+import { changeExt, encode } from "src/common/index.ts";
 
 class bsorHandler implements FormatHandler {
   public readonly name = "bsor";
@@ -30,8 +31,8 @@ class bsorHandler implements FormatHandler {
           if (outputFormat.internal === "json") {
             return [
               {
-                name: file.name.split(".").slice(0, -1).join(".") + ".json",
-                bytes: new TextEncoder().encode(JSON.stringify(replay)),
+                name: changeExt(file.name, "json"),
+                bytes: encode(JSON.stringify(replay)),
               },
             ];
           }

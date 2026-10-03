@@ -1,6 +1,7 @@
 import type { ConvertContext } from "src/ui/ProgressStore.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
+import { changeExt } from "src/common/index.ts";
 
 class wavebreakHandler implements FormatHandler {
   public readonly name = "wavebreak";
@@ -55,7 +56,7 @@ class wavebreakHandler implements FormatHandler {
       r.set(file.bytes, 44);
       // eslint-disable-next-line no-unused-expressions
       sz - file.bytes.byteLength && (r[r.length - 1] = 0);
-      outputFiles.push({ name: file.name.split(".").slice(0, -1).join(".") + ".wav", bytes: r });
+      outputFiles.push({ name: changeExt(file.name, "wav"), bytes: r });
     }
     return outputFiles;
   }

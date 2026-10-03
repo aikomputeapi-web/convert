@@ -5,6 +5,7 @@ import unpackager from "turbowarp-unpackager";
 import scaffoldingUrl from "built/turbowarp-packager/scaffolding/scaffolding-full.js?url";
 import scaffoldingMinUrl from "built/turbowarp-packager/scaffolding/scaffolding-min.js?url";
 import addonsUrl from "built/turbowarp-packager/scaffolding/addons.js?url";
+import { changeExt } from "src/common/index.ts";
 
 // patching some assets
 largeAssets.scaffolding.src = scaffoldingUrl;
@@ -40,14 +41,14 @@ class turbowarpHandler implements FormatHandler {
         const bytes = (await packager.package()).data;
 
         outputFiles.push({
-          name: inputFile.name.replace(/\.sb3$/, ".html"),
+          name: changeExt(inputFile.name, "html"),
           bytes,
         });
       } else if (inputFormat.internal === "html") {
         const data = (await unpackager(inputFile.bytes)).data;
         const bytes = new Uint8Array(data);
         outputFiles.push({
-          name: inputFile.name.replace(/\.html$/, ".sb3"),
+          name: changeExt(inputFile.name, "sb3"),
           bytes,
         });
       } else {

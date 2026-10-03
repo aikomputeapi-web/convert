@@ -4,6 +4,7 @@ import JSZip from "jszip";
 import pako from "pako";
 import { isMOBI, MOBI } from "built/foliate-mobi/mobi.js";
 import { DOMParser } from "linkedom/worker";
+import { changeExt } from "src/common/index.ts";
 
 class azw3Handler implements FormatHandler {
   public readonly name = "azw3";
@@ -165,7 +166,7 @@ class azw3Handler implements FormatHandler {
       oebps.file("toc.ncx", ncx);
 
       const epubBlob = await zip.generateAsync({ type: "uint8array" });
-      const outputName = inputFile.name.split(".").slice(0, -1).join(".") + ".epub";
+      const outputName = changeExt(inputFile.name, "epub");
       outputFiles.push({
         name: outputName,
         bytes: epubBlob,

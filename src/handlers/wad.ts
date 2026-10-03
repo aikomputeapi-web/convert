@@ -2,6 +2,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import JSZip from "jszip";
 import { BadMagicError } from "src/errors.ts";
+import { changeExt, encode, stripExt } from "src/common/index.ts";
 
 interface WadLump {
   name: string;
@@ -88,12 +89,11 @@ class wadHandler implements FormatHandler {
 
     // Write directory
     let dirPos = headerSize + dataSize;
-    const encoder = new TextEncoder();
     for (let i = 0; i < lumps.length; i++) {
       view.setInt32(dirPos, lumpOffsets[i], true);
       view.setInt32(dirPos + 4, lumps[i].data.length, true);
       // Lump name: 8 bytes, null-padded (preserve original casing)
-      const nameBytes = encoder.encode(lumps[i].name.substring(0, 8));
+      const nameBytes = encode(lumps[i].name.substring(0, 8));
       buffer.set(nameBytes, dirPos + 8);
       dirPos += 16;
     }
@@ -111,7 +111,6 @@ class wadHandler implements FormatHandler {
     if (inputFormat.internal === "wad") {
       for (const file of inputFiles) {
         const { type, lumps } = this.parseWAD(file.bytes);
-        const baseName = file.name.replace(/\.wad$/i, "");
 
         if (outputFormat.internal === "zip") {
           // WAD → ZIP: each lump becomes a file
@@ -140,7 +139,7 @@ class wadHandler implements FormatHandler {
             zip.file(zipName, lump.data);
           }
           const output = await zip.generateAsync({ type: "uint8array" });
-          outputFiles.push({ bytes: output, name: baseName + ".zip" });
+          outputFiles.push({ bytes: output, name: changeExt(file.name, "zip") });
         } else if (outputFormat.internal === "json") {
           // WAD → JSON: export directory listing and metadata
           const info = {
@@ -153,19 +152,18 @@ class wadHandler implements FormatHandler {
             })),
           };
           outputFiles.push({
-            bytes: new TextEncoder().encode(JSON.stringify(info, null, 2)),
-            name: baseName + ".json",
+            bytes: encode(JSON.stringify(info, null, 2)),
+            name: changeExt(file.name, "json"),
           });
         } else if (outputFormat.internal === "wad") {
           // WAD → WAD (passthrough / preserve type)
           const rebuilt = this.buildWAD(lumps, type);
-          outputFiles.push({ bytes: rebuilt, name: baseName + ".wad" });
+          outputFiles.push({ bytes: rebuilt, name: changeExt(file.name, "wad") });
         }
       }
     } else if (inputFormat.internal === "zip" && outputFormat.internal === "wad") {
       // ZIP → WAD: each zip entry becomes a lump
       for (const file of inputFiles) {
-        const baseName = file.name.replace(/\.zip$/i, "");
         const zip = await JSZip.loadAsync(file.bytes);
 
         // Check for metadata file for lossless conversion
@@ -207,17 +205,13 @@ class wadHandler implements FormatHandler {
             if (entry.dir) continue;
             const data = await entry.async("uint8array");
             // Use filename without extension as lump name (max 8 chars)
-            const lumpName = filePath
-              .split("/")
-              .pop()!
-              .replace(/\.[^.]*$/, "")
-              .substring(0, 8);
+            const lumpName = stripExt(filePath.split("/").pop()!).substring(0, 8);
             lumps.push({ name: lumpName, data });
           }
         }
 
         const wadBytes = this.buildWAD(lumps, wadType);
-        outputFiles.push({ bytes: wadBytes, name: baseName + ".wad" });
+        outputFiles.push({ bytes: wadBytes, name: changeExt(file.name, "wad") });
       }
     } else {
       throw new Error("Invalid input-output.");

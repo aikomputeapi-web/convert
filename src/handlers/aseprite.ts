@@ -2,6 +2,8 @@ import pako from "pako";
 import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { BadMagicError, EOFError, InitializationError } from "src/errors.ts";
+import { changeExt, decode } from "src/common/index.ts";
+import { canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas.ts";
 
 const ASEPRITE_HEADER_MAGIC = 0xa5e0;
 const ASEPRITE_FRAME_MAGIC = 0xf1fa;
@@ -86,7 +88,7 @@ function readStringLE(bytes: Uint8Array, offset: number): { value: string; next:
   const length = view.getUint16(offset, true);
   const start = offset + 2;
   const end = start + length;
-  const value = new TextDecoder().decode(bytes.subarray(start, end));
+  const value = decode(bytes.subarray(start, end));
   return { value, next: end };
 }
 
@@ -475,12 +477,10 @@ class asepriteHandler implements FormatHandler {
   ];
   public ready = false;
 
-  #canvas?: OffscreenCanvas;
-  #ctx?: OffscreenCanvasRenderingContext2D;
+  #bundle?: CanvasBundle;
 
   async init() {
-    this.#canvas = new OffscreenCanvas(1, 1);
-    this.#ctx = this.#canvas.getContext("2d") || undefined;
+    this.#bundle = createCanvas();
     this.ready = true;
   }
 
@@ -489,30 +489,25 @@ class asepriteHandler implements FormatHandler {
     _inputFormat: FileFormat,
     outputFormat: FileFormat,
   ): Promise<FileData[]> {
-    if (!this.#canvas || !this.#ctx) throw new InitializationError("Handler not initialized.");
+    if (!this.#bundle) throw new InitializationError("Handler not initialized.");
+    const { canvas, ctx } = this.#bundle;
 
     const outputs: FileData[] = [];
     for (const inputFile of inputFiles) {
       const decoded = decodeAseprite(inputFile.bytes);
-      this.#canvas.width = decoded.width;
-      this.#canvas.height = decoded.height;
+      canvas.width = decoded.width;
+      canvas.height = decoded.height;
 
       const imagePixels = new Uint8ClampedArray(decoded.pixels.length);
       imagePixels.set(decoded.pixels);
       const imageData = new ImageData(imagePixels, decoded.width, decoded.height);
-      this.#ctx.putImageData(imageData, 0, 0);
+      ctx.putImageData(imageData, 0, 0);
 
-      const blob = await this.#canvas.convertToBlob({
-        type: outputFormat.mime,
-      });
-      const bytes = new Uint8Array(await blob.arrayBuffer());
+      const bytes = await canvasToBlob(this.#bundle, outputFormat.mime);
 
-      const baseName = inputFile.name.includes(".")
-        ? inputFile.name.slice(0, inputFile.name.lastIndexOf("."))
-        : inputFile.name;
       outputs.push({
         bytes,
-        name: `${baseName}.${outputFormat.extension}`,
+        name: changeExt(inputFile.name, outputFormat.extension),
       });
     }
 

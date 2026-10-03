@@ -2,6 +2,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import sqlite3InitModule from "@sqlite.org/sqlite-wasm";
 import { parse } from "papaparse";
+import { decode, encode } from "src/common/index.ts";
 
 class sqliteHandler implements FormatHandler {
   public readonly name = "sqlite";
@@ -71,10 +72,9 @@ class sqliteHandler implements FormatHandler {
             stmt.finalize();
           }
 
-          const encoder = new TextEncoder();
           outputFiles.push({
             name: `${table}.csv`,
-            bytes: new Uint8Array(encoder.encode(csvStr)),
+            bytes: encode(csvStr),
           });
         }
       }
@@ -86,8 +86,7 @@ class sqliteHandler implements FormatHandler {
       }
 
       for (const file of inputFiles) {
-        const decoder = new TextDecoder("utf-8"); // decode as UTF-8
-        parse(decoder.decode(file.bytes), {
+        parse(decode(file.bytes), {
           header: false,
           skipEmptyLines: true,
           complete: function (result) {

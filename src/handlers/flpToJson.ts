@@ -13,6 +13,7 @@ import {
   getFlVersion,
   getPPQ,
 } from "ts-flp";
+import { changeExt, encode } from "src/common/index.ts";
 
 class flpToJsonHandler implements FormatHandler {
   public readonly name = "flpToJson";
@@ -87,11 +88,9 @@ class flpToJsonHandler implements FormatHandler {
 
         // JSON encoding
         const jsonString = JSON.stringify(songData, null, 2);
-        const encoder = new TextEncoder();
-        const outputBytes = encoder.encode(jsonString);
+        const outputBytes = encode(jsonString);
 
-        const baseName = inputFile.name.split(".").slice(0, -1).join(".");
-        const newName = `${baseName}.json`;
+        const newName = changeExt(inputFile.name, "json");
 
         outputFiles.push({
           bytes: outputBytes,

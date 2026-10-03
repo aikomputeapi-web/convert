@@ -1,6 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "src/FormatHandler";
 import CommonFormats from "src/CommonFormats";
 import JSZip from "jszip";
+import { changeExt } from "src/common/index.ts";
 
 class mcModpackHandler implements FormatHandler {
   public readonly name = "mcModpack";
@@ -177,7 +178,7 @@ class mcModpackHandler implements FormatHandler {
 
       const outBytes = await outZip.generateAsync({ type: "uint8array" });
       outputFiles.push({
-        name: file.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension,
+        name: changeExt(file.name, outputFormat.extension),
         bytes: outBytes,
       });
     }

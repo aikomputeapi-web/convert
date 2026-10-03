@@ -10,6 +10,7 @@ import mime from "mime";
 import normalizeMimeType from "../normalizeMimeType.ts";
 import CommonFormats, { Category, type CategoryType } from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
+import { changeExt, encode } from "src/common/index.ts";
 
 class FFmpegHandler implements FormatHandler {
   static formatNames: Map<string, string> = new Map([
@@ -316,7 +317,7 @@ class FFmpegHandler implements FormatHandler {
       listString += `file '${entryName}'\n`;
       if (forceFPS) listString += `duration ${1 / forceFPS}\n`;
     }
-    await this.#ffmpeg.writeFile("list.txt", new TextEncoder().encode(listString));
+    await this.#ffmpeg.writeFile("list.txt", encode(listString));
 
     const command = [
       "-hide_banner",
@@ -436,8 +437,7 @@ class FFmpegHandler implements FormatHandler {
       throw "FFmpeg failed to produce output file";
     }
     if (!(fileData instanceof Uint8Array)) {
-      const encoder = new TextEncoder();
-      bytes = encoder.encode(fileData);
+      bytes = encode(fileData);
     } else {
       bytes = new Uint8Array(fileData?.buffer);
     }
@@ -445,8 +445,7 @@ class FFmpegHandler implements FormatHandler {
     await this.#ffmpeg.deleteFile("output");
     await this.#ffmpeg.deleteFile("list.txt");
 
-    const baseName = inputFiles[0].name.split(".").slice(0, -1).join(".");
-    const name = baseName + "." + outputFormat.extension;
+    const name = changeExt(inputFiles[0].name, outputFormat.extension);
 
     ctx?.progress("Conversion complete!", 1);
     ctx?.log(`Successfully converted to ${name} (${bytes.length} bytes)`);

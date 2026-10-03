@@ -1,5 +1,6 @@
 import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
+import { changeExt, decode, encode } from "src/common/index.ts";
 
 class htmlEmbedHandler implements FormatHandler {
   public readonly name = "htmlEmbed";
@@ -37,14 +38,11 @@ class htmlEmbedHandler implements FormatHandler {
     if (outputFormat.internal !== "html")
       throw new TypeError(`Unsupported output format: ${outputFormat.internal}`);
 
-    const encoder = new TextEncoder();
     let html = "";
 
     if (inputFormat.internal === "text") {
-      const decoder = new TextDecoder();
       for (const inputFile of inputFiles) {
-        const text = decoder
-          .decode(inputFile.bytes)
+        const text = decode(inputFile.bytes)
           .replaceAll("&", "&amp;")
           .replaceAll("<", "&lt;")
           .replaceAll(">", "&gt;");
@@ -68,9 +66,8 @@ class htmlEmbedHandler implements FormatHandler {
       }
     }
 
-    const bytes = encoder.encode(html);
-    const name =
-      inputFiles[0].name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension;
+    const bytes = encode(html);
+    const name = changeExt(inputFiles[0].name, outputFormat.extension);
     return [{ bytes, name }];
   }
 }

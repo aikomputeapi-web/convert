@@ -1,6 +1,8 @@
 import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { BadMagicError, InitializationError } from "src/errors.ts";
+import { changeExt } from "src/common/index.ts";
+import { canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas.ts";
 
 const TEXTUREFLAGS_ENVMAP = 0x00004000;
 const RESOURCE_HIGH_RES_IMAGE = 0x30;
@@ -801,12 +803,10 @@ class vtfHandler implements FormatHandler {
   ];
   public ready = false;
 
-  #canvas?: OffscreenCanvas;
-  #ctx?: OffscreenCanvasRenderingContext2D;
+  #bundle?: CanvasBundle;
 
   async init() {
-    this.#canvas = new OffscreenCanvas(1, 1);
-    this.#ctx = this.#canvas.getContext("2d") || undefined;
+    this.#bundle = createCanvas();
     this.ready = true;
   }
 
@@ -815,23 +815,23 @@ class vtfHandler implements FormatHandler {
     _inputFormat: FileFormat,
     outputFormat: FileFormat,
   ): Promise<FileData[]> {
-    if (!this.#canvas || !this.#ctx) throw new InitializationError("Handler not initialized.");
+    if (!this.#bundle) throw new InitializationError("Handler not initialized.");
+    const { canvas, ctx } = this.#bundle;
 
     const outputFiles: FileData[] = [];
     for (const inputFile of inputFiles) {
       const decoded = decodeVTF(inputFile.bytes);
-      this.#canvas.width = decoded.width;
-      this.#canvas.height = decoded.height;
+      canvas.width = decoded.width;
+      canvas.height = decoded.height;
       const imageData = new ImageData(
         new Uint8ClampedArray(decoded.pixels),
         decoded.width,
         decoded.height,
       );
-      this.#ctx.putImageData(imageData, 0, 0);
+      ctx.putImageData(imageData, 0, 0);
 
-      const blob = await this.#canvas.convertToBlob({ type: outputFormat.mime });
-      const bytes = new Uint8Array(await blob.arrayBuffer());
-      const name = inputFile.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension;
+      const bytes = await canvasToBlob(this.#bundle, outputFormat.mime);
+      const name = changeExt(inputFile.name, outputFormat.extension);
       outputFiles.push({ bytes, name });
     }
     return outputFiles;

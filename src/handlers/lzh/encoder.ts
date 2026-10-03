@@ -1,3 +1,5 @@
+import { encode } from "src/common/index.ts";
+
 /**
  * LZH/LHA Archive Encoder
  * Creates LHA archive format files
@@ -46,7 +48,7 @@ export class LZHEncoder {
     const crc = this.calculateCRC16(file.data);
 
     // Prepare filename (ensure it's not too long)
-    const filenameBytes = new TextEncoder().encode(file.filename);
+    const filenameBytes = encode(file.filename);
     const filenameLength = Math.min(filenameBytes.length, 255);
 
     // Calculate header size (level 0)
@@ -66,7 +68,7 @@ export class LZHEncoder {
     header[offset++] = 0;
 
     // Method
-    const methodBytes = new TextEncoder().encode(method);
+    const methodBytes = encode(method);
     header.set(methodBytes, offset);
     offset += 5;
 
