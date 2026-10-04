@@ -1,8 +1,9 @@
 import { isAbsolute, join, normalize } from "path";
-import { mkdir, readdir, rm, rename } from "fs/promises";
+import { mkdir, readdir, rm, rename, chmod, stat } from "fs/promises";
 import JSZip from "jszip";
 import type { ArgsDef } from "citty";
 import type { PrebuildRequirement, RequirementsConfig } from "./types";
+import { $ } from "bun";
 
 const OUT_DIR = join(import.meta.dir, "../../built");
 export const CACHE_DIR = join(import.meta.dir, "../../.cache/convert-build");
@@ -107,6 +108,25 @@ async function extractInto(outPath: string, extract: (dir: string) => Promise<vo
 
 export async function extractTarball(outPath: string, tarball: Uint8Array) {
   await extractInto(outPath, (dir) => new Bun.Archive(tarball).extract(dir).then(() => {}));
+}
+
+export async function extractTarballNative(outPath: string, tarball: Uint8Array) {
+  await extractInto(outPath, async (dir) => {
+    const tmp = join(CACHE_DIR, `tmp-${crypto.randomUUID()}`);
+    try {
+      await Bun.write(tmp, tarball);
+      await $`tar -xf ${tmp} -C ${dir}`;
+      // tar respects permissions unlike others, so we need to fix them
+      const entries = await readdir(dir, { recursive: true, withFileTypes: true });
+      for (const entry of entries) {
+        if (!entry.isFile()) continue;
+        const path = join(entry.parentPath, entry.name);
+        await chmod(path, (await stat(path)).mode | 0o200); // u+w
+      }
+    } finally {
+      await rm(tmp, { force: true });
+    }
+  });
 }
 
 export async function extractZip(outPath: string, zip: Uint8Array) {

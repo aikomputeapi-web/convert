@@ -105,4 +105,13 @@ export default [
     patches: ["browser.patch"],
     assemble: "assemble.ts",
   },
+  {
+    name: "7z",
+    url: "https://github.com/ip7z/7zip/releases/download/26.03/7z2603-src.tar.xz",
+    hash: ["sha256", "9cbde5099c6deb73691b0579063da5827522ccbbcba3f0020fd04e8c8c16c0d4"],
+    patches: ["emcc.patch"],
+    prebuild: "build.sh",
+    image:
+      "emscripten/emsdk:6.0.10@sha256:e077d54e2b8970575ebc4f185ac1de0b95c05f2b266134d4ba27449af7aebf65",
+  },
 ] satisfies RequirementsConfig;

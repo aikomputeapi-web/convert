@@ -5,6 +5,7 @@ import type { ArgsDef } from "citty";
 import {
   CACHE_DIR,
   extractTarball,
+  extractTarballNative,
   extractZip,
   findPrebuilts,
   loadRequirements,
@@ -126,6 +127,12 @@ export async function extractSource(
     await extractTarball(outPath, bytes);
   } else if (urlPath.endsWith(".zip")) {
     await extractZip(outPath, bytes);
+  } else if (
+    urlPath.endsWith(".tar.xz") ||
+    urlPath.endsWith(".tar.bz2") ||
+    urlPath.endsWith(".tar.zst")
+  ) {
+    await extractTarballNative(outPath, bytes); // this might not work on windows
   } else {
     await rm(outPath, { recursive: true, force: true });
     await Bun.write(join(outPath, decodeURIComponent(basename(urlPath))), bytes);
@@ -144,7 +151,9 @@ export async function prepareSource(
   const recipePath = join(scope.recipeDir, requirement.name);
   for (const patch of requirement.patches || []) {
     const directory = relative(ROOT_DIR, outPath).split(sep).join("/");
-    await $`git apply -p1 ${`--directory=${directory}`} ${join(recipePath, patch)}`.cwd(ROOT_DIR);
+    await $`git apply -p1 --ignore-whitespace ${`--directory=${directory}`} ${join(recipePath, patch)}`.cwd(
+      ROOT_DIR,
+    );
   }
 }
 
