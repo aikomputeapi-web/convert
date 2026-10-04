@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { changeExt, decode, encode, stripExt } from "src/common/index.ts";
 import { createCanvas, type CanvasBundle } from "src/common/canvas.ts";
 
@@ -506,9 +506,9 @@ function renderMolecule(molecule: OM_Molecule, format: string): Uint8Array {
 export class opusMagnumMainHandler implements FormatHandler {
   public readonly name = "opusMagnumMain";
   public supportedFormats = [
-    CommonFormats.SVG.builder("svg").to(),
-    CommonFormats.OM_PUZZLE.builder("puzzle").fromTo(),
-    CommonFormats.OM_MOLECULE.builder("molecule").fromTo(),
+    Formats.SVG.builder("svg").to(),
+    Formats.OM_PUZZLE.builder("puzzle").fromTo(),
+    Formats.OM_MOLECULE.builder("molecule").fromTo(),
   ];
   public ready = false;
 
@@ -884,8 +884,8 @@ export class opusMagnumMainHandler implements FormatHandler {
 export class opusMagnumITMHandler implements FormatHandler {
   public readonly name = "opusMagnumITM";
   public supportedFormats = [
-    CommonFormats.PNG.builder("png").from(),
-    CommonFormats.OM_MOLECULE.builder("molecule").to(),
+    Formats.PNG.builder("png").from(),
+    Formats.OM_MOLECULE.builder("molecule").to(),
   ];
   public ready = false;
 
@@ -1069,8 +1069,8 @@ export class opusMagnumITMHandler implements FormatHandler {
 export class opusMagnumTTMHandler implements FormatHandler {
   public readonly name = "opusMagnumTTM";
   public supportedFormats = [
-    CommonFormats.TEXT.builder("txt").from(),
-    CommonFormats.OM_MOLECULE.builder("molecule").to(),
+    Formats.TEXT.builder("txt").from(),
+    Formats.OM_MOLECULE.builder("molecule").to(),
   ];
   public ready = false;
 

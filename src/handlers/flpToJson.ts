@@ -1,6 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { Buffer } from "buffer";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 
 (globalThis as any).Buffer = Buffer;
 
@@ -18,9 +18,9 @@ import { changeExt, encode } from "src/common/index.ts";
 class flpToJsonHandler implements FormatHandler {
   public readonly name = "flpToJson";
   public supportedFormats = [
-    CommonFormats.FLP.builder("flp").from(),
+    Formats.FLP.builder("flp").from(),
     // Unsure about this, it might be lossless
-    CommonFormats.JSON.builder("json").to(),
+    Formats.JSON.builder("json").to(),
   ];
   public ready = false;
 

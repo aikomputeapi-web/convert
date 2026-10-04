@@ -7,7 +7,7 @@ import { PlayerSpawnPoint } from "celaria-formats/class/maps/objects/PlayerSpawn
 import { Sphere } from "celaria-formats/class/maps/objects/Sphere.mjs";
 import { TutorialHologram } from "celaria-formats/class/maps/objects/TutorialHologram.mjs";
 import type { FlatVector3, Vector3 } from "celaria-formats/types/data.mts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { Buffer } from "buffer";
 import { changeExt, decode, encode } from "src/common/index.ts";
@@ -55,10 +55,10 @@ function putInstances(
 class celariaMapHandler implements FormatHandler {
   public readonly name = "celariaMap";
   public supportedFormats = [
-    CommonFormats.OBJ.builder("obj").to(),
-    CommonFormats.JSON.builder("json").fromTo(),
-    CommonFormats.ECMAP.builder("ecmap").fromTo(),
-    CommonFormats.CMAP.builder("cmap").from(),
+    Formats.OBJ.builder("obj").to(),
+    Formats.JSON.builder("json").fromTo(),
+    Formats.ECMAP.builder("ecmap").fromTo(),
+    Formats.CMAP.builder("cmap").from(),
   ];
   public ready = false;
   /**/

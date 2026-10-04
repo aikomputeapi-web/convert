@@ -3,7 +3,7 @@ import { DOMParser } from "@xmldom/xmldom";
 import { SVGPathData } from "svg-pathdata";
 import { compress, decompress } from "woff2-encoder";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { changeExt, decode, encode } from "src/common/index.ts";
 
 function escapeHtml(str: string) {
@@ -223,11 +223,11 @@ async function normalizeToSfnt(inputFile: FileData, inputFormat: FileFormat): Pr
 class fontHandler implements FormatHandler {
   public readonly name = "font";
   public supportedFormats = [
-    CommonFormats.TTF.builder("ttf").lossless().from(),
-    CommonFormats.OTF.builder("otf").lossless().fromTo(),
-    CommonFormats.WOFF.builder("woff").lossless().from(),
-    CommonFormats.WOFF2.builder("woff2").lossless().fromTo(),
-    CommonFormats.SVG.builder("svg").fromTo(), // svg fonts lose a lot of font metadata, since they only convert the glyphs, so we can't mark it as lossless
+    Formats.TTF.builder("ttf").lossless().from(),
+    Formats.OTF.builder("otf").lossless().fromTo(),
+    Formats.WOFF.builder("woff").lossless().from(),
+    Formats.WOFF2.builder("woff2").lossless().fromTo(),
+    Formats.SVG.builder("svg").fromTo(), // svg fonts lose a lot of font metadata, since they only convert the glyphs, so we can't mark it as lossless
   ];
   public ready = false;
 

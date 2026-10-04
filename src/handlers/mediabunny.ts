@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import { Category } from "src/CommonFormats.ts";
+import { Category } from "src/Formats.ts";
 import type { ConvertContext } from "src/ui/ProgressStore.ts";
 import normalizeMimeType from "src/normalizeMimeType.ts";
 import * as mb from "mediabunny";

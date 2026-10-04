@@ -1,4 +1,4 @@
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { SimpleTTS } from "built/espeakng.js/js/espeakng-simple.js";
 import { WaveFile } from "wavefile";
@@ -7,10 +7,7 @@ import { changeExt, decode } from "src/common/index.ts";
 
 export class espeakngHandler implements FormatHandler {
   public readonly name = "espeakng";
-  public supportedFormats = [
-    CommonFormats.TEXT.builder("text").from(),
-    CommonFormats.WAV.builder("wav").to(),
-  ];
+  public supportedFormats = [Formats.TEXT.builder("text").from(), Formats.WAV.builder("wav").to()];
   public ready = false;
   #tts: SimpleTTS | undefined = undefined;
 

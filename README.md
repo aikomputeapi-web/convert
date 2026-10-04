@@ -93,15 +93,15 @@ Below is a super barebones handler that does absolutely nothing. You can use thi
 // file: dummy.ts
 
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 
 class dummyHandler implements FormatHandler {
   public readonly name = "dummy";
   public supportedFormats = [
-    CommonFormats.PNG.builder("png").lossless().fromTo(),
+    Formats.PNG.builder("png").lossless().fromTo(),
     // modifiers go before the direction
-    CommonFormats.GIF.builder("gif").to(),
-    // add custom formats to CommonFormats.ts
+    Formats.GIF.builder("gif").to(),
+    // add custom formats to Formats.ts
   ];
   public ready = false;
 

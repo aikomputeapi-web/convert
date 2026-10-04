@@ -6,7 +6,7 @@ import * as CSG from "three-bvh-csg";
 import { Demo } from "built/sppd/sppd/Demo.ts";
 import { Vector } from "built/sppd/sppd/Vector.ts";
 
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { InitializationError } from "src/errors.ts";
 import { changeExt, encode } from "src/common/index.ts";
 
@@ -187,10 +187,10 @@ const wallPortalMaterial = new THREE.MeshLambertMaterial({ color: 0x505050 });
 class sppdHandler implements FormatHandler {
   public readonly name = "sppd";
   public supportedFormats = [
-    CommonFormats.PORTAL2_DEM.builder("dem").from(),
-    CommonFormats.PNG.builder("png").to(),
-    CommonFormats.JPEG.builder("jpeg").to(),
-    CommonFormats.JSON.builder("json").lossless().to(),
+    Formats.PORTAL2_DEM.builder("dem").from(),
+    Formats.PNG.builder("png").to(),
+    Formats.JPEG.builder("jpeg").to(),
+    Formats.JSON.builder("json").lossless().to(),
   ];
   public ready = false;
 

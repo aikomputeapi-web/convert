@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import JSZip from "jszip";
 import { changeExt, decode, encode } from "src/common/index.ts";
 
@@ -36,9 +36,9 @@ function write_lendian_4(x: number): number[] {
 class brarchiveHandler implements FormatHandler {
   public readonly name = "brarchive";
   public supportedFormats = [
-    CommonFormats.ZIP.builder("zip").lossless().fromTo(),
-    CommonFormats.JSON.builder("json").lossless().fromTo(),
-    CommonFormats.BRARCHIVE.builder("brarchive").lossless().fromTo(),
+    Formats.ZIP.builder("zip").lossless().fromTo(),
+    Formats.JSON.builder("json").lossless().fromTo(),
+    Formats.BRARCHIVE.builder("brarchive").lossless().fromTo(),
   ];
   public ready = false;
 

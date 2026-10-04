@@ -1,12 +1,12 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { changeExt, decode, encode } from "src/common/index.ts";
 
 class alsHandler implements FormatHandler {
   public readonly name = "als";
   public supportedFormats = [
-    CommonFormats.ALS.builder("als").lossless().from(),
-    CommonFormats.XML.builder("xml").to(),
+    Formats.ALS.builder("als").lossless().from(),
+    Formats.XML.builder("xml").to(),
   ];
   public ready = false;
 

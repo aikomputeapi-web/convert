@@ -1,7 +1,7 @@
 import { DOMParser } from "linkedom/worker";
 import { EllipseCurve } from "three";
 import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader.js";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { changeExt, decode, encode } from "src/common/index.ts";
 
@@ -40,10 +40,7 @@ function safeMax(arr: number[]) {
 
 class pyTurtleHandler implements FormatHandler {
   public readonly name = "pyTurtle";
-  public supportedFormats = [
-    CommonFormats.PYTHON.builder("py").to(),
-    CommonFormats.SVG.builder("svg").from(),
-  ];
+  public supportedFormats = [Formats.PYTHON.builder("py").to(), Formats.SVG.builder("svg").from()];
   public ready = false;
 
   async init() {

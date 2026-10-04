@@ -2,7 +2,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { LZHDecoder } from "./lzh/decoder.ts";
 import { LZHEncoder, type LHAFileInput } from "./lzh/encoder.ts";
 import JSZip from "jszip";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { InitializationError } from "src/errors.ts";
 import { changeExt, encode } from "src/common/index.ts";
 
@@ -33,9 +33,9 @@ function sanitizeString(str: string): string {
 export class lzhHandler implements FormatHandler {
   public readonly name = "lzh";
   public supportedFormats = [
-    CommonFormats.LZH.builder("lzh").lossless().fromTo(),
-    CommonFormats.ZIP.builder("zip").lossless().fromTo(),
-    CommonFormats.JSON.builder("json").to(),
+    Formats.LZH.builder("lzh").lossless().fromTo(),
+    Formats.ZIP.builder("zip").lossless().fromTo(),
+    Formats.JSON.builder("json").to(),
   ];
   public ready = false;
 
@@ -181,7 +181,7 @@ export class lzhHandler implements FormatHandler {
 // Packs any input(s) into a singular LZH file. Separated for tree purposes.
 export class lzh2Handler implements FormatHandler {
   public readonly name = "lzh2";
-  public supportedFormats = [CommonFormats.LZH.builder("lzh").lossless().to()];
+  public supportedFormats = [Formats.LZH.builder("lzh").lossless().to()];
   public supportAnyInput = true;
   public ready = false;
 

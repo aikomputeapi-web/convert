@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { Packager, largeAssets, downloadProject } from "turbowarp-packager";
 import unpackager from "turbowarp-unpackager";
 import scaffoldingUrl from "built/turbowarp-packager/scaffolding/scaffolding-full.js?url";
@@ -15,8 +15,8 @@ largeAssets.addons.src = addonsUrl;
 class turbowarpHandler implements FormatHandler {
   public readonly name = "turbowarp";
   public supportedFormats = [
-    CommonFormats.SB3.builder("sb3").lossless().fromTo(), // all project data is in the html
-    CommonFormats.HTML.builder("html").lossless().fromTo(),
+    Formats.SB3.builder("sb3").lossless().fromTo(), // all project data is in the html
+    Formats.HTML.builder("html").lossless().fromTo(),
   ];
   public ready = false;
 

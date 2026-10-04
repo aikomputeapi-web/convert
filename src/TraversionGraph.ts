@@ -1,5 +1,5 @@
 import { ConvertPathNode, type FileFormat, type HandlerDefinition } from "./FormatHandler.ts";
-import type { CategoryType } from "./CommonFormats.ts";
+import type { CategoryType } from "./Formats.ts";
 import { PriorityQueue } from "./PriorityQueue.ts";
 import * as comlink from "comlink";
 

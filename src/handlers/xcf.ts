@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import XCF from "built/gimper/src/main.js";
 import { InitializationError } from "src/errors.ts";
 import { changeExt } from "src/common/index.ts";
@@ -8,8 +8,8 @@ import { canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas
 class xcfHandler implements FormatHandler {
   public readonly name = "xcf";
   public supportedFormats = [
-    CommonFormats.XCF.builder("xcf").lossless().from(),
-    CommonFormats.PNG.builder("png").lossless().to(),
+    Formats.XCF.builder("xcf").lossless().from(),
+    Formats.PNG.builder("png").lossless().to(),
   ];
   public ready = false;
 

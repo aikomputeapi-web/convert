@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import JSZip from "jszip";
 import pako from "pako";
 import { isMOBI, MOBI } from "built/foliate-mobi/mobi.js";
@@ -9,9 +9,9 @@ import { changeExt } from "src/common/index.ts";
 class azw3Handler implements FormatHandler {
   public readonly name = "azw3";
   public supportedFormats = [
-    CommonFormats.AZW3.builder("azw3").from(),
-    CommonFormats.MOBI.builder("mobi").from(),
-    CommonFormats.EPUB.builder("epub").to(),
+    Formats.AZW3.builder("azw3").from(),
+    Formats.MOBI.builder("mobi").from(),
+    Formats.EPUB.builder("epub").to(),
   ];
   public ready = false;
 

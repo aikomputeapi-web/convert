@@ -1,4 +1,4 @@
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import type { FormatHandler, FileData, FileFormat } from "../FormatHandler.ts";
 import { decode, encode } from "src/common/index.ts";
 
@@ -94,13 +94,13 @@ function decodeUsingTextDecoder(bytes: Uint8Array, label: string) {
 export default class textEncodingHandler implements FormatHandler {
   public readonly name = "textEncoding";
   public supportedFormats = [
-    CommonFormats.TEXT.builder("txt").lossless().fromTo(), // May or may not have BOM depending on browser
-    CommonFormats.TEXT_UTF8_NO_BOM.builder("utf8NB").lossless().to(), // In case the broeser defaults to with BOM, we can choose to force BOMless UTF-8.
-    CommonFormats.TEXT_UTF8_BOM.builder("utf8WB").lossless().to(), // UTF8 with forced BOM.
-    CommonFormats.TEXT_UTF16LE.builder("utf16le").lossless().fromTo(),
-    CommonFormats.TEXT_UTF16BE.builder("utf16be").lossless().fromTo(),
-    CommonFormats.TEXT_UTF32LE.builder("utf32le").lossless().fromTo(),
-    CommonFormats.TEXT_UTF32BE.builder("utf32be").lossless().fromTo(),
+    Formats.TEXT.builder("txt").lossless().fromTo(), // May or may not have BOM depending on browser
+    Formats.TEXT_UTF8_NO_BOM.builder("utf8NB").lossless().to(), // In case the broeser defaults to with BOM, we can choose to force BOMless UTF-8.
+    Formats.TEXT_UTF8_BOM.builder("utf8WB").lossless().to(), // UTF8 with forced BOM.
+    Formats.TEXT_UTF16LE.builder("utf16le").lossless().fromTo(),
+    Formats.TEXT_UTF16BE.builder("utf16be").lossless().fromTo(),
+    Formats.TEXT_UTF32LE.builder("utf32le").lossless().fromTo(),
+    Formats.TEXT_UTF32BE.builder("utf32be").lossless().fromTo(),
   ];
   public ready = false;
 

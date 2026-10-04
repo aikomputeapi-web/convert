@@ -1,6 +1,6 @@
 import { buildPresentation, parseZip, renderSlide } from "@aiden0z/pptx-renderer";
 import { jsPDF } from "jspdf";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { changeExt } from "src/common/index.ts";
 
@@ -50,10 +50,7 @@ function toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
 
 export default class pptxRendererHandler implements FormatHandler {
   public readonly name = "pptxRenderer";
-  public supportedFormats = [
-    CommonFormats.PPTX.builder("pptx").from(),
-    CommonFormats.PDF.builder("pdf").to(),
-  ];
+  public supportedFormats = [Formats.PPTX.builder("pptx").from(), Formats.PDF.builder("pdf").to()];
   public ready = false;
   public offload = false; // dom heavy
 

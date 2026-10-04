@@ -1,6 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { InitializationError } from "src/errors.ts";
 import { changeExt, decode } from "src/common/index.ts";
 import { canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas.ts";
@@ -13,8 +13,8 @@ const COLOR_BUNNY = [255, 255, 255];
 class bunburrowsHandler implements FormatHandler {
   public readonly name = "bunburrows";
   public supportedFormats = [
-    CommonFormats.PNG.builder("png").fromTo(),
-    CommonFormats.BUNLEVEL.builder("bunlevel").from(),
+    Formats.PNG.builder("png").fromTo(),
+    Formats.BUNLEVEL.builder("bunlevel").from(),
   ];
   public ready = false;
 
@@ -42,7 +42,7 @@ class bunburrowsHandler implements FormatHandler {
       let new_file_bytes = new Uint8Array(file.bytes);
 
       // Code here based on mcmap.ts
-      if (inputFormat.internal === "bunlevel" && outputFormat.mime === CommonFormats.PNG.mime) {
+      if (inputFormat.internal === "bunlevel" && outputFormat.mime === Formats.PNG.mime) {
         // Read .level as text
         let level_string = decode(new_file_bytes);
         let level_data_array = level_string.split(/[\s,;:]+/);

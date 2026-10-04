@@ -12,7 +12,7 @@ import {
   midiToPng,
 } from "./midi/midifilelib.js";
 
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { InitializationError } from "src/errors.ts";
 import sfontUrl from "built/timgm6mb/TimGM6mb.sf2?url";
 import fluidsynthUrl from "js-synthesizer/externals/libfluidsynth-2.4.6.js?url";
@@ -81,14 +81,14 @@ function loadFluidSynth(): Promise<{ JSSynth: any; sfontBin: ArrayBuffer }> {
 export class midiCodecHandler implements FormatHandler {
   public readonly name = "midiCodec";
   public supportedFormats = [
-    CommonFormats.MIDI.builder("mid").lossless().fromTo(),
-    CommonFormats.RTTTL.builder("rtttl").fromTo(),
-    CommonFormats.NOKRING.builder("rtttl").from(),
-    CommonFormats.GRUB.builder("grub").fromTo(),
-    CommonFormats.TEXT.builder("txt").lossless().fromTo(),
+    Formats.MIDI.builder("mid").lossless().fromTo(),
+    Formats.RTTTL.builder("rtttl").fromTo(),
+    Formats.NOKRING.builder("rtttl").from(),
+    Formats.GRUB.builder("grub").fromTo(),
+    Formats.TEXT.builder("txt").lossless().fromTo(),
     // PNG spectrogram -> MIDI (matches meyda's internal="image" so routing picks
     // up the audio->png->mid path automatically)
-    CommonFormats.PNG.builder("png").fromTo(),
+    Formats.PNG.builder("png").fromTo(),
   ];
   public ready = false;
 
@@ -184,8 +184,8 @@ export class midiCodecHandler implements FormatHandler {
 export class midiSynthHandler implements FormatHandler {
   public readonly name = "midiSynth";
   public supportedFormats = [
-    CommonFormats.MIDI.builder("mid").lossless().from(),
-    CommonFormats.WAV.builder("wav").lossless().to(),
+    Formats.MIDI.builder("mid").lossless().from(),
+    Formats.WAV.builder("wav").lossless().to(),
   ];
   public ready = false;
 

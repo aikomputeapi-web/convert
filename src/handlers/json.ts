@@ -1,4 +1,4 @@
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import parseXML from "built/envelope/parseXML.js";
 import * as yaml from "yaml";
@@ -9,11 +9,11 @@ import { changeExt, decode, encode } from "src/common/index.ts";
 export class toJsonHandler implements FormatHandler {
   public readonly name = "toJson";
   public supportedFormats = [
-    CommonFormats.CSV.builder("csv").from(),
-    CommonFormats.XML.builder("xml").from(),
-    CommonFormats.YML.builder("yaml").from(),
-    CommonFormats.JSONL.builder("jsonl").from(),
-    CommonFormats.JSON.builder("json").lossless().to(),
+    Formats.CSV.builder("csv").from(),
+    Formats.XML.builder("xml").from(),
+    Formats.YML.builder("yaml").from(),
+    Formats.JSONL.builder("jsonl").from(),
+    Formats.JSON.builder("json").lossless().to(),
   ];
   public ready = false;
 
@@ -74,11 +74,11 @@ export class fromJsonHandler {
   public readonly name = "fromJson";
   public ready = false;
   public supportedFormats = [
-    CommonFormats.CSV.builder("csv").to(),
-    CommonFormats.XML.builder("xml").to(),
-    CommonFormats.YML.builder("yaml").to(),
-    CommonFormats.JSONL.builder("jsonl").to(),
-    CommonFormats.JSON.builder("json").from(),
+    Formats.CSV.builder("csv").to(),
+    Formats.XML.builder("xml").to(),
+    Formats.YML.builder("yaml").to(),
+    Formats.JSONL.builder("jsonl").to(),
+    Formats.JSON.builder("json").from(),
   ];
 
   async init() {

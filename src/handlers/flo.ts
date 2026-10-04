@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import initReflo, { decode, encode, get_flo_file_info } from "@flo-audio/reflo";
 import { WaveFile } from "wavefile";
 import refloWasmUrl from "@flo-audio/reflo/reflo_bg.wasm?url";
@@ -9,9 +9,9 @@ import { changeExt } from "src/common/index.ts";
 class floHandler implements FormatHandler {
   public readonly name = "flo";
   public supportedFormats = [
-    CommonFormats.FLO.builder("flo").fromTo(),
-    CommonFormats.WAV.builder("wav").lossless().fromTo(),
-    CommonFormats.F32LE.builder("f32le").lossless().fromTo(),
+    Formats.FLO.builder("flo").fromTo(),
+    Formats.WAV.builder("wav").lossless().fromTo(),
+    Formats.F32LE.builder("f32le").lossless().fromTo(),
   ];
   public ready = false;
 

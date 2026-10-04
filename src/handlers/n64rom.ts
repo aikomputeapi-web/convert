@@ -1,6 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { InitializationError } from "src/errors.ts";
 import { changeExt } from "src/common/index.ts";
 import { blobToCanvas, canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas.ts";
@@ -18,10 +18,10 @@ type N64Order = "z64" | "n64" | "v64";
 class n64romHandler implements FormatHandler {
   public readonly name = "n64rom";
   public supportedFormats = [
-    CommonFormats.Z64.builder("z64").lossless().fromTo(),
-    CommonFormats.N64.builder("n64").lossless().fromTo(),
-    CommonFormats.V64.builder("v64").lossless().fromTo(),
-    CommonFormats.PNG.builder("n64png").lossless().fromTo(),
+    Formats.Z64.builder("z64").lossless().fromTo(),
+    Formats.N64.builder("n64").lossless().fromTo(),
+    Formats.V64.builder("v64").lossless().fromTo(),
+    Formats.PNG.builder("n64png").lossless().fromTo(),
   ];
   public ready = false;
 

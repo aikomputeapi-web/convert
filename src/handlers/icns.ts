@@ -1,4 +1,4 @@
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { type FileData, type FileFormat, type FormatHandler } from "../FormatHandler.ts";
 import { BadMagicError, InitializationError } from "src/errors.ts";
 import { changeExt } from "src/common/index.ts";
@@ -121,9 +121,9 @@ export function extractBestPngFromIcns(icnsBytes: Uint8Array): Uint8Array {
 class icnsHandler implements FormatHandler {
   public readonly name = "icns";
   public supportedFormats = [
-    CommonFormats.PNG.builder("png").lossless().fromTo(),
+    Formats.PNG.builder("png").lossless().fromTo(),
     // ICNS contains a finite icon set; conversions here are not guaranteed bit-exact round-trips.
-    CommonFormats.ICNS.builder("icns").fromTo(),
+    Formats.ICNS.builder("icns").fromTo(),
   ];
   public ready = false;
 

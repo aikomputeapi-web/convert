@@ -1,4 +1,4 @@
-import type { CategoryType } from "src/CommonFormats";
+import type { CategoryType } from "src/Formats";
 import FileIcon from "src/ui/components/FileIcon";
 import { X } from "lucide-preact";
 import "./index.css";

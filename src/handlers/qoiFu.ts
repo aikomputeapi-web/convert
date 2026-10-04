@@ -1,4 +1,4 @@
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 import { QOIDecoder, QOIEncoder } from "qoi-fu";
@@ -10,11 +10,11 @@ import { blobToCanvas, canvasToBlob, createCanvas, type CanvasBundle } from "src
 class qoiFuHandler implements FormatHandler {
   public readonly name = "qoiFu";
   public supportedFormats = [
-    CommonFormats.PNG.builder("png").lossless().fromTo(),
-    CommonFormats.JPEG.builder("jpeg").fromTo(),
-    CommonFormats.WEBP.builder("webp").fromTo(),
-    CommonFormats.GIF.builder("gif").from(),
-    CommonFormats.QOI.builder("qoi").lossless().fromTo(),
+    Formats.PNG.builder("png").lossless().fromTo(),
+    Formats.JPEG.builder("jpeg").fromTo(),
+    Formats.WEBP.builder("webp").fromTo(),
+    Formats.GIF.builder("gif").from(),
+    Formats.QOI.builder("qoi").lossless().fromTo(),
   ];
   public ready = false;
 

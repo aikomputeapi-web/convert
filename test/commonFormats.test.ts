@@ -1,7 +1,7 @@
 import { afterAll, expect, test } from "bun:test";
 import puppeteer from "puppeteer";
 import type { FileData, FormatHandler, FileFormat, ConvertPathNode } from "../src/FormatHandler.js";
-import CommonFormats from "../src/CommonFormats.js";
+import Formats from "../src/Formats.js";
 import type { HandlerName } from "../src/handlers/index.js";
 
 declare global {
@@ -86,11 +86,7 @@ function attemptConversion(files: string[], from: FileFormat, to: FileFormat) {
 test(
   "png → jpeg",
   async () => {
-    const conversion = await attemptConversion(
-      ["colors_50x50.png"],
-      CommonFormats.PNG,
-      CommonFormats.JPEG,
-    );
+    const conversion = await attemptConversion(["colors_50x50.png"], Formats.PNG, Formats.JPEG);
 
     expect(conversion).toBeTruthy();
     expect(conversion!.path.map((c) => c.format.mime)).toEqual(["image/png", "image/jpeg"]);
@@ -101,11 +97,7 @@ test(
 test(
   "png → svg",
   async () => {
-    const conversion = await attemptConversion(
-      ["colors_50x50.png"],
-      CommonFormats.PNG,
-      CommonFormats.SVG,
-    );
+    const conversion = await attemptConversion(["colors_50x50.png"], Formats.PNG, Formats.SVG);
 
     expect(conversion).toBeTruthy();
     expect(conversion!.path.map((c) => c.format.mime)).toEqual(["image/png", "image/svg+xml"]);
@@ -116,7 +108,7 @@ test(
 test(
   "mp4 → apng",
   async () => {
-    const conversion = await attemptConversion(["doom.mp4"], CommonFormats.MP4, CommonFormats.APNG);
+    const conversion = await attemptConversion(["doom.mp4"], Formats.MP4, Formats.APNG);
 
     expect(conversion).toBeTruthy();
     expect(conversion!.path.map((c) => c.format.format)).toEqual(["mp4", "apng"]);
@@ -128,11 +120,7 @@ test(
 test(
   "png → mp4",
   async () => {
-    const conversion = await attemptConversion(
-      ["colors_50x50.png"],
-      CommonFormats.PNG,
-      CommonFormats.MP4,
-    );
+    const conversion = await attemptConversion(["colors_50x50.png"], Formats.PNG, Formats.MP4);
 
     expect(conversion).toBeTruthy();
     expect(conversion!.path.map((c) => c.format.mime)).toEqual(["image/png", "video/mp4"]);
@@ -143,11 +131,7 @@ test(
 test(
   "png → wav → mp3",
   async () => {
-    const conversion = await attemptConversion(
-      ["colors_50x50.png"],
-      CommonFormats.PNG,
-      CommonFormats.MP3,
-    );
+    const conversion = await attemptConversion(["colors_50x50.png"], Formats.PNG, Formats.MP3);
 
     expect(conversion).toBeTruthy();
     expect(conversion!.path.map((c) => c.format.mime)).toEqual([
@@ -162,11 +146,7 @@ test(
 test(
   "mp3 → png → gif",
   async () => {
-    const conversion = await attemptConversion(
-      ["gaster.mp3"],
-      CommonFormats.MP3,
-      CommonFormats.GIF,
-    );
+    const conversion = await attemptConversion(["gaster.mp3"], Formats.MP3, Formats.GIF);
 
     expect(conversion).toBeTruthy();
     expect(conversion!.path.map((c) => c.format.mime)).toEqual([
@@ -182,11 +162,7 @@ test(
 test(
   "docx → typst → pdf",
   async () => {
-    const conversion = await attemptConversion(
-      ["word.docx"],
-      CommonFormats.DOCX,
-      CommonFormats.PDF,
-    );
+    const conversion = await attemptConversion(["word.docx"], Formats.DOCX, Formats.PDF);
 
     expect(conversion).toBeTruthy();
     expect(conversion!.path.map((c) => c.format.mime)).toEqual([
@@ -205,8 +181,8 @@ test(
   async () => {
     const conversion = await attemptConversion(
       ["chart-and-complex.pptx"],
-      CommonFormats.PPTX,
-      CommonFormats.PDF,
+      Formats.PPTX,
+      Formats.PDF,
     );
 
     expect(conversion).toBeTruthy();
@@ -221,11 +197,7 @@ test(
 test(
   "md → docx",
   async () => {
-    const conversion = await attemptConversion(
-      ["markdown.md"],
-      CommonFormats.MD,
-      CommonFormats.DOCX,
-    );
+    const conversion = await attemptConversion(["markdown.md"], Formats.MD, Formats.DOCX);
 
     expect(conversion).toBeTruthy();
     expect(conversion!.path.map((c) => c.format.mime)).toEqual([
@@ -239,11 +211,7 @@ test(
 test(
   "txt → wav → flac",
   async () => {
-    const conversion = await attemptConversion(
-      ["markdown.md"],
-      CommonFormats.TEXT,
-      CommonFormats.FLAC,
-    );
+    const conversion = await attemptConversion(["markdown.md"], Formats.TEXT, Formats.FLAC);
 
     expect(conversion).toBeTruthy();
     expect(conversion!.path.map((c) => c.format.mime)).toEqual([

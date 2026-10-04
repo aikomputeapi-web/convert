@@ -1,4 +1,4 @@
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import type { TypstSnippet } from "@myriaddreamin/typst.ts/dist/esm/contrib/snippet.mjs";
 import typstCompilerWasmUrl from "@myriaddreamin/typst-ts-web-compiler/wasm?url";
@@ -334,9 +334,9 @@ function parseSvgPageDimensions(svgBytes: Uint8Array): { widthPt: number; height
 class typstHandler implements FormatHandler {
   public readonly name = "typst";
   public supportedFormats = [
-    CommonFormats.TYPST.builder("typst").lossless().from(),
-    CommonFormats.PDF.builder("pdf").lossless().to(),
-    CommonFormats.SVG.builder("svg").fromTo(),
+    Formats.TYPST.builder("typst").lossless().from(),
+    Formats.PDF.builder("pdf").lossless().to(),
+    Formats.SVG.builder("svg").fromTo(),
   ];
   public ready = false;
 

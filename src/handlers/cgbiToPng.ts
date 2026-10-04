@@ -1,6 +1,6 @@
 import pako from "pako";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { changeExt } from "src/common/index.ts";
 
 async function revertCgBIBuffer(input: Uint8Array | ArrayBuffer): Promise<Uint8Array> {
@@ -149,8 +149,8 @@ async function revertCgBIBuffer(input: Uint8Array | ArrayBuffer): Promise<Uint8A
 class cgbiToPngHandler implements FormatHandler {
   public readonly name = "cgbiToPng";
   public supportedFormats = [
-    CommonFormats.CGBI_PNG.builder("cgbi-png").lossless().from(),
-    CommonFormats.PNG.builder("png").lossless().to(),
+    Formats.CGBI_PNG.builder("cgbi-png").lossless().from(),
+    Formats.PNG.builder("png").lossless().to(),
   ];
   public ready = false;
 

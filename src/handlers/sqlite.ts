@@ -1,4 +1,4 @@
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import sqlite3InitModule from "@sqlite.org/sqlite-wasm";
 import { parse } from "papaparse";
@@ -7,10 +7,10 @@ import { decode, encode } from "src/common/index.ts";
 class sqliteHandler implements FormatHandler {
   public readonly name = "sqlite";
   public supportedFormats = [
-    CommonFormats.SQLITE3.builder("sqlite3").fromTo(),
-    CommonFormats.ITDB.builder("sqlite3").from(),
+    Formats.SQLITE3.builder("sqlite3").fromTo(),
+    Formats.ITDB.builder("sqlite3").from(),
     // Lossy because extracts only tables
-    CommonFormats.CSV.builder("csv").fromTo(),
+    Formats.CSV.builder("csv").fromTo(),
   ];
   public ready = false;
 

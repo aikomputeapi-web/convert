@@ -1,14 +1,14 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { Chess } from "chess.js";
 import { changeExt, decode, encode } from "src/common/index.ts";
 
 class chessjsHandler implements FormatHandler {
   public readonly name = "chessjs";
   public supportedFormats = [
-    CommonFormats.FEN.builder("fen").fromTo(),
-    CommonFormats.PGN.builder("pgn").lossless().fromTo(),
-    CommonFormats.TEXT.builder("txt").to(),
+    Formats.FEN.builder("fen").fromTo(),
+    Formats.PGN.builder("pgn").lossless().fromTo(),
+    Formats.TEXT.builder("txt").to(),
   ];
   public ready = false;
 

@@ -2,7 +2,7 @@ import * as vexml from "@stringsync/vexml";
 import VexFlow from "vexflow";
 import { DOMParser as WorkerDOMParser, Document } from "linkedom/worker";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { buildMidi, addNote } from "./midi/midifilelib.js";
 import bravuraUrl from "@vexflow-fonts/bravura/bravura.woff2?url";
 import academicoUrl from "@vexflow-fonts/academico/academico.woff2?url";
@@ -53,10 +53,10 @@ function renderCanvases(xml: string): OffscreenCanvas[] {
 class vexFlowHandler implements FormatHandler {
   public readonly name = "vexFlow";
   public supportedFormats = [
-    CommonFormats.MUSICXML.builder("musicxml").from(),
-    CommonFormats.MXL.builder("mxl").from(),
-    CommonFormats.HTML.builder("html").to(),
-    CommonFormats.MIDI.builder("mid").to(),
+    Formats.MUSICXML.builder("musicxml").from(),
+    Formats.MXL.builder("mxl").from(),
+    Formats.HTML.builder("html").to(),
+    Formats.MIDI.builder("mid").to(),
   ];
   public ready = false;
   private static fontsLoaded = false;

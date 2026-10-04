@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { FileReader } from "built/terraria-wld-parser/src/";
 import { changeExt } from "src/common/index.ts";
 import { canvasToBlob, createCanvas } from "src/common/canvas.ts";
@@ -883,8 +883,8 @@ const MOD_TILE_COLORS: [number, number, number][] = [
 class terrariaWldHandler implements FormatHandler {
   public readonly name = "terrariaWld";
   public supportedFormats = [
-    CommonFormats.TERRARIA_WLD.builder("wld").from(),
-    CommonFormats.PNG.builder("png").to(),
+    Formats.TERRARIA_WLD.builder("wld").from(),
+    Formats.PNG.builder("png").to(),
   ];
   public ready = false;
 

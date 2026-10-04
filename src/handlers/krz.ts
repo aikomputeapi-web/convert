@@ -1,14 +1,11 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import JSZip from "jszip";
 import { changeExt } from "src/common/index.ts";
 
 class krzHandler implements FormatHandler {
   public readonly name = "krz";
-  public supportedFormats = [
-    CommonFormats.PNG.builder("png").to(),
-    CommonFormats.KRZ.builder("krz").from(),
-  ];
+  public supportedFormats = [Formats.PNG.builder("png").to(), Formats.KRZ.builder("krz").from()];
   public ready = false;
 
   async init() {

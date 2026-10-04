@@ -1,4 +1,4 @@
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 import * as THREE from "three";
@@ -300,8 +300,8 @@ export function bbmodelToObj(input: string | BBModel) {
 class bbmodelHandler implements FormatHandler {
   public readonly name = "bbmodel";
   public supportedFormats = [
-    CommonFormats.OBJ.builder("obj").to(),
-    CommonFormats.BBMODEL.builder("bbmodel").from(),
+    Formats.OBJ.builder("obj").to(),
+    Formats.BBMODEL.builder("bbmodel").from(),
   ];
   public ready = false;
 

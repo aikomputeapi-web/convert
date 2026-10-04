@@ -1,5 +1,5 @@
 import type { FileFormat, FileData, FormatHandler } from "../FormatHandler.js";
-import CommonFormats from "src/CommonFormats.js";
+import Formats from "src/Formats.js";
 import { Buffer } from "buffer";
 import { encode, stripExt } from "src/common/index.ts";
 
@@ -11,8 +11,8 @@ const EXE_MIME = "application/vnd.microsoft.portable-executable";
 export default class exeToBatHandler implements FormatHandler {
   public readonly name = "exeToBat";
   public supportedFormats = [
-    CommonFormats.EXE.builder("exe").from(),
-    CommonFormats.BATCH.builder("bat").lossless().to(),
+    Formats.EXE.builder("exe").from(),
+    Formats.BATCH.builder("bat").lossless().to(),
   ];
   public ready = false;
 
@@ -35,14 +35,9 @@ export default class exeToBatHandler implements FormatHandler {
       console.log("[exe2bat] Input files:", inputFiles.length);
     }
 
-    if (inputFormat.mime !== EXE_MIME || outputFormat.mime !== CommonFormats.BATCH.mime) {
+    if (inputFormat.mime !== EXE_MIME || outputFormat.mime !== Formats.BATCH.mime) {
       if (DEBUG_EXE_TO_BAT)
-        console.log(
-          "[exe2bat] MIME type mismatch - expected:",
-          EXE_MIME,
-          "→",
-          CommonFormats.BATCH.mime,
-        );
+        console.log("[exe2bat] MIME type mismatch - expected:", EXE_MIME, "→", Formats.BATCH.mime);
       throw new TypeError("This handler only supports EXE to BAT conversion");
     }
 

@@ -1,4 +1,4 @@
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { InitializationError } from "src/errors.ts";
 
@@ -11,12 +11,12 @@ import { changeExt } from "src/common/index.ts";
 class threejsHandler implements FormatHandler {
   public readonly name = "threejs";
   public supportedFormats = [
-    CommonFormats.GLB.builder("glb").from(),
-    CommonFormats.GLTF.builder("glb").from(),
-    CommonFormats.OBJ.builder("obj").from(),
-    CommonFormats.PNG.builder("png").to(),
-    CommonFormats.JPEG.builder("jpeg").to(),
-    CommonFormats.WEBP.builder("webp").to(),
+    Formats.GLB.builder("glb").from(),
+    Formats.GLTF.builder("glb").from(),
+    Formats.OBJ.builder("obj").from(),
+    Formats.PNG.builder("png").to(),
+    Formats.JPEG.builder("jpeg").to(),
+    Formats.WEBP.builder("webp").to(),
   ];
   public ready = false;
 

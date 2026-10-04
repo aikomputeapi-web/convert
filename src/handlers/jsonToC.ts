@@ -1,7 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { JsonType } from "./jsonToC/JsonType.ts";
 import JsonTypeFactory from "./jsonToC/JsonTypeFactory.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { changeExt, encode } from "src/common/index.ts";
 
 export default class jsonToCHandler implements FormatHandler {
@@ -11,8 +11,8 @@ export default class jsonToCHandler implements FormatHandler {
 
   public readonly name = "jsonToC";
   public supportedFormats = [
-    CommonFormats.C.builder("c").fromTo(),
-    CommonFormats.JSON.builder("json").fromTo(),
+    Formats.C.builder("c").fromTo(),
+    Formats.JSON.builder("json").fromTo(),
   ];
   public ready = false;
 

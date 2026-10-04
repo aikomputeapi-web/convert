@@ -1,18 +1,18 @@
 import { imageTracer } from "imagetracer";
 
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { changeExt, encode } from "src/common/index.ts";
 import { blobToCanvas, createCanvas } from "src/common/canvas.ts";
 
 class svgTraceHandler implements FormatHandler {
   public readonly name = "svgTrace";
   public supportedFormats = [
-    CommonFormats.PNG.builder("png").from(),
-    CommonFormats.JPEG.builder("jpeg").from(),
+    Formats.PNG.builder("png").from(),
+    Formats.JPEG.builder("jpeg").from(),
     // note there is both animated svgs, and animted webPs, although this converter does not support either
-    CommonFormats.WEBP.builder("webp").from(),
-    CommonFormats.SVG.builder("svg").to(),
+    Formats.WEBP.builder("webp").from(),
+    Formats.SVG.builder("svg").to(),
   ];
   public ready = false;
 

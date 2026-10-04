@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { changeExt } from "src/common/index.ts";
 
 function read_lendian(x: number, y: number): number {
@@ -9,9 +9,9 @@ function read_lendian(x: number, y: number): number {
 class curaniHandler implements FormatHandler {
   public readonly name = "curani";
   public supportedFormats = [
-    CommonFormats.ANI.builder("ani").fromTo(),
-    CommonFormats.CUR.builder("cur").fromTo(),
-    CommonFormats.ICO.builder("ico").fromTo(),
+    Formats.ANI.builder("ani").fromTo(),
+    Formats.CUR.builder("cur").fromTo(),
+    Formats.ICO.builder("ico").fromTo(),
   ];
   public ready = false;
 

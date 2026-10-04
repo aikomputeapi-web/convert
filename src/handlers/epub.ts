@@ -1,4 +1,4 @@
-import CommonFormats from "../CommonFormats.ts";
+import Formats from "../Formats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import type { ConvertContext } from "../ui/ProgressStore.ts";
 import ePub from "epubjs";
@@ -115,8 +115,8 @@ async function inlineBlobBackedAttributes(printDoc: Document, cache: Map<string,
 export default class epubHandler implements FormatHandler {
   public readonly name = "epub";
   public supportedFormats = [
-    CommonFormats.EPUB.builder("epub").from(),
-    CommonFormats.HTML.builder("html").to(),
+    Formats.EPUB.builder("epub").from(),
+    Formats.HTML.builder("html").to(),
   ];
   public ready = false;
 

@@ -1,16 +1,16 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { Replay } from "./bsor/replay.ts";
 import { render } from "./bsor/renderer.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { changeExt, encode } from "src/common/index.ts";
 
 class bsorHandler implements FormatHandler {
   public readonly name = "bsor";
   public supportedFormats = [
-    CommonFormats.BSOR.builder("bsor").from(),
-    CommonFormats.PNG.builder("png").to(),
-    CommonFormats.JPEG.builder("jpeg").to(),
-    CommonFormats.JSON.builder("json").lossless().to(),
+    Formats.BSOR.builder("bsor").from(),
+    Formats.PNG.builder("png").to(),
+    Formats.JPEG.builder("jpeg").to(),
+    Formats.JSON.builder("json").lossless().to(),
   ];
   public ready = false;
 

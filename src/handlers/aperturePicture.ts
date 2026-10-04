@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { BadMagicError, InitializationError } from "src/errors.ts";
 import { changeExt, decode, encode } from "src/common/index.ts";
 import { createCanvas, type CanvasBundle } from "src/common/canvas.ts";
@@ -7,8 +7,8 @@ import { createCanvas, type CanvasBundle } from "src/common/canvas.ts";
 class aperturePictureHandler implements FormatHandler {
   public readonly name = "aperturePicture";
   public supportedFormats = [
-    CommonFormats.APF.builder("apf").lossless().fromTo(),
-    CommonFormats.BMP.builder("bmp").lossless().fromTo(),
+    Formats.APF.builder("apf").lossless().fromTo(),
+    Formats.BMP.builder("bmp").lossless().fromTo(),
   ];
   public ready = false;
 

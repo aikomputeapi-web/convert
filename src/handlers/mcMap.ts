@@ -1,6 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { InitializationError } from "src/errors.ts";
 
 import pako from "pako";
@@ -81,10 +81,10 @@ const base_colours = [
 class mcMapHandler implements FormatHandler {
   public readonly name = "mcMap";
   public supportedFormats = [
-    CommonFormats.PNG.builder("png").fromTo(),
-    CommonFormats.RGB.builder("rgb").lossless().to(),
-    CommonFormats.MC_MAP.builder("mcmap").fromTo(),
-    CommonFormats.MC_MAP_GRID.builder("mcmap_grid").to(),
+    Formats.PNG.builder("png").fromTo(),
+    Formats.RGB.builder("rgb").lossless().to(),
+    Formats.MC_MAP.builder("mcmap").fromTo(),
+    Formats.MC_MAP_GRID.builder("mcmap_grid").to(),
   ];
   public ready = false;
 
@@ -108,7 +108,7 @@ class mcMapHandler implements FormatHandler {
     }
     const { canvas, ctx } = this.#bundle;
 
-    if (inputFormat.mime === CommonFormats.PNG.mime) {
+    if (inputFormat.mime === Formats.PNG.mime) {
       for (const file of inputFiles) {
         const fileName = stripExt(file.name);
 
@@ -182,7 +182,7 @@ class mcMapHandler implements FormatHandler {
           });
         }
       }
-    } else if (inputFormat.internal === "mcmap" && outputFormat.mime === CommonFormats.PNG.mime) {
+    } else if (inputFormat.internal === "mcmap" && outputFormat.mime === Formats.PNG.mime) {
       for (const file of inputFiles) {
         const result = pako.ungzip(file.bytes);
         const nbt = await NBT.read(result);

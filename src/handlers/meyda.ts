@@ -1,7 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 import Meyda from "meyda";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { WaveFile } from "wavefile";
 import { InitializationError } from "src/errors.ts";
 import type { TypedWaveFile } from "src/common/wav.ts";
@@ -14,10 +14,10 @@ class meydaHandler implements FormatHandler {
   public readonly name = "meyda";
   public supportedFormats = [
     // Lossy reconstruction due to 2 channel encoding
-    CommonFormats.PNG.builder("image").fromTo(),
-    CommonFormats.JPEG.builder("image").fromTo(),
-    CommonFormats.WEBP.builder("image").fromTo(),
-    CommonFormats.WAV.builder("audio").fromTo(),
+    Formats.PNG.builder("image").fromTo(),
+    Formats.JPEG.builder("image").fromTo(),
+    Formats.WEBP.builder("image").fromTo(),
+    Formats.WAV.builder("audio").fromTo(),
   ];
   public ready = false;
 

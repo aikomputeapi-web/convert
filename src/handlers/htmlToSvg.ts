@@ -1,5 +1,5 @@
 import { elementToSVG, inlineResources } from "dom-to-svg";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { decode, encode } from "src/common/index.ts";
 
@@ -119,10 +119,7 @@ async function htmlContentToSvgString(
 
 class htmlToSvgHandler implements FormatHandler {
   public readonly name = "htmlToSvg";
-  public supportedFormats = [
-    CommonFormats.HTML.builder("html").from(),
-    CommonFormats.SVG.builder("svg").to(),
-  ];
+  public supportedFormats = [Formats.HTML.builder("html").from(), Formats.SVG.builder("svg").to()];
   public ready = false;
   public offload = false; // very dom heavy
 

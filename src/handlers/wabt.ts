@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "../CommonFormats.ts";
+import Formats from "../Formats.ts";
 import wabt from "wabt";
 import { changeExt, encode } from "src/common/index.ts";
 
@@ -9,8 +9,8 @@ type WabtModule = Awaited<ReturnType<typeof wabt>>;
 export default class wabtHandler implements FormatHandler {
   public readonly name = "wabt";
   public supportedFormats = [
-    CommonFormats.WASM.builder("wasm").lossless().fromTo(),
-    CommonFormats.WAT.builder("wat").lossless().fromTo(),
+    Formats.WASM.builder("wasm").lossless().fromTo(),
+    Formats.WAT.builder("wat").lossless().fromTo(),
   ];
   public ready = false;
 

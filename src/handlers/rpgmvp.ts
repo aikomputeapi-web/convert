@@ -1,13 +1,13 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { Decrypter } from "built/rpgmvp-decrypter/scripts/Decrypter.js";
 import { changeExt } from "src/common/index.ts";
 
 class rpgmvpHandler implements FormatHandler {
   public readonly name = "rpgmvp";
   public supportedFormats = [
-    CommonFormats.RPGMVP.builder("rpgmvp").lossless().from(),
-    CommonFormats.PNG.builder("png").lossless().to(),
+    Formats.RPGMVP.builder("rpgmvp").lossless().from(),
+    Formats.PNG.builder("png").lossless().to(),
   ];
   public ready = false;
 

@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import JSZip from "jszip";
 import { BadMagicError } from "src/errors.ts";
 import { changeExt, encode, stripExt } from "src/common/index.ts";
@@ -17,9 +17,9 @@ interface ParsedWAD {
 class wadHandler implements FormatHandler {
   public readonly name = "wad";
   public supportedFormats = [
-    CommonFormats.WAD.builder("wad").lossless().fromTo(),
-    CommonFormats.ZIP.builder("zip").lossless().fromTo(),
-    CommonFormats.JSON.builder("json").to(),
+    Formats.WAD.builder("wad").lossless().fromTo(),
+    Formats.ZIP.builder("zip").lossless().fromTo(),
+    Formats.JSON.builder("json").to(),
   ];
   public ready = false;
 

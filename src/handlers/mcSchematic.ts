@@ -1,17 +1,17 @@
 import type { FileData, FileFormat, FormatHandler } from "src/FormatHandler";
 import * as NBT from "nbtify";
 import { gunzipSync, gzipSync } from "fflate";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { changeExt } from "src/common/index.ts";
 
 class mcSchematicHandler implements FormatHandler {
   public readonly name = "mcSchematic";
   public supportedFormats = [
-    CommonFormats.MC_SCHEMATIC.builder("schematic").lossless().fromTo(),
-    CommonFormats.MC_SCHEM.builder("schem").lossless().fromTo(),
-    CommonFormats.MC_LITEMATIC.builder("litematic").lossless().fromTo(),
+    Formats.MC_SCHEMATIC.builder("schematic").lossless().fromTo(),
+    Formats.MC_SCHEM.builder("schem").lossless().fromTo(),
+    Formats.MC_LITEMATIC.builder("litematic").lossless().fromTo(),
     // Target internal format for graph routing
-    CommonFormats.NBT.builder("nbt").lossless().to(),
+    Formats.NBT.builder("nbt").lossless().to(),
   ];
   public ready = false;
 

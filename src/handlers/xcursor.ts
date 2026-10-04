@@ -1,15 +1,15 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { InitializationError } from "src/errors.ts";
 import { canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas.ts";
 
 class xcursorHandler implements FormatHandler {
   public readonly name = "xcursor";
   public supportedFormats = [
-    CommonFormats.PNG.builder("png").lossless().to(),
-    CommonFormats.JPEG.builder("jpeg").to(),
-    CommonFormats.XCUR.builder("xcur").lossless().from(),
+    Formats.PNG.builder("png").lossless().to(),
+    Formats.JPEG.builder("jpeg").to(),
+    Formats.XCUR.builder("xcur").lossless().from(),
   ];
   public ready = false;
 

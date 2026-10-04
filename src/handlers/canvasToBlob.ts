@@ -1,4 +1,4 @@
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { imageToText, rgbaToGrayscale } from "built/image-to-txt/src/convert.ts";
 import { InitializationError } from "src/errors.ts";
@@ -8,11 +8,11 @@ import { changeExt, decode, encode } from "src/common/index.ts";
 class canvasToBlobHandler implements FormatHandler {
   public readonly name = "canvasToBlob";
   public supportedFormats = [
-    CommonFormats.PNG.builder("png").lossless().fromTo(),
-    CommonFormats.JPEG.builder("jpeg").fromTo(),
-    CommonFormats.WEBP.builder("webp").fromTo(),
-    CommonFormats.GIF.builder("gif").from(),
-    CommonFormats.TEXT.builder("text").fromTo(),
+    Formats.PNG.builder("png").lossless().fromTo(),
+    Formats.JPEG.builder("jpeg").fromTo(),
+    Formats.WEBP.builder("webp").fromTo(),
+    Formats.GIF.builder("gif").from(),
+    Formats.TEXT.builder("text").fromTo(),
   ];
   public ready = false;
 

@@ -1,6 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import Formats, { Category } from "src/Formats.ts";
 import { InitializationError } from "src/errors.ts";
 import wasmUrl from "built/libopenmpt/libopenmpt.wasm?url";
 import runtimeUrl from "built/libopenmpt/libopenmpt.js?url";
@@ -138,7 +138,7 @@ class libopenmptHandler implements FormatHandler {
       });
     }
 
-    this.supportedFormats.push(CommonFormats.WAV.builder("wav").lossless().to());
+    this.supportedFormats.push(Formats.WAV.builder("wav").lossless().to());
 
     this.ready = true;
   }

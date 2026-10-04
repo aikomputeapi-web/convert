@@ -1,13 +1,13 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { WASI, File, OpenFile, ConsoleStdout } from "@bjorn3/browser_wasi_shim";
 import { changeExt } from "src/common/index.ts";
 
 class wasiRunnerHandler implements FormatHandler {
   public readonly name = "wasiRunner";
   public supportedFormats = [
-    CommonFormats.WASM.builder("wasm").lossless().from(),
-    CommonFormats.TEXT.builder("txt").to(),
+    Formats.WASM.builder("wasm").lossless().from(),
+    Formats.TEXT.builder("txt").to(),
   ];
   public ready = false;
 

@@ -10,7 +10,7 @@ import {
 import mime from "mime";
 import magickWasmUrl from "@imagemagick/magick-wasm/magick.wasm?url";
 import normalizeMimeType from "../normalizeMimeType.ts";
-import CommonFormats, { Category, isCategory } from "src/CommonFormats.ts";
+import Formats, { Category, isCategory } from "src/Formats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import type { ConvertContext } from "../ui/ProgressStore.js";
 import { changeExt } from "src/common/index.ts";
@@ -46,9 +46,9 @@ class ImageMagickHandler implements FormatHandler {
 
       // ImageMagick _really_ likes mislabeling formats
       let description = format.description;
-      if (mimeType === "image/jpeg") description = CommonFormats.JPEG.name;
-      if (mimeType === "image/gif") description = CommonFormats.GIF.name;
-      if (mimeType === "image/webp") description = CommonFormats.WEBP.name;
+      if (mimeType === "image/jpeg") description = Formats.JPEG.name;
+      if (mimeType === "image/gif") description = Formats.GIF.name;
+      if (mimeType === "image/webp") description = Formats.WEBP.name;
       if (formatName === "ico") description = "Microsoft Windows ICO";
       if (formatName === "mpo") description = "Multi-Picture Object";
       if (formatName === "vst") description = "Microsoft Visio Template";

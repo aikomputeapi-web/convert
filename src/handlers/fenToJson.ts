@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import {
   BLACK,
   KING,
@@ -49,8 +49,8 @@ function isPieceSymbol(value: string): value is PieceSymbol {
 class fenToJsonHandler implements FormatHandler {
   public readonly name = "fenToJson";
   public supportedFormats = [
-    CommonFormats.FEN.builder("fen").lossless().fromTo(),
-    CommonFormats.JSON.builder("json").lossless().fromTo(),
+    Formats.FEN.builder("fen").lossless().fromTo(),
+    Formats.JSON.builder("json").lossless().fromTo(),
   ];
   public ready = false;
 

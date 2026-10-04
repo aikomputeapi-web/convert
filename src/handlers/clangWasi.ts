@@ -1,15 +1,15 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { commands } from "@yowasp/clang";
 import { changeExt, encode } from "src/common/index.ts";
 
 class clangWasiHandler implements FormatHandler {
   public readonly name = "clangWasi";
   public supportedFormats = [
-    CommonFormats.C.builder("c").from(),
-    CommonFormats.CPP.builder("cpp").from(),
-    CommonFormats.ASM.builder("asm").from(),
-    CommonFormats.WASM.builder("wasm").lossless().to(),
+    Formats.C.builder("c").from(),
+    Formats.CPP.builder("cpp").from(),
+    Formats.ASM.builder("asm").from(),
+    Formats.WASM.builder("wasm").lossless().to(),
   ];
   public ready = false;
 

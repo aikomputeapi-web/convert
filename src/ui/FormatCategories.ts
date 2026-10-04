@@ -1,5 +1,5 @@
 import { signal } from "@preact/signals";
-import type { CategoryType } from "src/CommonFormats";
+import type { CategoryType } from "src/Formats";
 
 export const SelectedCategories = signal<Set<CategoryType>>(new Set());
 

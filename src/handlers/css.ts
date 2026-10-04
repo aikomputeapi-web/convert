@@ -1,13 +1,13 @@
 import { type FileData, type FileFormat, type FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { changeExt, decode, encode } from "src/common/index.ts";
 
 class cssHandler implements FormatHandler {
   public readonly name = "css";
   public supportedFormats = [
-    CommonFormats.CSS.builder("css").lossless().fromTo(),
-    CommonFormats.LESS.builder("less").from(),
-    CommonFormats.SCSS.builder("scss").from(),
+    Formats.CSS.builder("css").lossless().fromTo(),
+    Formats.LESS.builder("less").from(),
+    Formats.SCSS.builder("scss").from(),
   ];
   public ready = false;
 

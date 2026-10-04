@@ -1,14 +1,11 @@
 import { type FileData, type FileFormat, type FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "../CommonFormats.ts";
+import Formats from "../Formats.ts";
 import PDFDocument from "pdfkit/js/pdfkit.standalone";
 import { changeExt, decode } from "src/common/index.ts";
 
 class textToPdfHandler implements FormatHandler {
   public readonly name = "textToPdf";
-  public supportedFormats = [
-    CommonFormats.TEXT.builder("text").from(),
-    CommonFormats.PDF.builder("pdf").to(),
-  ];
+  public supportedFormats = [Formats.TEXT.builder("text").from(), Formats.PDF.builder("pdf").to()];
   public ready = false;
 
   async init() {

@@ -1,4 +1,4 @@
-import type { CategoryType } from "./CommonFormats.js";
+import type { CategoryType } from "./Formats.js";
 import type { HandlerName } from "./handlers/index.js";
 import type { ConvertContext } from "./ui/ProgressStore.js";
 

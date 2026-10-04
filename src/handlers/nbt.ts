@@ -1,15 +1,15 @@
 import type { FileData, FileFormat, FormatHandler } from "src/FormatHandler.ts";
 import * as NBT from "nbtify";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { gzipSync } from "fflate";
 import { changeExt, decode, encode } from "src/common/index.ts";
 
 class nbtHandler implements FormatHandler {
   public readonly name = "nbt";
   public supportedFormats = [
-    CommonFormats.NBT.builder("nbt").lossless().fromTo(),
-    CommonFormats.JSON.builder("json").lossless().fromTo(),
-    CommonFormats.SNBT.builder("snbt").lossless().fromTo(), // only compression data is lost
+    Formats.NBT.builder("nbt").lossless().fromTo(),
+    Formats.JSON.builder("json").lossless().fromTo(),
+    Formats.SNBT.builder("snbt").lossless().fromTo(), // only compression data is lost
   ];
   public ready = false;
 

@@ -1,6 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { InitializationError } from "src/errors.ts";
 import { changeExt } from "src/common/index.ts";
 import { blobToCanvas, canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas.ts";
@@ -8,9 +8,9 @@ import { blobToCanvas, canvasToBlob, createCanvas, type CanvasBundle } from "src
 class rgbaHandler implements FormatHandler {
   public readonly name = "rgba";
   public supportedFormats = [
-    CommonFormats.PNG.builder("png").lossless().fromTo(),
-    CommonFormats.RGB.builder("rgb").fromTo(),
-    CommonFormats.RGBA.builder("rgba").lossless().fromTo(),
+    Formats.PNG.builder("png").lossless().fromTo(),
+    Formats.RGB.builder("rgb").fromTo(),
+    Formats.RGBA.builder("rgba").lossless().fromTo(),
   ];
   public ready = false;
 
@@ -37,7 +37,7 @@ class rgbaHandler implements FormatHandler {
     for (const file of inputFiles) {
       let new_file_bytes = new Uint8Array(file.bytes);
 
-      if (inputFormat.mime === CommonFormats.PNG.mime) {
+      if (inputFormat.mime === Formats.PNG.mime) {
         if (outputFormat.internal === "rgba") {
           // Some code copied from mcmap.ts
           await blobToCanvas(this.#bundle, file.bytes, inputFormat.mime);
@@ -77,7 +77,7 @@ class rgbaHandler implements FormatHandler {
             }
           }
           new_file_bytes = new Uint8Array(writer_array);
-        } else if (outputFormat.mime === CommonFormats.PNG.mime) {
+        } else if (outputFormat.mime === Formats.PNG.mime) {
           throw new TypeError(
             "This handler doesn't need to convert rgb to png, let ImageMagik do that.",
           );
@@ -104,7 +104,7 @@ class rgbaHandler implements FormatHandler {
             }
           }
           new_file_bytes = new Uint8Array(writer_array);
-        } else if (outputFormat.mime === CommonFormats.PNG.mime) {
+        } else if (outputFormat.mime === Formats.PNG.mime) {
           // Determine image dimensions: smallest number x such that x^2 is >= total samples
           const total_samples = new_file_bytes.length / 4;
           let image_sw = 0;

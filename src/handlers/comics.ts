@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 
 import { parseTar } from "nanotar";
 import JSZip from "jszip";
@@ -20,14 +20,14 @@ function padNumberString(num: number, digits: number): string {
 export class comicsZipPackerHandler implements FormatHandler {
   public readonly name = "comicsZipPacker";
   public supportedFormats = [
-    CommonFormats.PNG.builder("png").from(),
-    CommonFormats.JPEG.builder("jpg").from(),
-    CommonFormats.WEBP.builder("webp").from(),
-    CommonFormats.BMP.builder("bmp").from(),
-    CommonFormats.TIFF.builder("tiff").from(),
-    CommonFormats.GIF.builder("gif").from(),
-    CommonFormats.ZIP.builder("zip").lossless().to(),
-    CommonFormats.CBZ.builder("cbz").to(),
+    Formats.PNG.builder("png").from(),
+    Formats.JPEG.builder("jpg").from(),
+    Formats.WEBP.builder("webp").from(),
+    Formats.BMP.builder("bmp").from(),
+    Formats.TIFF.builder("tiff").from(),
+    Formats.GIF.builder("gif").from(),
+    Formats.ZIP.builder("zip").lossless().to(),
+    Formats.CBZ.builder("cbz").to(),
   ];
   public ready = false;
 
@@ -89,14 +89,14 @@ export class comicsZipPackerHandler implements FormatHandler {
 export class comicsZipUnpackerHandler implements FormatHandler {
   public readonly name = "comicsZipUnpacker";
   public supportedFormats = [
-    CommonFormats.PNG.builder("png").to(),
-    CommonFormats.JPEG.builder("jpg").to(),
-    CommonFormats.WEBP.builder("webp").to(),
-    CommonFormats.BMP.builder("bmp").to(),
-    CommonFormats.TIFF.builder("tiff").to(),
-    CommonFormats.GIF.builder("gif").to(),
-    CommonFormats.ZIP.builder("zip").from(),
-    CommonFormats.CBZ.builder("cbz").from(),
+    Formats.PNG.builder("png").to(),
+    Formats.JPEG.builder("jpg").to(),
+    Formats.WEBP.builder("webp").to(),
+    Formats.BMP.builder("bmp").to(),
+    Formats.TIFF.builder("tiff").to(),
+    Formats.GIF.builder("gif").to(),
+    Formats.ZIP.builder("zip").from(),
+    Formats.CBZ.builder("cbz").from(),
   ];
   public ready = false;
 
@@ -155,14 +155,14 @@ export class comicsZipUnpackerHandler implements FormatHandler {
 export class comicsTarUnpackerHandler implements FormatHandler {
   public readonly name = "comicsTarUnpacker";
   public supportedFormats = [
-    CommonFormats.PNG.builder("png").to(),
-    CommonFormats.JPEG.builder("jpg").to(),
-    CommonFormats.WEBP.builder("webp").to(),
-    CommonFormats.BMP.builder("bmp").to(),
-    CommonFormats.TIFF.builder("tiff").to(),
-    CommonFormats.GIF.builder("gif").to(),
-    CommonFormats.TAR.builder("tar").from(),
-    CommonFormats.CBT.builder("cbt").from(),
+    Formats.PNG.builder("png").to(),
+    Formats.JPEG.builder("jpg").to(),
+    Formats.WEBP.builder("webp").to(),
+    Formats.BMP.builder("bmp").to(),
+    Formats.TIFF.builder("tiff").to(),
+    Formats.GIF.builder("gif").to(),
+    Formats.TAR.builder("tar").from(),
+    Formats.CBT.builder("cbt").from(),
   ];
   public ready = false;
 

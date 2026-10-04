@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { QOAEncoder, QOADecoder, QOABase } from "qoa-fu";
 import { WaveFile } from "wavefile";
 import type { TypedWaveFile } from "src/common/wav.ts";
@@ -50,8 +50,8 @@ class uint8ArrayQOAEncoder extends QOAEncoder {
 class qoaFuHandler implements FormatHandler {
   public readonly name = "qoaFu";
   public supportedFormats = [
-    CommonFormats.QOA.builder("qoa").fromTo(),
-    CommonFormats.WAV.builder("wav").fromTo(),
+    Formats.QOA.builder("qoa").fromTo(),
+    Formats.WAV.builder("wav").fromTo(),
   ];
   public ready = false;
 

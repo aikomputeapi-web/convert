@@ -12,7 +12,7 @@ import {
   stringifyTOML,
   stringifyINI,
 } from "confbox";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { type FileData, type FileFormat, type FormatHandler } from "../FormatHandler.ts";
 import { changeExt, decode, encode } from "src/common/index.ts";
 
@@ -20,13 +20,13 @@ class configHandler implements FormatHandler {
   public readonly name = "config";
   public supportedFormats = [
     // JSON maintains exact data equivalence to JS Objects natively
-    CommonFormats.JSON.builder("json").lossless().fromTo(),
+    Formats.JSON.builder("json").lossless().fromTo(),
     // JSON5, YAML, and TOML have comments and other features lost when parsed to JS Objects
-    CommonFormats.JSON5.builder("json5").fromTo(),
-    CommonFormats.JSONC.builder("jsonc").fromTo(),
-    CommonFormats.YML.builder("yaml").fromTo(),
-    CommonFormats.TOML.builder("toml").fromTo(),
-    CommonFormats.INI.builder("ini").fromTo(),
+    Formats.JSON5.builder("json5").fromTo(),
+    Formats.JSONC.builder("jsonc").fromTo(),
+    Formats.YML.builder("yaml").fromTo(),
+    Formats.TOML.builder("toml").fromTo(),
+    Formats.INI.builder("ini").fromTo(),
   ];
   public ready = false;
 

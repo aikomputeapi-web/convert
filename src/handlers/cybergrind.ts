@@ -1,16 +1,13 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { InitializationError } from "src/errors.ts";
 import { changeExt, encode } from "src/common/index.ts";
 import { createCanvas, type CanvasBundle } from "src/common/canvas.ts";
 
 class cybergrindHandler implements FormatHandler {
   public readonly name = "cybergrind";
-  public supportedFormats = [
-    CommonFormats.PNG.builder("png").from(),
-    CommonFormats.CGP.builder("cgp").to(),
-  ];
+  public supportedFormats = [Formats.PNG.builder("png").from(), Formats.CGP.builder("cgp").to()];
   public ready = false;
 
   #bundle?: CanvasBundle;

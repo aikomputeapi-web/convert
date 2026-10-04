@@ -8,18 +8,18 @@ import ffmpegWasmUrl from "@ffmpeg/core/wasm?url";
 
 import mime from "mime";
 import normalizeMimeType from "../normalizeMimeType.ts";
-import CommonFormats, { Category, type CategoryType } from "src/CommonFormats.ts";
+import Formats, { Category, type CategoryType } from "src/Formats.ts";
 import { InitializationError } from "src/errors.ts";
 import { changeExt, encode } from "src/common/index.ts";
 
 class FFmpegHandler implements FormatHandler {
   static formatNames: Map<string, string> = new Map([
-    ["mp4", CommonFormats.MP4.name],
+    ["mp4", Formats.MP4.name],
     ["m4a", "MPEG-4 Audio"],
-    ["flac", CommonFormats.FLAC.name],
-    ["wav", CommonFormats.WAV.name],
-    ["mp3", CommonFormats.MP3.name],
-    ["ogg", CommonFormats.OGG.name],
+    ["flac", Formats.FLAC.name],
+    ["wav", Formats.WAV.name],
+    ["mp3", Formats.MP3.name],
+    ["ogg", Formats.OGG.name],
     ["matroska", "Matroska / WebM"],
     ["mov", "QuickTime / MOV"],
     ["3gp", "3GPP Multimedia Container"],
@@ -218,18 +218,18 @@ class FFmpegHandler implements FormatHandler {
     this.supportedFormats = this.supportedFormats.filter((c) => !remove.includes(c.internal));
 
     // Add .qta (QuickTime Audio) support - uses same mov demuxer
-    this.supportedFormats.push(CommonFormats.QTA.builder("mov").fromTo());
+    this.supportedFormats.push(Formats.QTA.builder("mov").fromTo());
 
     // Add .wmv (Windows Media Video) support - uses ASF container
-    this.supportedFormats.push(CommonFormats.WMV.builder("asf").fromTo());
+    this.supportedFormats.push(Formats.WMV.builder("asf").fromTo());
 
     // Add .mts (AVCHD) support — camcorder footage using the MPEG-TS container.
     // FFmpeg auto-discovers "mpegts" but assigns the ".ts" extension, leaving
     // ".mts" files (JVC, Sony, Panasonic AVCHD camcorders) unrecognised.
-    this.supportedFormats.push(CommonFormats.MTS.builder("mpegts").from());
+    this.supportedFormats.push(Formats.MTS.builder("mpegts").from());
 
     // Add .m2ts (Blu-ray BDMV) support — same MPEG-TS container, different extension.
-    this.supportedFormats.push(CommonFormats.M2TS.builder("mpegts").from());
+    this.supportedFormats.push(Formats.M2TS.builder("mpegts").from());
 
     // Normalize Bink metadata to ensure ".bik" files are detected by extension.
     const binkFormats = this.supportedFormats.filter(
@@ -250,12 +250,12 @@ class FFmpegHandler implements FormatHandler {
 
     // Add PNG input explicitly - FFmpeg otherwise treats both PNG and
     // APNG as the same thing.
-    this.supportedFormats.push(CommonFormats.PNG.builder("png").from());
+    this.supportedFormats.push(Formats.PNG.builder("png").from());
 
     // Encoding-specific formats
-    this.supportedFormats.push(CommonFormats.OGG_VORBIS.builder("ogg").to());
+    this.supportedFormats.push(Formats.OGG_VORBIS.builder("ogg").to());
 
-    this.supportedFormats.push(CommonFormats.OGG_OPUS.builder("ogg").to());
+    this.supportedFormats.push(Formats.OGG_OPUS.builder("ogg").to());
 
     this.#ffmpeg.terminate();
 

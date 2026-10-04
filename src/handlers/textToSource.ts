@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { changeExt, decode, encode } from "src/common/index.ts";
 
 function python(text: string): string {
@@ -60,20 +60,20 @@ function rust(text: string): string {
 
 class textToSourceHandler implements FormatHandler {
   static converters: [FileFormat, (text: string) => string][] = [
-    [CommonFormats.PYTHON.builder("py").lossless().to(), python],
-    [CommonFormats.JS.builder("js").lossless().to(), javascript],
-    [CommonFormats.C.builder("c").lossless().to(), c],
-    [CommonFormats.CPP.builder("cpp").lossless().to(), cpp],
-    [CommonFormats.GO.builder("go").lossless().to(), go],
-    [CommonFormats.BATCH.builder("bat").lossless().to(), batch],
-    [CommonFormats.SH.builder("sh").lossless().to(), shell],
-    [CommonFormats.CSHARP.builder("csharp").lossless().to(), csharp],
-    [CommonFormats.RUST.builder("rs").lossless().to(), rust],
+    [Formats.PYTHON.builder("py").lossless().to(), python],
+    [Formats.JS.builder("js").lossless().to(), javascript],
+    [Formats.C.builder("c").lossless().to(), c],
+    [Formats.CPP.builder("cpp").lossless().to(), cpp],
+    [Formats.GO.builder("go").lossless().to(), go],
+    [Formats.BATCH.builder("bat").lossless().to(), batch],
+    [Formats.SH.builder("sh").lossless().to(), shell],
+    [Formats.CSHARP.builder("csharp").lossless().to(), csharp],
+    [Formats.RUST.builder("rs").lossless().to(), rust],
   ];
 
   public readonly name = "textToSource";
   public supportedFormats = [
-    CommonFormats.TEXT.builder("txt").lossless().from(),
+    Formats.TEXT.builder("txt").lossless().from(),
     ...textToSourceHandler.converters.map(([format]) => format),
   ];
   public ready = false;

@@ -1,4 +1,4 @@
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 import { getDocument, GlobalWorkerOptions } from "pdfjs-dist";
@@ -35,9 +35,9 @@ class WorkerCanvasFactory {
 class pdfjsHandler implements FormatHandler {
   public readonly name = "pdfjs";
   public supportedFormats = [
-    CommonFormats.PDF.builder("pdf").from(),
-    CommonFormats.PNG.builder("png").to(),
-    CommonFormats.JPEG.builder("jpeg").to(),
+    Formats.PDF.builder("pdf").from(),
+    Formats.PNG.builder("png").to(),
+    Formats.JPEG.builder("jpeg").to(),
   ];
   public ready = false;
 

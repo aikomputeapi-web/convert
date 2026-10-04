@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import JSZip from "jszip";
 import { InitializationError } from "src/errors.ts";
 import { changeExt, decode } from "src/common/index.ts";
@@ -8,9 +8,9 @@ import { canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas
 class piskelHandler implements FormatHandler {
   public readonly name = "piskel";
   public supportedFormats = [
-    CommonFormats.PNG.builder("png").lossless().to(),
-    CommonFormats.ZIP.builder("zip").lossless().to(),
-    CommonFormats.PISKEL.builder("piskel").lossless().from(),
+    Formats.PNG.builder("png").lossless().to(),
+    Formats.ZIP.builder("zip").lossless().to(),
+    Formats.PISKEL.builder("piskel").lossless().from(),
   ];
   public ready = false;
 

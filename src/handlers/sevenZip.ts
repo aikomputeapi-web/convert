@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import Formats, { Category } from "src/Formats.ts";
 import SevenZip from "7z-wasm";
 import sevenZipWasmUrl from "7z-wasm/7zz.wasm?url";
 import mime from "mime";
@@ -100,10 +100,10 @@ class sevenZipHandler implements FormatHandler {
     }
 
     // Comic book support
-    this.supportedFormats.push(CommonFormats.CBZ.builder("cbz").fromTo(true, zipTo));
-    this.supportedFormats.push(CommonFormats.CBT.builder("cbt").fromTo(true, tarTo));
-    this.supportedFormats.push(CommonFormats.CBR.builder("cbr").fromTo(true, rarTo));
-    this.supportedFormats.push(CommonFormats.CB7.builder("cb7").fromTo(true, szTo));
+    this.supportedFormats.push(Formats.CBZ.builder("cbz").fromTo(true, zipTo));
+    this.supportedFormats.push(Formats.CBT.builder("cbt").fromTo(true, tarTo));
+    this.supportedFormats.push(Formats.CBR.builder("cbr").fromTo(true, rarTo));
+    this.supportedFormats.push(Formats.CB7.builder("cb7").fromTo(true, szTo));
 
     // push zip and tar up the list
     const priority = ["tar", "zip"];

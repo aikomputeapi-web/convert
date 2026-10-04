@@ -1,12 +1,12 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { changeExt, decode, encode } from "src/common/index.ts";
 
 class txtToInfiniteCraftHandler implements FormatHandler {
   public readonly name = "txtToInfiniteCraft";
   public supportedFormats = [
-    CommonFormats.TEXT.builder("text").from(),
-    CommonFormats.INFINITE_CRAFT.builder("ic").to(),
+    Formats.TEXT.builder("text").from(),
+    Formats.INFINITE_CRAFT.builder("ic").to(),
   ];
   public ready = false;
 
@@ -69,8 +69,8 @@ class txtToInfiniteCraftHandler implements FormatHandler {
 class infiniteCraftToJsonHandler implements FormatHandler {
   public readonly name = "infiniteCraftToJson";
   public supportedFormats = [
-    CommonFormats.INFINITE_CRAFT.builder("ic").lossless().from(),
-    CommonFormats.JSON.builder("json").lossless().to(),
+    Formats.INFINITE_CRAFT.builder("ic").lossless().from(),
+    Formats.JSON.builder("json").lossless().to(),
   ];
   public ready = false;
 

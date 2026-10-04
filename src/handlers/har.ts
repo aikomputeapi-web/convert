@@ -1,14 +1,11 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import JSZip from "jszip";
 import { decode, encode } from "src/common/index.ts";
 
 class harHandler implements FormatHandler {
   public readonly name = "har";
-  public supportedFormats = [
-    CommonFormats.HAR.builder("har").from(),
-    CommonFormats.ZIP.builder("zip").to(),
-  ];
+  public supportedFormats = [Formats.HAR.builder("har").from(), Formats.ZIP.builder("zip").to()];
   public ready = false;
 
   async init() {

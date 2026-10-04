@@ -1,18 +1,18 @@
 import type { ConvertContext } from "src/ui/ProgressStore.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { changeExt } from "src/common/index.ts";
 
 class wavebreakHandler implements FormatHandler {
   public readonly name = "wavebreak";
   public supportedFormats = [
-    CommonFormats.WAV.builder("wav").lossless().to(),
-    CommonFormats.S16LE.builder("s16le").lossless().from(), // interpreted as 44.1 kHz mono
-    CommonFormats.U8.builder("u8").lossless().from(), // once again interpreted as std. mono
-    CommonFormats.S24LE.builder("s24le").lossless().from(),
-    CommonFormats.S32LE.builder("s32le").lossless().from(),
-    CommonFormats.F32LE.builder("f32le").lossless().from(),
-    CommonFormats.F64LE.builder("f64le").lossless().from(),
+    Formats.WAV.builder("wav").lossless().to(),
+    Formats.S16LE.builder("s16le").lossless().from(), // interpreted as 44.1 kHz mono
+    Formats.U8.builder("u8").lossless().from(), // once again interpreted as std. mono
+    Formats.S24LE.builder("s24le").lossless().from(),
+    Formats.S32LE.builder("s32le").lossless().from(),
+    Formats.F32LE.builder("f32le").lossless().from(),
+    Formats.F64LE.builder("f64le").lossless().from(),
   ];
   public ready = false;
 

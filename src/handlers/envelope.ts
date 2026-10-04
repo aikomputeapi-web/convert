@@ -4,21 +4,21 @@ import { parseODT, parseODP, parseODS } from "built/envelope/parseODF.js";
 import parseDOCX from "built/envelope/parseDOCX.js";
 import parsePPTX from "built/envelope/parsePPTX.js";
 import parseXLSX from "built/envelope/parseXLSX.js";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { changeExt, encode } from "src/common/index.ts";
 
 class envelopeHandler implements FormatHandler {
   public readonly name = "envelope";
   public supportedFormats = [
-    CommonFormats.DOCX.builder("docx").from(),
+    Formats.DOCX.builder("docx").from(),
     // Currently, Pancoc handles PPTX and XLSX better than Envelope.
-    // CommonFormats.PPTX.builder("pptx").from(),
-    // CommonFormats.XLSX.builder("xlsx").from(),
-    CommonFormats.ODT.builder("odt").from(),
-    CommonFormats.ODP.builder("odp").from(),
-    CommonFormats.ODS.builder("ods").from(),
+    // Formats.PPTX.builder("pptx").from(),
+    // Formats.XLSX.builder("xlsx").from(),
+    Formats.ODT.builder("odt").from(),
+    Formats.ODP.builder("odp").from(),
+    Formats.ODS.builder("ods").from(),
     // Technically not "lossless", but it's about as close as we'll ever get
-    CommonFormats.HTML.builder("html").lossless().to(),
+    Formats.HTML.builder("html").lossless().to(),
   ];
   public ready = false;
 

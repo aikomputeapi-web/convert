@@ -1,4 +1,4 @@
-import { Category, type CategoryType } from "src/CommonFormats";
+import { Category, type CategoryType } from "src/Formats";
 
 const CATEGORY_TO_ICON: Record<CategoryType, string> = {
   [Category.IMAGE]: "image",

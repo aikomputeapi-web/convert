@@ -26,10 +26,10 @@ export function isCategory(value: string): value is CategoryType {
 }
 
 /**
- * Common format definitions which can be used to reduce boilerplate definitions
+ * All formats used in all handlers, except dynamic ones
  */
 // oxfmt-ignore
-const CommonFormats = {
+const Formats = {
   // images
   PNG: new FormatDefinition("Portable Network Graphics", "png", "png", "image/png", Category.IMAGE),
   APNG: new FormatDefinition("Animated Portable Network Graphics", "apng", "apng", "image/png", Category.IMAGE),
@@ -247,4 +247,4 @@ const CommonFormats = {
   OM_MOLECULE: new FormatDefinition("Opus Magnum molecule", "molecule", "molecule", "application/x-opus-magnum-molecule", Category.DATA),
 };
 
-export default CommonFormats;
+export default Formats;

@@ -31,7 +31,7 @@ import {
   clearCategories,
   hasActiveFilters,
 } from "src/ui/FormatCategories";
-import { Category, type CategoryType } from "src/CommonFormats";
+import { Category, type CategoryType } from "src/Formats";
 
 interface FormatExplorerProps {
   conversionOptions: ConversionOptionsMap;

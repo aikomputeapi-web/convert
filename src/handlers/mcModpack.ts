@@ -1,13 +1,13 @@
 import type { FileData, FileFormat, FormatHandler } from "src/FormatHandler";
-import CommonFormats from "src/CommonFormats";
+import Formats from "src/Formats";
 import JSZip from "jszip";
 import { changeExt } from "src/common/index.ts";
 
 class mcModpackHandler implements FormatHandler {
   public readonly name = "mcModpack";
   public supportedFormats = [
-    CommonFormats.MRPACK.builder("mrpack").lossless().fromTo(),
-    CommonFormats.ZIP.builder("zip").lossless().fromTo(), // Only handles generic .zip modpacks when routed appropriately
+    Formats.MRPACK.builder("mrpack").lossless().fromTo(),
+    Formats.ZIP.builder("zip").lossless().fromTo(), // Only handles generic .zip modpacks when routed appropriately
   ];
   public ready = false;
 

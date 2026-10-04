@@ -1,4 +1,4 @@
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { InitializationError } from "src/errors.ts";
 
@@ -9,8 +9,8 @@ import { changeExt } from "src/common/index.ts";
 class batToExeHandler implements FormatHandler {
   public readonly name = "batToExe";
   public supportedFormats = [
-    CommonFormats.BATCH.builder("bat").from(),
-    CommonFormats.EXE.builder("exe").lossless().to(), // Lossless because it stores exact input side
+    Formats.BATCH.builder("bat").from(),
+    Formats.EXE.builder("exe").lossless().to(), // Lossless because it stores exact input side
   ];
   public ready = false;
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "preact/hooks";
 import iconsUrl from "built/material-icons/icons.json?url";
-import type { CategoryType } from "src/CommonFormats";
+import type { CategoryType } from "src/Formats";
 import { getDefaultIconForCategory } from "./categoryDefaultIcons";
 import "./index.css";
 

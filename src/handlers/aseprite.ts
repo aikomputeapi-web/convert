@@ -1,5 +1,5 @@
 import pako from "pako";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { BadMagicError, EOFError, InitializationError } from "src/errors.ts";
 import { changeExt, decode } from "src/common/index.ts";
@@ -470,10 +470,10 @@ function decodeAseprite(bytes: Uint8Array): ParsedAseprite {
 class asepriteHandler implements FormatHandler {
   public readonly name = "aseprite";
   public supportedFormats = [
-    CommonFormats.ASEPRITE.builder("aseprite").lossless().from(),
-    CommonFormats.PNG.builder("png").lossless().to(),
-    CommonFormats.JPEG.builder("jpeg").to(),
-    CommonFormats.WEBP.builder("webp").to(),
+    Formats.ASEPRITE.builder("aseprite").lossless().from(),
+    Formats.PNG.builder("png").lossless().to(),
+    Formats.JPEG.builder("jpeg").to(),
+    Formats.WEBP.builder("webp").to(),
   ];
   public ready = false;
 

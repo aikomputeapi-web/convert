@@ -3,7 +3,7 @@ import * as Pe from "pe-library";
 import JSZip from "jszip";
 
 import { Buffer } from "buffer";
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { changeExt } from "src/common/index.ts";
 if (typeof window !== "undefined") {
   (window as any).Buffer = Buffer;
@@ -12,9 +12,9 @@ if (typeof window !== "undefined") {
 class peToZipHandler implements FormatHandler {
   public readonly name = "peToZip";
   public supportedFormats = [
-    CommonFormats.EXE.builder("exe").from(),
-    CommonFormats.DLL.builder("dll").from(),
-    CommonFormats.ZIP.builder("zip").lossless().to(),
+    Formats.EXE.builder("exe").from(),
+    Formats.DLL.builder("dll").from(),
+    Formats.ZIP.builder("zip").lossless().to(),
   ];
   public ready = false;
 

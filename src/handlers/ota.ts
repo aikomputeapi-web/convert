@@ -1,6 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import { InitializationError } from "src/errors.ts";
 import { changeExt } from "src/common/index.ts";
 import { canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas.ts";
@@ -8,8 +8,8 @@ import { canvasToBlob, createCanvas, type CanvasBundle } from "src/common/canvas
 class otaHandler implements FormatHandler {
   public readonly name = "ota";
   public supportedFormats = [
-    CommonFormats.PNG.builder("png").lossless().fromTo(),
-    CommonFormats.OTA.builder("ota").fromTo(),
+    Formats.PNG.builder("png").lossless().fromTo(),
+    Formats.OTA.builder("ota").fromTo(),
   ];
   public ready = false;
 
@@ -33,7 +33,7 @@ class otaHandler implements FormatHandler {
     }
     const { canvas, ctx } = this.#bundle;
 
-    if (inputFormat.internal === "ota" && outputFormat.mime === CommonFormats.PNG.mime) {
+    if (inputFormat.internal === "ota" && outputFormat.mime === Formats.PNG.mime) {
       for (const file of inputFiles) {
         let new_file_bytes = new Uint8Array(file.bytes);
 
@@ -74,7 +74,7 @@ class otaHandler implements FormatHandler {
           bytes: new_file_bytes,
         });
       }
-    } else if (inputFormat.mime === CommonFormats.PNG.mime && outputFormat.internal === "ota") {
+    } else if (inputFormat.mime === Formats.PNG.mime && outputFormat.internal === "ota") {
       for (const file of inputFiles) {
         let writer_array: number[] = [];
 

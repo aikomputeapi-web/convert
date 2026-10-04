@@ -1,19 +1,19 @@
-import CommonFormats from "src/CommonFormats.ts";
+import Formats from "src/Formats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { changeExt, decode, encode } from "src/common/index.ts";
 
 class htmlEmbedHandler implements FormatHandler {
   public readonly name = "htmlEmbed";
   public supportedFormats = [
-    CommonFormats.HTML.builder("html").lossless().to(),
-    CommonFormats.PNG.builder("png").from(),
-    CommonFormats.JPEG.builder("jpeg").from(),
-    CommonFormats.WEBP.builder("webp").from(),
-    CommonFormats.GIF.builder("gif").from(),
-    CommonFormats.SVG.builder("svg").from(),
-    CommonFormats.TEXT.builder("text").from(),
-    CommonFormats.MP4.builder("mp4").from(),
-    CommonFormats.MP3.builder("mp3").from(),
+    Formats.HTML.builder("html").lossless().to(),
+    Formats.PNG.builder("png").from(),
+    Formats.JPEG.builder("jpeg").from(),
+    Formats.WEBP.builder("webp").from(),
+    Formats.GIF.builder("gif").from(),
+    Formats.SVG.builder("svg").from(),
+    Formats.TEXT.builder("text").from(),
+    Formats.MP4.builder("mp4").from(),
+    Formats.MP3.builder("mp3").from(),
   ];
   public ready = false;
 
