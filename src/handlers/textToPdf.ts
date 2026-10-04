@@ -1,6 +1,7 @@
 import { type FileData, type FileFormat, type FormatHandler } from "../FormatHandler.ts";
 import Formats from "../Formats.ts";
-import PDFDocument from "pdfkit/js/pdfkit.standalone";
+import PDFDocument, { registerStdFonts } from "pdfkit";
+import Courier from "pdfkit/standard-fonts/Courier";
 import { changeExt, decode } from "src/common/index.ts";
 
 class textToPdfHandler implements FormatHandler {
@@ -9,6 +10,7 @@ class textToPdfHandler implements FormatHandler {
   public ready = false;
 
   async init() {
+    registerStdFonts(Courier);
     this.ready = true;
   }
 
@@ -24,6 +26,7 @@ class textToPdfHandler implements FormatHandler {
 
       const doc = new PDFDocument({
         size: "A4",
+        font: "Courier",
         margins: { top: 72, bottom: 72, left: 72, right: 72 },
       });
 

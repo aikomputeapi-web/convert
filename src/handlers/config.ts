@@ -78,7 +78,11 @@ class configHandler implements FormatHandler {
           outText = stringifyJSONC(object);
           break;
         case "yaml":
-          outText = stringifyYAML(object);
+          // confbox carries over a detected indent of 0 from compact input, which flattens nested YAML
+          outText = stringifyYAML(
+            object,
+            inputFormat.internal === "yaml" ? undefined : { indent: 2 },
+          );
           break;
         case "toml":
           outText = stringifyTOML(object);

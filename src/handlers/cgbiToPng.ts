@@ -1,4 +1,4 @@
-import pako from "pako";
+import * as pako from "pako";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import Formats from "src/Formats.ts";
 import { changeExt } from "src/common/index.ts";

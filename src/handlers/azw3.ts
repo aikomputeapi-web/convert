@@ -1,7 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import Formats from "src/Formats.ts";
 import JSZip from "jszip";
-import pako from "pako";
+import * as pako from "pako";
 import { isMOBI, MOBI } from "built/foliate-mobi/mobi.js";
 import { DOMParser } from "linkedom/worker";
 import { changeExt } from "src/common/index.ts";

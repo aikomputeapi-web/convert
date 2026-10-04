@@ -3,7 +3,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import Formats from "src/Formats.ts";
 import { InitializationError } from "src/errors.ts";
 
-import pako from "pako";
+import * as pako from "pako";
 import * as NBT from "nbtify";
 import JSZip from "jszip";
 import { changeExt, stripExt } from "src/common/index.ts";
