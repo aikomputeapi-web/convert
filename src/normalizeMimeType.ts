@@ -82,6 +82,8 @@ function normalizeMimeType(mime: string) {
       return "video/x-ms-asf";
     case "application/x-ndjson":
       return "application/jsonl";
+    case "text/fb2":
+      return "application/x-fictionbook+xml";
   }
   return mime;
 }

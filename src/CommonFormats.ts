@@ -43,6 +43,18 @@ const CommonFormats = {
   RGB: new FormatDefinition("Raw red, green, and blue samples", "rgb", "rgb", "image/x-rgb", Category.IMAGE),
   RGBA: new FormatDefinition("Raw red, green, blue, and alpha samples", "rgba", "rgba", "image/x-rgba", Category.IMAGE),
   CGBI_PNG: new FormatDefinition("iPhone optimized CgBI PNG", "cgbi-png", "png", "image/png", Category.IMAGE),
+  PNM: new FormatDefinition("Portable anymap", "pnm", "pnm", "image/x-portable-pixmap", Category.IMAGE),
+  PGM: new FormatDefinition("Portable graymap format (gray scale)", "pgm", "pgm", "image/x-portable-greymap", Category.IMAGE),
+  PPM: new FormatDefinition("Portable pixmap format (color)", "ppm", "ppm", "image/x-portable-pixmap", Category.IMAGE),
+  PAM: new FormatDefinition("Portable arbitrary map", "pam", "pam", "image/x-portable-anymap", Category.IMAGE),
+  PBM: new FormatDefinition("Portable bitmap format (black and white)", "pbm", "pbm", "image/x-portable-bitmap", Category.IMAGE),
+  PKM: new FormatDefinition("Portable arbitrary map (CMYK)", "pkm", "pkm", "image/x-portable-arbitrarymap", Category.IMAGE),
+  PCL: new FormatDefinition("Printer Command Language", "pcl", "pcl", "application/vnd.hp-pcl", Category.DOCUMENT),
+  PCLM: new FormatDefinition("PCLm raster", "pclm", "pclm", "application/PCLm", Category.DOCUMENT),
+  PS: new FormatDefinition("PostScript", "ps", "ps", "application/postscript", Category.DOCUMENT),
+  PWG: new FormatDefinition("PWG raster", "pwg", "pwg", "image/pwg-raster", Category.IMAGE),
+  JXR: new FormatDefinition("JPEG XR", "jxr", "jxr", "image/jxr", Category.IMAGE),
+  JBIG2: new FormatDefinition("Joint Bi-level Image experts Group (JBIG2)", "jbig2", "jb2", "image/x-jbig2", Category.IMAGE),
   // images - icons and cursors
   ICO: new FormatDefinition("Microsoft Windows ICO", "ico", "ico", "image/vnd.microsoft.icon", Category.IMAGE),
   CUR: new FormatDefinition("Microsoft Windows CUR", "cur", "cur", "image/vnd.microsoft.icon", Category.IMAGE),
@@ -141,6 +153,7 @@ const CommonFormats = {
 
   // documents
   HTML: new FormatDefinition("Hypertext Markup Language", "html", "html", "text/html", [Category.DOCUMENT, Category.TEXT]),
+  XHTML: new FormatDefinition("Extensible Hypertext Markup Language", "xhtml", "xhtml", "application/xhtml+xml", [Category.DOCUMENT, Category.TEXT]),
   MD: new FormatDefinition("Markdown Document", "markdown", "markdown", "text/markdown", [Category.DOCUMENT, Category.TEXT]),
   TYPST: new FormatDefinition("Typst Document", "typst", "typ", "text/typst", [Category.DOCUMENT, Category.TEXT]),
   PDF: new FormatDefinition("Portable Document Format", "pdf", "pdf", "application/pdf", Category.DOCUMENT),
@@ -148,6 +161,7 @@ const CommonFormats = {
   EPUB: new FormatDefinition("Electronic Publication", "epub", "epub", "application/epub+zip", Category.DOCUMENT),
   AZW3: new FormatDefinition("Amazon Kindle Format 8", "azw3", "azw3", "application/vnd.amazon.mobi8-ebook", Category.DOCUMENT),
   MOBI: new FormatDefinition("Mobipocket e-book", "mobi", "mobi", "application/x-mobipocket-ebook", Category.DOCUMENT),
+  FB2: new FormatDefinition("FictionBook 2", "fb2", "fb2", "application/x-fictionbook+xml", Category.DOCUMENT),
   // documents - office
   DOCX: new FormatDefinition("WordprocessingML Document", "docx", "docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", Category.DOCUMENT),
   XLSX: new FormatDefinition("SpreadsheetML Workbook", "xlsx", "xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", [Category.SPREADSHEET, Category.DOCUMENT]),
@@ -155,6 +169,7 @@ const CommonFormats = {
   ODT: new FormatDefinition("OpenDocument Text", "odt", "odt", "application/vnd.oasis.opendocument.text", Category.DOCUMENT),
   ODS: new FormatDefinition("OpenDocument Spreadsheet", "ods", "ods", "application/vnd.oasis.opendocument.spreadsheet", Category.SPREADSHEET),
   ODP: new FormatDefinition("OpenDocument Presentation", "odp", "odp", "application/vnd.oasis.opendocument.presentation", Category.PRESENTATION),
+  HWPX: new FormatDefinition("Hancom Office Hangul Document", "hwpx", "hwpx", "application/vnd.hancom.hwpx", Category.DOCUMENT),
   // documents - music notation
   MUSICXML: new FormatDefinition("MusicXML", "musicxml", "musicxml", "application/vnd.recordare.musicxml+xml", Category.DOCUMENT),
   MXL: new FormatDefinition("MusicXML Compressed", "mxl", "mxl", "application/vnd.recordare.musicxml", Category.DOCUMENT),

@@ -40,16 +40,16 @@ class htmlEmbedHandler implements FormatHandler {
 
     let html = "";
 
-    if (inputFormat.internal === "text") {
-      for (const inputFile of inputFiles) {
+    for (const inputFile of inputFiles) {
+      if (inputFormat.internal === "text") {
         const text = decode(inputFile.bytes)
           .replaceAll("&", "&amp;")
           .replaceAll("<", "&lt;")
           .replaceAll(">", "&gt;");
         html += `<pre>${text}</pre>`;
-      }
-    } else {
-      for (const inputFile of inputFiles) {
+      } else if (inputFormat.internal === "svg") {
+        html += `<div><template shadowrootmode="open">${decode(inputFile.bytes)}</template></div><br>`;
+      } else {
         const base64 = htmlEmbedHandler.bytesToBase64(inputFile.bytes);
 
         if (inputFormat.mime.startsWith("image/")) {
