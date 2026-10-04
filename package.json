@@ -137,7 +137,8 @@
   },
   "build": {
     "appId": "com.p2r3.convert",
-    "executableName": "ConvertToIt",
+    "executableName": "convert-to-it",
+    "artifactName": "convert-to-it-${version}-${os}-${arch}.${ext}",
     "directories": {
       "output": "release"
     },

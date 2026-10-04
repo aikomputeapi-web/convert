@@ -34,7 +34,6 @@ jobs:
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: "latest"
-          cache: true
 
       - name: Install dependencies
         run: bun i --frozen-lockfile
@@ -51,8 +50,8 @@ jobs:
         with:
           tag_name: latest
           name: Rolling Release
-          prerelease: true
-          overwrite: true
+          prerelease: false
+          make_latest: true
           files: |
             release/*.exe
             release/*.dmg
