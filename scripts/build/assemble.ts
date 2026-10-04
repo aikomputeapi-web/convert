@@ -3,7 +3,7 @@ import { mkdir, rm, stat } from "fs/promises";
 import { $ } from "bun";
 import type { ArgsDef } from "citty";
 import {
-  CACHE_DIR,
+  DOWNLOADS_DIR,
   extractTarball,
   extractTarballNative,
   extractZip,
@@ -24,7 +24,6 @@ import {
   type SourceRequirement,
 } from "./types";
 
-const DOWNLOADS_DIR = join(CACHE_DIR, "downloads");
 const ROOT_DIR = join(import.meta.dir, "../..");
 
 async function fetchFile(url: string) {

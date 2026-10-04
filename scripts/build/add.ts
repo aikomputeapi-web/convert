@@ -1,6 +1,6 @@
 import { join, relative } from "path";
 import ts from "typescript";
-import { ROOT_SCOPE, loadRequirements, subrecipeScope, type Scope } from "./common";
+import { DOWNLOADS_DIR, ROOT_SCOPE, loadRequirements, subrecipeScope, type Scope } from "./common";
 import { hashFile } from "./hash";
 import { hasSource, isSubrecipe } from "./types";
 
@@ -76,7 +76,9 @@ export async function addSource(path: string, url: string, root: Scope = ROOT_SC
   console.log(`Fetching file ${url}...`);
   const response = await fetch(url);
   if (!response.ok) throw new Error(`Could not fetch: ${response.status} ${response.statusText}`);
-  const hash = hashFile("sha256", await response.bytes());
+  const bytes = await response.bytes();
+  const hash = hashFile("sha256", bytes);
+  await Bun.write(join(DOWNLOADS_DIR, hash), bytes);
   const updated = insertSource(config, name, url, hash);
   const formatted = Bun.spawnSync(
     ["bun", "x", "--no-install", "oxfmt", "--stdin-filepath", configPath],

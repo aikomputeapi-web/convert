@@ -7,6 +7,7 @@ import { $ } from "bun";
 
 const OUT_DIR = join(import.meta.dir, "../../built");
 export const CACHE_DIR = join(import.meta.dir, "../../.cache/convert-build");
+export const DOWNLOADS_DIR = join(CACHE_DIR, "downloads");
 const RECIPE_DIR = join(import.meta.dir, "../../recipe");
 const PREBUILT_DIR = join(import.meta.dir, "../../prebuilt");
 
