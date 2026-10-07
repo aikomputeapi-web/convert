@@ -28,24 +28,27 @@ export default [
   },
   {
     name: "espeakng.js",
-    url: "https://github.com/TheZipCreator/espeakng.js/archive/d889d8b9cb07af4e3edb23e41a88adc1c9918414.tar.gz",
-    hash: ["sha256", "958a6391d22464505a156a140fd8d6a6a8e8ca252d469dfb92c72676bb99b801"],
+    url: "https://github.com/steveseguin/espeakng.js/archive/46a04afb1425209f6d6f7e50ac389ae24f41b821.tar.gz",
+    hash: ["sha256", "47ea2838f9befa3bf5d26024aca344e62439d7c25210686e0d5a57edd834b361"],
+    patches: ["esm.patch"],
     copy: {
       "espeakng-simple.d.ts": "js/espeakng-simple.d.ts",
     },
   },
   {
     name: "rpgmvp-decrypter",
-    url: "https://github.com/ConnorTippets/RPG-Maker-MV-Decrypter/archive/82ccd8c4e1efcd051ab55ad618c320777c77b350.tar.gz",
-    hash: ["sha256", "a3add518fe9b0030541af7cf01bef8ea45ed216316f63ffd9e64fd78faadb1a4"],
+    url: "https://github.com/Petschko/RPG-Maker-MV-Decrypter/archive/d2ae9b8c2c87d51eb5643180efb74bddf611e829.tar.gz",
+    hash: ["sha256", "d1fc516b1b05d085fd7657c0b5913b092e492b38265e734a9edabcf63014ac25"],
+    patches: ["export.patch"],
     copy: {
       "Decrypter.d.ts": "scripts/Decrypter.d.ts",
     },
   },
   {
     name: "terraria-wld-parser",
-    url: "https://github.com/ConnorTippets/terraria-world-file-ts/archive/e0400bfd5ab855e63185f94f892485faff3249d4.tar.gz",
-    hash: ["sha256", "74f5646f6953a887c914dda11df1cd959203a71f49c3e253d29e7c5b82453265"],
+    url: "https://github.com/TEdit/terraria-world-file-ts/archive/7292cb8509d2aa869583cf9f8549d6f78f7f9a24.tar.gz",
+    hash: ["sha256", "f0fcc7704d32b87f0e980d7298801bddf1c828a0a8a47d4a511c6f88525b0479"],
+    patches: ["fixes.patch"],
   },
   {
     name: "gimper",

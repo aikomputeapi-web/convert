@@ -1,0 +1,82 @@
+diff --git a/src/BinaryReader.ts b/src/BinaryReader.ts
+index 861dcd2..4e6c7c3 100644
+--- a/src/BinaryReader.ts
++++ b/src/BinaryReader.ts
+@@ -12,6 +12,7 @@ export default class BinaryReader {
+ 
+   private set offset(offset: number) {
+     if (this.ignoreBounds && offset > this.view.byteLength) {
++      // @ts-ignore
+       this.view = new DataView(this.view.buffer.transfer(this.view.byteLength + 4 * 1024 * 1024))
+     }
+ 
+diff --git a/src/BinarySaver.ts b/src/BinarySaver.ts
+index 50e404c..77f240d 100644
+--- a/src/BinarySaver.ts
++++ b/src/BinarySaver.ts
+@@ -11,6 +11,7 @@ export default class BinarySaver {
+ 
+   private set offset(offset: number) {
+     if (offset + 10 > this.view.byteLength) {
++      // @ts-ignore
+       this.view = new DataView(this.view.buffer.transfer(this.view.byteLength + 4 * 1024 * 1024))
+     }
+ 
+@@ -22,6 +23,7 @@ export default class BinarySaver {
+   }
+ 
+   public trimBuffer(): void {
++    // @ts-ignore
+     this.view = new DataView(this.view.buffer.transfer(this.getPosition()))
+   }
+ 
+diff --git a/src/TileData.ts b/src/TileData.ts
+index d3f0aac..f4fdd36 100644
+--- a/src/TileData.ts
++++ b/src/TileData.ts
+@@ -1,3 +1,4 @@
++// @ts-ignore
+ import { Liquid, Slope, Tile, TileFlag } from './types'
+ 
+ export class TileData {
+diff --git a/src/section/TileEntities.ts b/src/section/TileEntities.ts
+index 32a8c75..ca4bd86 100644
+--- a/src/section/TileEntities.ts
++++ b/src/section/TileEntities.ts
+@@ -1,20 +1,36 @@
+ import type BinaryReader from '../BinaryReader'
+ import {
++  // @ts-ignore
+   CritterAnchor,
++  // @ts-ignore
+   DeadCellsDisplayJar,
++  // @ts-ignore
+   DisplayDoll,
++  // @ts-ignore
+   FoodPlatter,
++  // @ts-ignore
+   HatRack,
++  // @ts-ignore
+   Item,
++  // @ts-ignore
+   ItemFrame,
++  // @ts-ignore
+   ItemSlot,
++  // @ts-ignore
+   KiteAnchor,
++  // @ts-ignore
+   LogicSensor,
++  // @ts-ignore
+   Pylon,
++  // @ts-ignore
+   TileEntity,
++  // @ts-ignore
+   TileEntityBase,
++  // @ts-ignore
+   TileEntityType,
++  // @ts-ignore
+   TrainingDummy,
++  // @ts-ignore
+   WeaponsRack,
+ } from '../types'
+ import type { Section } from '../sections'
