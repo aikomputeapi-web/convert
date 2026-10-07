@@ -30,11 +30,17 @@ export default [
     name: "espeakng.js",
     url: "https://github.com/TheZipCreator/espeakng.js/archive/d889d8b9cb07af4e3edb23e41a88adc1c9918414.tar.gz",
     hash: ["sha256", "958a6391d22464505a156a140fd8d6a6a8e8ca252d469dfb92c72676bb99b801"],
+    copy: {
+      "espeakng-simple.d.ts": "js/espeakng-simple.d.ts",
+    },
   },
   {
     name: "rpgmvp-decrypter",
     url: "https://github.com/ConnorTippets/RPG-Maker-MV-Decrypter/archive/82ccd8c4e1efcd051ab55ad618c320777c77b350.tar.gz",
     hash: ["sha256", "a3add518fe9b0030541af7cf01bef8ea45ed216316f63ffd9e64fd78faadb1a4"],
+    copy: {
+      "Decrypter.d.ts": "scripts/Decrypter.d.ts",
+    },
   },
   {
     name: "terraria-wld-parser",
@@ -103,6 +109,9 @@ export default [
     url: "https://github.com/TurboWarp/packager/archive/9a4854b238c5ebfe9ccbbda486382a673c85cd38.tar.gz",
     hash: ["sha256", "95bebe471a9c7316961526f230ef23d4bd0a37901eb063c543e859c5e35823c6"],
     patches: ["browser.patch"],
+    copy: {
+      "bun.lock": "bun.lock",
+    },
     assemble: "assemble.ts",
   },
   {

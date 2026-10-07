@@ -1,6 +1,8 @@
 // pdfkit >=0.20 browser APIs that @types/pdfkit doesn't cover yet
-declare module "pdfkit" {
-  export function registerStdFonts(...fonts: object[]): void;
+declare namespace PDFKit {
+  interface PDFDocument {
+    registerStdFonts(...fonts: object[]): void;
+  }
 }
 
 declare module "pdfkit/standard-fonts/*" {

@@ -2,6 +2,7 @@ type Source = {
   url: `https://${string}`;
   hash: [Bun.SupportedCryptoAlgorithms, string];
   patches?: string[];
+  copy?: Record<string, string>;
 };
 
 // all of a source or none of it

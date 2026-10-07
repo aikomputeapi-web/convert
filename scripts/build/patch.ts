@@ -1,5 +1,5 @@
 import { basename, dirname, join, relative } from "path";
-import { mkdir, rm } from "fs/promises";
+import { cp, mkdir, rm } from "fs/promises";
 import { $ } from "bun";
 import { extractSource, fetchSource } from "./assemble";
 import { CACHE_DIR, ROOT_SCOPE, loadRequirements, subrecipeScope, type Scope } from "./common";
@@ -86,6 +86,10 @@ export async function editPatch(name: string, patch: string, reset: boolean) {
   await rm(workspace, { recursive: true, force: true });
   await mkdir(dirname(workspace), { recursive: true });
   await extractSource(requirement, await fetchSource(requirement, {}), workspace);
+
+  for (const [from, to] of Object.entries(requirement.copy || {})) {
+    await cp(join(recipePath, from), join(workspace, to), { recursive: true });
+  }
 
   const run = git(workspace);
   await run(["init", "-q"]);

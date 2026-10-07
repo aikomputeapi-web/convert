@@ -1,47 +1,51 @@
 import { join, relative } from "path";
-import ts from "typescript";
+import { parseSync } from "oxc-parser";
 import { DOWNLOADS_DIR, ROOT_SCOPE, loadRequirements, subrecipeScope, type Scope } from "./common";
 import { hashFile } from "./hash";
 import { hasSource, isSubrecipe } from "./types";
 
-// this is crazy
 export function insertSource(config: string, name: string, url: string, hash: string) {
-  const file = ts.createSourceFile("requirements.config.ts", config, ts.ScriptTarget.Latest, true);
-  const exported = file.statements.find(ts.isExportAssignment);
-  let expression = exported?.expression;
+  const parsed = parseSync("requirements.config.ts", config, null);
+  if (parsed.errors.length) throw new Error("could not parse requirements.config.ts");
+  const exported = parsed.program.body.find((d) => d.type === "ExportDefaultDeclaration");
+  let expression = exported?.declaration;
   while (
     expression &&
-    (ts.isSatisfiesExpression(expression) ||
-      ts.isAsExpression(expression) ||
-      ts.isParenthesizedExpression(expression))
+    (expression.type === "TSSatisfiesExpression" ||
+      expression.type === "TSAsExpression" ||
+      expression.type === "ParenthesizedExpression")
   ) {
     expression = expression.expression;
   }
-  if (!expression || !ts.isArrayLiteralExpression(expression)) {
+  if (!expression || expression.type !== "ArrayExpression") {
     throw new Error("requirements.config.ts must export an array literal to add a source.");
   }
 
   const entry = expression.elements.find((element) => {
-    if (!ts.isObjectLiteralExpression(element)) return false;
+    if (element?.type !== "ObjectExpression") return false;
     return element.properties.some(
       (property) =>
-        ts.isPropertyAssignment(property) &&
-        property.name.getText(file).replace(/^["']|["']$/g, "") === "name" &&
-        ts.isStringLiteral(property.initializer) &&
-        property.initializer.text === name,
+        property.type === "Property" &&
+        property.key.type === "Identifier" &&
+        property.key.name === "name" &&
+        property.value.type === "Literal" &&
+        property.value.value === name,
     );
   });
   const properties = `url: ${JSON.stringify(url)},\n    hash: ["sha256", ${JSON.stringify(hash)}],`;
-  const container = entry && ts.isObjectLiteralExpression(entry) ? entry : expression;
-  const members = ts.isObjectLiteralExpression(container)
-    ? container.properties
-    : container.elements;
+  let container, members, addition;
+  if (entry?.type === "ObjectExpression") {
+    container = entry;
+    members = container.properties;
+    addition = `\n    ${properties}\n  `;
+  } else {
+    container = expression;
+    members = container.elements;
+    addition = `\n  {\n    name: ${JSON.stringify(name)},\n    ${properties}\n  },\n`;
+  }
   const last = members.at(-1);
-  const comma = last && !members.hasTrailingComma ? "," : "";
+  const comma = last && !config.slice(last.end, container.end - 1).includes(",") ? "," : "";
   const position = container.end - 1;
-  const addition = entry
-    ? `\n    ${properties}\n  `
-    : `\n  {\n    name: ${JSON.stringify(name)},\n    ${properties}\n  },\n`;
   const before = config.slice(0, position);
   // A missing comma belongs before any trailing comments, immediately after the last member.
   const prefix =

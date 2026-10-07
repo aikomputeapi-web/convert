@@ -1,5 +1,5 @@
 import { basename, join, relative, sep } from "path";
-import { mkdir, rm, stat } from "fs/promises";
+import { cp, mkdir, rm, stat } from "fs/promises";
 import { $ } from "bun";
 import type { ArgsDef } from "citty";
 import {
@@ -148,6 +148,11 @@ export async function prepareSource(
   await extractSource(requirement, await fetchSource(requirement, args), outPath);
 
   const recipePath = join(scope.recipeDir, requirement.name);
+
+  for (const [from, to] of Object.entries(requirement.copy || {})) {
+    await cp(join(recipePath, from), join(outPath, to), { recursive: true });
+  }
+
   for (const patch of requirement.patches || []) {
     const directory = relative(ROOT_DIR, outPath).split(sep).join("/");
     await $`git apply -p1 --ignore-whitespace ${`--directory=${directory}`} ${join(recipePath, patch)}`.cwd(

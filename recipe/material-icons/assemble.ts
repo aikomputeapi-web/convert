@@ -1,6 +1,6 @@
 import { existsSync, writeFileSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
-import ts from "typescript";
+import { parseSync, Visitor } from "oxc-parser";
 import { extraExtensionToIcon } from "./extra-language-extensions";
 
 const ICONS_SRC = "icons";
@@ -19,59 +19,59 @@ interface FileIconEntry {
 
 function extractFileIconEntries(sourcePath: string): FileIconEntry[] {
   const source = readFileSync(sourcePath, "utf-8");
-  const sf = ts.createSourceFile(
-    sourcePath,
-    source,
-    ts.ScriptTarget.Latest,
-    true,
-    ts.ScriptKind.TS,
-  );
+  const parsed = parseSync(sourcePath, source);
+  if (parsed.errors.length) throw new Error(`could not parse ${sourcePath}`);
   const out: FileIconEntry[] = [];
 
-  function visit(node: ts.Node): void {
-    if (ts.isCallExpression(node)) {
-      const expr = node.expression;
-      if (ts.isIdentifier(expr) && expr.text === "parseByPattern" && node.arguments.length > 0) {
-        const arg = node.arguments[0];
-        if (ts.isArrayLiteralExpression(arg)) {
-          for (const el of arg.elements) {
-            if (!ts.isObjectLiteralExpression(el)) continue;
-            let name: string | undefined;
-            const fileExtensions: string[] = [];
-            let cloneBase: string | undefined;
-            for (const prop of el.properties) {
-              if (!ts.isPropertyAssignment(prop)) continue;
-              const pn = prop.name;
-              const key = ts.isIdentifier(pn) ? pn.text : ts.isStringLiteral(pn) ? pn.text : "";
-              const init = prop.initializer;
-              if (key === "name" && ts.isStringLiteral(init)) {
-                name = init.text;
-              }
-              if (key === "fileExtensions" && ts.isArrayLiteralExpression(init)) {
-                for (const e of init.elements) {
-                  if (ts.isStringLiteral(e)) fileExtensions.push(e.text);
-                }
-              }
-              if (key === "clone" && ts.isObjectLiteralExpression(init)) {
-                for (const cp of init.properties) {
-                  if (!ts.isPropertyAssignment(cp)) continue;
-                  const cn = ts.isIdentifier(cp.name) ? cp.name.text : "";
-                  if (cn === "base" && ts.isStringLiteral(cp.initializer)) {
-                    cloneBase = cp.initializer.text;
-                  }
-                }
-              }
+  const visitor = new Visitor({
+    CallExpression(node) {
+      const callee = node.callee;
+      if (
+        callee.type !== "Identifier" ||
+        callee.name !== "parseByPattern" ||
+        !node.arguments.length
+      )
+        return;
+      const arg = node.arguments[0];
+      if (arg.type !== "ArrayExpression") return;
+      for (const el of arg.elements) {
+        if (el?.type !== "ObjectExpression") continue;
+        let name: string | undefined;
+        const fileExtensions: string[] = [];
+        let cloneBase: string | undefined;
+        for (const prop of el.properties) {
+          if (prop.type !== "Property") continue;
+          let key;
+          if (prop.key.type === "Identifier") key = prop.key.name;
+          else if (prop.key.type === "Literal") key = String(prop.key.value);
+          else key = "";
+          if (key === "name" && prop.value.type === "Literal") {
+            name = String(prop.value.value);
+          }
+          if (key === "fileExtensions" && prop.value.type === "ArrayExpression") {
+            for (const e of prop.value.elements) {
+              if (e?.type === "Literal") fileExtensions.push(String(e.value));
             }
-            if (name && fileExtensions.length > 0) {
-              out.push({ name, fileExtensions, cloneBase });
+          }
+          if (key === "clone" && prop.value.type === "ObjectExpression") {
+            for (const p of prop.value.properties) {
+              if (p.type !== "Property") continue;
+              const cloneName = p.key.type === "Identifier" ? p.key.name : "";
+              if (cloneName === "base" && p.value.type === "Literal") {
+                cloneBase = String(p.value.value);
+              }
             }
           }
         }
+        if (name && fileExtensions.length > 0) {
+          out.push({ name, fileExtensions, cloneBase });
+        }
       }
-    }
-    ts.forEachChild(node, visit);
-  }
-  visit(sf);
+    },
+  });
+
+  visitor.visit(parsed.program);
+
   return out;
 }
 
