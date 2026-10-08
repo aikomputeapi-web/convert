@@ -105,7 +105,9 @@ const fileSelectHandler = (event: Event) => {
   files.sort((a, b) => a.name === b.name ? 0 : (a.name < b.name ? -1 : 1));
   selectedFiles = files;
 
-  ui.fileSelectArea.innerHTML = `<h2>
+  ui.fileSelectArea.innerHTML = `
+    <svg class="dropzone__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18a4.5 4.5 0 0 1-1-8.9A5.5 5.5 0 0 1 16.9 8H17a4 4 0 0 1 1 7.9"/><path d="M12 12v7M9 15l3-3 3 3"/></svg>
+    <h2>
     ${files[0].name}
     ${files.length > 1 ? `<br>... and ${files.length - 1} more` : ""}
   </h2>`;
@@ -244,6 +246,10 @@ async function buildOptionList () {
       newOption.setAttribute("mime-type", format.mime);
 
       const formatDescriptor = format.format.toUpperCase();
+      const codeSpan = document.createElement("span");
+      codeSpan.className = "fmt-code";
+      codeSpan.textContent = formatDescriptor;
+      newOption.appendChild(codeSpan);
       if (simpleMode) {
         // Hide any handler-specific information in simple mode
         const cleanName = format.name
@@ -251,9 +257,9 @@ async function buildOptionList () {
           .filter((_, i) => i % 2 === 0)
           .filter(c => c != "")
           .join(" ");
-        newOption.appendChild(document.createTextNode(`${formatDescriptor} - ${cleanName} (${format.mime})`));
+        newOption.appendChild(document.createTextNode(` - ${cleanName} (${format.mime})`));
       } else {
-        newOption.appendChild(document.createTextNode(`${formatDescriptor} - ${format.name} (${format.mime}) ${handler.name}`));
+        newOption.appendChild(document.createTextNode(` - ${format.name} (${format.mime}) ${handler.name}`));
       }
 
       const clickHandler = (event: Event) => {
@@ -288,6 +294,7 @@ async function buildOptionList () {
   filterButtonList(ui.outputList, ui.outputSearch.value);
 
   window.hidePopup();
+  window.dispatchEvent(new Event("formats-ready"));
 
 }
 
