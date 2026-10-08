@@ -9,7 +9,7 @@
   "main": "src/electron.cjs",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && bun run scripts/build-blog.mjs",
     "cache:build": "bun run buildCache.js dist/cache.json --minify",
     "cache:build:dev": "bun run buildCache.js dist/cache.json",
     "preview": "vite preview",
