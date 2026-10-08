@@ -51,7 +51,7 @@ Audio and video conversions can involve both a container and its encoded content
 
 Not every file format converter supports every category. Check the available input and output formats before beginning, especially for specialized, encrypted, damaged, or proprietary files.
 
-## How to universal file converter step by step
+## How to use Kaleido step by step
 
 A universal file converter should make the basic process straightforward: choose an input format, choose an output format, select the file, and start the conversion. To convert files in browser with [Kaleido’s universal file converter](https://aikomputeapi-web.github.io/convert/), follow these steps:
 

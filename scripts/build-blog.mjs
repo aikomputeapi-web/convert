@@ -95,11 +95,28 @@ function renderMarkdown(markdown) {
     listItems = [];
     listType = "";
   };
+  const isTableSeparator = (value) => /^\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(value || "");
+  const parseTableRow = (value) => value.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map((cell) => cell.trim());
 
-  for (const line of lines) {
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
     const heading = line.match(/^(#{1,3})\s+(.+)$/);
     const list = line.match(/^\s*(?:([-*+])|(\d+)[.)])\s+(.+)$/);
-    if (!line.trim()) {
+    if (line.includes("|") && isTableSeparator(lines[index + 1])) {
+      flushParagraph();
+      flushList();
+      const headers = parseTableRow(line);
+      const rows = [];
+      index += 2;
+      while (index < lines.length && lines[index].trim() && lines[index].includes("|")) {
+        rows.push(parseTableRow(lines[index]));
+        index += 1;
+      }
+      index -= 1;
+      const head = `<thead><tr>${headers.map((cell) => `<th>${inlineMarkdown(cell)}</th>`).join("")}</tr></thead>`;
+      const cells = rows.map((row) => `<tr>${headers.map((_, i) => `<td>${inlineMarkdown(row[i] || "")}</td>`).join("")}</tr>`).join("");
+      html.push(`<div class="table-wrap"><table>${head}<tbody>${cells}</tbody></table></div>`);
+    } else if (!line.trim()) {
       flushParagraph();
       flushList();
     } else if (heading) {
@@ -140,6 +157,7 @@ const styles = `
   .crumb{margin-top:34px;color:var(--muted);font-size:14px}.hero{padding:42px 0 28px}.eyebrow{color:var(--accent);font:12px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.14em;text-transform:uppercase}
   h1{font-size:clamp(34px,6vw,56px);line-height:1.08;letter-spacing:-.04em;margin:14px 0 16px}.intro{font-size:18px;color:var(--muted);max-width:760px}.meta{color:var(--muted);font-size:14px;margin-top:20px}
   .card{border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,#111b2b,#0e1522);padding:24px;margin:18px 0}.card h2{font-size:23px;line-height:1.25;margin:0 0 8px}.card p{color:var(--muted);margin:8px 0}.content{max-width:760px;margin:12px auto 70px}.content h2{font-size:29px;line-height:1.25;letter-spacing:-.02em;margin:44px 0 12px}.content h3{font-size:21px;margin:30px 0 8px}.content p,.content li{color:#d3dbe8}.content ul,.content ol{padding-left:26px}.content li{margin:7px 0}.content blockquote{margin:24px 0;border-left:3px solid var(--accent);padding:4px 18px;color:var(--muted)}.content code{font: .9em ui-monospace,Consolas,monospace;background:#172235;padding:2px 5px;border-radius:4px}.content hr{border:0;border-top:1px solid var(--line);margin:34px 0}
+  .table-wrap{overflow-x:auto;margin:24px 0}.content table{width:100%;border-collapse:collapse;min-width:520px;font-size:14px}.content th,.content td{text-align:left;vertical-align:top;padding:11px 12px;border:1px solid var(--line)}.content th{color:var(--accent);background:#121d2d}.content td{color:#d3dbe8}
   .cta{margin:54px 0 70px;padding:26px;border:1px solid #27635f;border-radius:16px;background:#102623}.button{display:inline-block;border-radius:9px;background:var(--accent);color:#071411;padding:11px 17px;font-weight:700;margin-top:8px}.footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-size:13px}
   @media(max-width:600px){.top-inner{height:62px}.top-links{gap:12px}.top-links a:first-child{display:none}.hero{padding-top:32px}.card{padding:19px}.content h2{font-size:25px}}
 `;
